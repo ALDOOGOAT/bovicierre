@@ -2,7 +2,7 @@
 
 SaaS B2B (proyecto académico de **Tópicos Avanzados de Bases de Datos**, con intención comercial) para cerrar y conciliar operaciones de compraventa de ganado bovino en pie: qué animales participaron, qué peso y condiciones se pactaron, qué gastos se asignaron, cómo se calculó la liquidación y qué queda por cobrar o pagar.
 
-> **Estado al 2026-10-10:** paquete de diseño documental (negocio, reglas, modelo conceptual y relacional en texto, arquitectura, ADR, contrato OpenAPI, plan). **No existe código, migraciones ni pruebas ejecutadas.** Láminas MER Chen y relacional en `docs/diagrams/` (pendientes de revisión humana); el grafo está en curso. Ver [`docs/status.md`](docs/status.md).
+> **Estado al 2026-10-10:** paquete de diseño documental (negocio, reglas, modelo conceptual y relacional en texto, arquitectura, ADR, contrato OpenAPI, plan). **No existe código, migraciones ni pruebas ejecutadas.** Láminas MER Chen y relacional en `docs/diagrams/` (pendientes de revisión humana); grafo de Graphify generado localmente (ver `docs/knowledge/graph-status.md`). Ver [`docs/status.md`](docs/status.md).
 
 Equipo: **Aldo Fabio Contreras Marroquín** (backend, bases de datos, infraestructura) · **Jared** (frontend). Entrega académica: **31-oct-2026**. Especificación maestra: [`docs/spec/megaprompt.md`](docs/spec/megaprompt.md).
 
@@ -106,7 +106,7 @@ Las casillas `[ ]` de las tablas son texto (no interactivas); las listas de abaj
 | [ ] | TASK-A-003 | MER Chen y matriz de relaciones | A-002 | 11–12 | Fuertes/débiles, rombos, óvalos, verbos, mínimos/máximos y exportaciones revisadas | Revisión |
 | [ ] | TASK-A-004 | Modelo relacional, diccionario y normalización | A-003 | 12–13 | Todas las relaciones con claves, FKs, tipos, restricciones y justificación | Revisión |
 | [ ] | TASK-A-005 | Arquitectura, ADR y plan de despliegue | A-002/A-004 | 12–13 | Dueños, transacciones, límites M–M y recuperación explícitos | Revisión |
-| [ ] | TASK-A-006 | Contexto Markdown, README y grafo inicial | A-003/A-005/A-007 | 12–13 | Archivos sustantivos y grafo real verificado; si Graphify está bloqueado, sólo el avance documental se registra y la subtarea de grafo sigue pendiente | En curso |
+| [ ] | TASK-A-006 | Contexto Markdown, README y grafo inicial | A-003/A-005/A-007 | 12–13 | Archivos sustantivos y grafo real verificado; si Graphify está bloqueado, sólo el avance documental se registra y la subtarea de grafo sigue pendiente | Revisión |
 | [ ] | TASK-A-007 | OpenAPI, errores y ejemplos para Jared | A-004/A-005 | 13 | Contrato validado con decimales exactos, scope e idempotencia | Revisión |
 | [ ] | TASK-A-008 | Backend modular y build reproducible | A-005/A-007 | 13–14 | Maven Wrapper, configuración por entorno y arranque verificable | Listo |
 | [ ] | TASK-A-009 | DDL/Flyway, claves, índices y seed sintético | A-004 | 13–15 | Base limpia construida; restricciones fallan ante datos inválidos | Listo |
