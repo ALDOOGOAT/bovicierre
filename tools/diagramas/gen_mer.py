@@ -67,7 +67,7 @@ def l3_operaciones():
     p.ref("sucursal", "Sucursal", 2, 130, 560)
     p.entidad("op", "Operacion", 600, 380, dom="ope")
     p.atributos("op", [("id", "k"), ("tipo", ""), ("folio", ""), ("fecha", ""), ("estado", ""), ("estado entrega", "d")], "top", sep=112)
-    p.relacion("interviene", "interviene en", 360, 290)
+    p.relacion("interviene", "interviene en", 360, 220)
     p.une("parte", "interviene", "(0,N)")
     p.une("op", "interviene", "(1,1)", total=True)
     p.relacion("tramita", "tramita", 360, 480)
@@ -298,7 +298,7 @@ def l1_general():
     W1, H1 = 2380, 1680  # A2 horizontal
     p = Pagina("01 Vista general por dominios", W1, H1)
     p.marco("Lámina 1 · Vista general conceptual por dominios",
-            "Relaciones principales sin atributos ni cardinalidades: ver láminas 2–6")
+            "Flechas: sentido del verbo A → relación → B; cardinalidades en láminas 2–6")
     from chen import COLORES, BASE
     for nom, dom, x, y, w, h in [("Organización e identidad (maestros, nodo A)", "org", 30, 90, 740, 680),
                                  ("Operaciones y contratos", "ope", 790, 90, 780, 680), ("Inventario", "inv", 1590, 90, 760, 680),
@@ -310,8 +310,8 @@ def l1_general():
 
     def R(cid, verbo, x, y, a, b, ident=False, w=130, h=64):
         D(cid, verbo, x, y, ident, w, h)
-        p.une(a, cid, None)
-        p.une(b, cid, None)
+        p.linea(a, cid, extra="endArrow=open;endSize=10;")
+        p.linea(cid, b, extra="endArrow=open;endSize=10;")
 
     # Organización e identidad
     E("empresa", "Empresa", 60, 150); E("sucursal", "Sucursal", 420, 150); E("usuario", "Usuario", 60, 330)
@@ -330,14 +330,14 @@ def l1_general():
     R("r8", "contiene", 1085, 143, "op", "lote", ident=True)
     R("r9", "conserva", 870, 285, "op", "ver", ident=True)
     R("r10", "establece", 1085, 393, "ver", "cond", ident=True)
-    R("r11", "rige para", 1310, 285, "lote", "cond", ident=True)
-    R("r12", "recibe", 1310, 525, "cond", "pesaje")
+    R("r11", "rige para", 1310, 285, "cond", "lote", ident=True)
+    R("r12", "recibe", 1310, 525, "lote", "pesaje")
     # Inventario
     E("selc", "SeleccionCompra", 1630, 150, debil=True); E("pos", "PosicionInventario", 1620, 400, w=170)
     E("selv", "SeleccionVenta", 2120, 150, debil=True, w=170); E("res", "ReservaVenta", 2130, 400); E("mov", "MovimientoInventario", 1615, 650, w=180)
     R("r13", "incluye", 1470, 143, "lote", "selc", ident=True, w=120)
     R("r14", "origina", 1640, 285, "selc", "pos")
-    R("r15", "selecciona", 1900, 270, "pos", "selv", ident=True)
+    R("r15", "es seleccionada en", 1900, 270, "pos", "selv", ident=True)
     R("r16", "mantiene", 2140, 285, "selv", "res")
     R("r17", "registra", 1640, 525, "pos", "mov")
     # Liquidaciones
@@ -352,7 +352,7 @@ def l1_general():
     R("r21", "abona a", 1090, 1000, "apl", "liq")
     R("r22", "proviene de", 1320, 1210, "apl", "pago")
     R("r23", "incurre en", 430, 968, "op2", "gasto")
-    R("r24", "proviene de", 430, 1210, "gasto", "asig")
+    R("r24", "proviene de", 430, 1210, "asig", "gasto")
     R("r25", "se asigna a", 430, 1440, "asig", "pos2")
     R("r26", "acumula", 650, 1533, "pos2", "asi")
     # Evidencia
@@ -366,7 +366,7 @@ def l1_general():
            "Animal participa en PosicionInventario (4), Operacion incorpora Documento y RevisionAdministrativa revisa "
            "Operacion o Identificacion (6), Usuario origina AuditoriaEvento (6). "
            "Las entidades con borde discontinuo repiten una entidad de otro dominio.", 1630, 1500, 440, 120, tam=10)
-    p.leyenda(2120, 1420)
+    p.leyenda(2120, 1420, lectura=True)
     return p
 
 

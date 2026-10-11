@@ -13,6 +13,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "esquema"))
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from esquema import TABLAS, verificar
 from chen import COLORES, VERSION, FECHA
+from rutas import enrutar
+import xml.etree.ElementTree as ET
 
 OUT = pathlib.Path(__file__).resolve().parents[2] / "docs/diagrams/sources/relacional-completo.drawio"
 COLOR = {"org": COLORES["org"], "ope": COLORES["ope"], "inv": COLORES["inv"], "liq": COLORES["liq"], "evi": COLORES["evi"], "tec": "#eeeeee"}
@@ -29,7 +31,7 @@ CARRILES = [
     ("liq", ["gasto_operacion", "asignacion_costo", "asiento_valoracion"]),
     ("tec", ["evento_outbox", "clave_idempotencia", "mensaje_inbox", "infra.nodo_config", "infra.entrega_outbox", "infra.importacion_fuente"]),
 ]
-ANCHO, FILA, CAB, GAP_X, GAP_Y, X0, Y0 = 470, 20, 30, 200, 44, 60, 160
+ANCHO, FILA, CAB, GAP_X, GAP_Y, X0, Y0 = 470, 20, 30, 260, 70, 60, 160
 ANCHOS = (78, 232, 160)
 TITULOS = ["Organización (maestros · nodo A)", "Identidad animal · evidencia y auditoría", "Operaciones, contratos y pesajes",
            "Inventario", "Periodos, liquidaciones y pagos", "Costos y valoración", "Soporte técnico (local)"]  # claves | columna | tipo + NN
@@ -38,6 +40,18 @@ TITULOS = ["Organización (maestros · nodo A)", "Identidad animal · evidencia 
 def cid(t, c=None):
     base = "t_" + t.replace(".", "_")
     return base if c is None else f"{base}__{c}"
+
+
+def marcas_fk(tabla, loc):
+    _, _, cols, _, uks = tabla
+    pk = {c for c, _, marcas in cols if "PK" in marcas}
+    scope = {c for c, _, _ in cols if c in ("empresa_id", "sucursal_id")}
+    claves = [pk] + [set(uk) for uk in uks]
+    cubiertas = set().union(*(set(uk) for uk in uks)) if uks else set()
+    claves += [scope | {c} for c, _, marcas in cols if "UK" in marcas and c not in cubiertas and c not in pk]
+    unica = any(clave <= set(loc) for clave in claves)
+    nulos = any("NN" not in marcas and "PK" not in marcas for c, _, marcas in cols if c in loc)
+    return "ERzeroToOne" if unica else "ERzeroToMany", "ERzeroToOne" if nulos else "ERmandOne", set(loc) <= pk
 
 
 def main():
@@ -54,7 +68,7 @@ def main():
             alto = CAB + FILA * len(cols)
             celdas.append(
                 f'<mxCell id="{cid(n)}" value="{escape(n)}" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize={CAB};'
-                f'horizontalStack=0;resizeParent=1;collapsible=0;marginBottom=0;html=1;fillColor={COLOR[mod]};strokeColor=#000000;'
+                f'horizontalStack=0;resizeParent=1;collapsible=0;marginBottom=0;html=1;fillColor={COLOR[mod]};strokeColor=#334155;'
                 f'fontFamily=Helvetica;fontSize=13;swimlaneFillColor=#ffffff;" vertex="1" parent="1">'
                 f'<mxGeometry x="{x}" y="{y}" width="{ANCHO}" height="{alto}" as="geometry"/></mxCell>')
             for j, (cn, tipo, marcas) in enumerate(cols):
@@ -75,19 +89,13 @@ def main():
                         f'<mxGeometry x="{xx}" width="{w}" height="{FILA}" as="geometry"/></mxCell>')
                     xx += w
             for loc, ref, rcols in fks:
-                pk = {c[0] for c in cols if "PK" in c[2]}
-                nulos = any("NN" not in next(c for c in cols if c[0] == l)[2] for l in loc)
-                unica = all("UK" in next(c for c in cols if c[0] == l)[2] for l in loc if l not in ("empresa_id", "sucursal_id")) and \
-                    any(l not in ("empresa_id", "sucursal_id") for l in loc)
-                identificante = set(loc) <= pk
+                hijo, padre, identificante = marcas_fk(por_nombre[n], loc)
                 # fila a conectar: última columna "propia" de la FK (no empresa/sucursal) y su correspondiente referenciada
                 k = max(range(len(loc)), key=lambda q: (loc[q] not in ("empresa_id", "sucursal_id"), q))
                 src, dst = cid(n, loc[k]), cid(ref, rcols[k])
-                hijo = "ERzeroToOne" if unica else "ERzeroToMany"
-                padre = "ERzeroToOne" if nulos else "ERmandOne"
                 aristas.append(
-                    f'<mxCell id="fk_{len(aristas)}" value="" style="edgeStyle=entityRelationEdgeStyle;html=1;rounded=0;endSize=10;startSize=10;'
-                    f'startArrow={hijo};startFill=0;endArrow={padre};endFill=0;strokeColor=#333333;strokeWidth=1.1;jumpStyle=arc;jumpSize=8;'
+                    f'<mxCell id="fk_{len(aristas)}" value="" style="edgeStyle=entityRelationEdgeStyle;html=1;rounded=0;endSize=14;startSize=14;'
+                    f'startArrow={hijo};startFill=0;endArrow={padre};endFill=0;strokeColor=#475569;strokeWidth=1.5;jumpStyle=arc;jumpSize=8;'
                     f'{"" if identificante else "dashed=1;"}" edge="1" parent="1" source="{src}" target="{dst}">'
                     f'<mxGeometry relative="1" as="geometry"/></mxCell>')
             y += alto + GAP_Y
@@ -109,15 +117,15 @@ def main():
         f'PK clave primaria (subrayada) · FK clave foránea · UK participa en clave única · NN NOT NULL · GEN columna generada&lt;br&gt;'
         f'Extremo padre: ‖ exactamente uno (FK NOT NULL) · o| cero o uno (FK opcional). Extremo hijo: o&lt; cero o muchos · o| cero o uno (FK única)&lt;br&gt;'
         f'Línea continua: relación identificante (la FK forma parte de la PK) · discontinua: no identificante&lt;br&gt;'
-        f'Todas las FK locales incluyen (empresa_id, sucursal_id); las FK a maestros incluyen empresa_id. Cada conector une la columna FK con la columna referenciada.&lt;br&gt;'
+        f'Triángulo central: dirección FK → clave referenciada; los símbolos de los extremos indican cardinalidad.&lt;br&gt;Todas las FK locales incluyen (empresa_id, sucursal_id); las FK a maestros incluyen empresa_id. Cada conector une la columna FK con la columna referenciada.&lt;br&gt;'
         f'Restricciones no gráficas (CHECK, UNIQUE parciales, EXCLUDE, triggers): docs/database/data-dictionary.md y administration.md" '
-        f'style="text;html=1;fontSize=13;align=left;verticalAlign=top;spacing=8;strokeColor=#000000;fillColor=#f5f5f5;" vertex="1" parent="1">'
+        f'style="text;html=1;fontSize=13;align=left;verticalAlign=top;spacing=8;strokeColor=#334155;fillColor=#f5f5f5;" vertex="1" parent="1">'
         f'<mxGeometry x="60" y="{ley_y}" width="1500" height="140" as="geometry"/></mxCell>')
     xml = (f'<mxfile host="bovicierre-gen" agent="tools/diagramas/gen_relacional_completo.py" version="24.0.0">'
            f'<diagram id="relacional-completo" name="Relacional completo"><mxGraphModel grid="1" gridSize="10" page="1" pageScale="1" '
            f'pageWidth="{ancho}" pageHeight="{alto}" background="#ffffff" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/>'
            f'{marco}{"".join(celdas)}{"".join(aristas)}{leyenda}</root></mxGraphModel></diagram></mxfile>\n')
-    OUT.write_text(xml, encoding="utf-8")
+    OUT.write_text(ET.tostring(enrutar(ET.fromstring(xml)), encoding="unicode"), encoding="utf-8")
     print(f"generado {OUT.name}: {len(TABLAS)} tablas, {len(aristas)} FK, lienzo {ancho}x{alto}")
 
 

@@ -13,3 +13,14 @@ Sólo resultados reales. Formato: fecha · entorno · comando · resultado · en
 | 2026-10-11 | idem, Docker | `python3 tools/esquema/esquema.py`; `gen_mer_completo.py`; `gen_relacional_completo.py`; export draw.io | Esquema 42 tablas/80 FK verificado; MER completo y relacional completo exportados (PDF vectorial ≈A0); revisión visual en 4 iteraciones sin líneas sobre cajas ni atributos | A-003, A-004 |
 
 Pruebas de dominio, SQL, replicación, FDW, restauración y rendimiento: **ninguna ejecutada aún**.
+
+## Revisión de diagramas v0.2 · 2026-10-11
+
+- `python3 -m unittest discover -s tools/diagramas -p 'test_*.py'`: 4 pruebas pasan (obstáculos, ausencia de ruta, simplificación y cardinalidades de claves completas).
+- `python3 tools/esquema/esquema.py`: 42 tablas y 80 FK verificadas; el esquema no fue modificado.
+- `python3 tools/verificar_cobertura.py`: cobertura de IDs y archivos requerida completa; comprueba presencia, no semántica.
+- `python3 tools/diagramas/exportar.py`: Docker draw.io v4.5.0 + PyMuPDF; 13 PDF individuales de una página, 13 SVG y un PDF de 11 páginas con marcadores. Auto-comprobación de conservación de texto. Completos A0 ISO 1189 × 841 mm; numeradas A2/A3.
+- Revisión visual de renders PNG de las 13 láminas, con ajustes de recorridos, roles recursivos, etiquetas y distribución de tablas. La lámina 7 ya no contiene tablas fuera del marco ni páginas posteriores duplicadas en los PDF individuales.
+- Correcciones semánticas puntuales: cardinalidad `animal → sucursal` usa la UK compuesta completa; la vista general enlaza Pesaje con LoteOperacion y dirige los verbos de condición, selección y fuente de costo correctamente. Enlaces y rangos del resto de láminas conservados.
+- Alcance TASK-A-003/A-004: artefactos gráficos revisados; no se marcan las tareas como hechas sin la revisión semántica humana. No se ejecutaron pruebas de BD, de dominio ni impresión física.
+- Grafo: actualización AST de 8 generadores/herramientas; 853 nodos, 3,319 aristas, 22 comunidades; 790 nodos documentales conservados. Sin extracción semántica nueva ni consumo LLM.

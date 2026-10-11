@@ -7,8 +7,8 @@ Actualizado: 2026-10-11.
 - Contrato OpenAPI validado con Redocly (válido, 26 warnings de estilo).
 - Decisiones DEC-01..11 que resuelven contradicciones del megaprompt (`docs/research/evidence-register.md`).
 - Backlog de 55 tareas con estado Kanban.
-- Grafo Graphify local: 830 nodos, 45 comunidades (`docs/knowledge/graph-status.md`; `graphify-out/` no se versiona).
-- MER completo (Chen) y relacional completo (pata de gallo) en una hoja A0 cada uno; esquema lógico ejecutable `tools/esquema/esquema.py`.
+- Grafo Graphify local: 853 nodos, 22 comunidades (`docs/knowledge/graph-status.md`; `graphify-out/` no se versiona).
+- Diagramas v0.2: MER completo y relacional completo en PDF A0 ISO; líneas ortogonales, direcciones y cardinalidades revisadas, 42 tablas/80 FK. Las 11 páginas numeradas están reunidas en `docs/diagrams/exports/laminas-numeradas.pdf`. Esquema lógico: `tools/esquema/esquema.py`.
 - 7 láminas `.drawio` (MER Chen 1–6 y relacional por módulo) con exportes SVG/PDF revisados (`docs/diagrams/README.md`).
 
 ## No existe todavía

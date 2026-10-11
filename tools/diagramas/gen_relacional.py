@@ -8,6 +8,7 @@ import pathlib, sys
 from xml.sax.saxutils import escape
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from chen import Pagina, guardar, COLORES
+from gen_relacional_completo import TABLAS, marcas_fk
 
 OUT = pathlib.Path(__file__).resolve().parents[2] / "docs/diagrams/sources"
 LOC = ["empresa_id PK", "sucursal_id PK"]
@@ -78,15 +79,15 @@ def tabla(p, nombre, cols, x, y, dom):
     alto = 30 + 16 * len(cols)
     valor = f"<b>{escape(nombre)}</b><hr size='1'>" + "<br>".join(filas)
     estilo = (f"html=1;whiteSpace=wrap;rounded=0;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;fontFamily=Courier New;"
-              f"fontSize=11;strokeColor=#000000;fillColor={COLORES[dom]};")
+              f"fontSize=11;strokeColor=#334155;strokeWidth=1.4;fillColor={COLORES[dom]};")
     cid = nombre.split(" ")[0].replace(".", "_")
     p._vertex(cid, valor, estilo, x, y, 300, alto)
     return cid, alto
 
 
 def pagina(titulo, dom, tablas):
-    p = Pagina(titulo, 1800, 1240)
-    p.marco("Lámina 7 · Modelo lógico relacional · " + titulo[3:], "PK subrayada · FK → tabla · [pN] = FK hacia otra página · E,S = empresa_id, sucursal_id", etiqueta="Modelo lógico relacional (no Chen)")
+    p = Pagina(titulo, 1900, 1300)
+
     # Columnas por profundidad de FK dentro del módulo: referenciadas a la izquierda, dependientes a la derecha.
     clave = lambda n: n.split(" ")[0].replace(".", "_")
     refs_de = {clave(n): r for n, _, r in tablas}
@@ -106,23 +107,29 @@ def pagina(titulo, dom, tablas):
         y = y_col.get(c, 100)
         _, alto = tabla(p, nombre, cols, 40 + 430 * c, y, dom)
         y_col[c] = y + alto + 50
-    c, y = (max_prof + 1 if y_col else 0), 100
     for nombre in aisladas:
         cols = next(cs for n, cs, _ in tablas if n == nombre)
-        alto = 30 + 16 * len(cols)
-        if y + alto > 1150:
-            c, y = c + 1, 100
-        tabla(p, nombre, cols, 40 + 430 * c, y, dom)
-        y += alto + 40
+        c = min(range(max(3, max_prof + 1)), key=lambda c: y_col.get(c, 100))
+        y = y_col.get(c, 100)
+        _, alto = tabla(p, nombre, cols, 40 + 430 * c, y, dom)
+        y_col[c] = y + alto + 50
+    p.ancho = max(1800, max(x + w for x, y, w, h in p.geo.values()) + 40)
+    pie_y = max(y + h for x, y, w, h in p.geo.values()) + 70
+    p.alto = max(850, pie_y + 100)
+    p.marco("Lámina 7 · Modelo lógico relacional · " + titulo[3:], "PK subrayada · FK → tabla · [pN] = FK hacia otra página · E,S = empresa_id, sucursal_id", etiqueta="Modelo lógico relacional (no Chen)")
     for nombre, cols, refs in tablas:
         for r in refs:
             cid = p._id("fk")
+            esquema = next(t for t in TABLAS if t[1] == nombre.split(" ")[0])
+            fks = [loc for loc, ref, _ in esquema[3] if ref == r]
+            assert len(fks) == 1, (nombre, r, fks)
+            hijo, padre, identificante = marcas_fk(esquema, fks[0])
             p.celdas.append(
-                f'<mxCell id="{cid}" value="" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;'
-                f'strokeColor=#333333;strokeWidth=1.2;" edge="1" parent="1" source="{nombre.split(" ")[0].replace(".", "_")}" target="{r}">'
+                f'<mxCell id="{cid}" value="" style="rounded=0;html=1;startArrow={hijo};endArrow={padre};startFill=0;endFill=0;startSize=14;endSize=14;'
+                f'strokeColor=#475569;strokeWidth=1.5;{"" if identificante else "dashed=1;"}" edge="1" parent="1" source="{nombre.split(" ")[0].replace(".", "_")}" target="{r}">'
                 f'<mxGeometry relative="1" as="geometry"/></mxCell>')
-    p.texto("Flecha: FK hacia la tabla referenciada. Todas las FK locales incluyen (empresa_id, sucursal_id); las FK a maestros incluyen empresa_id. "
-            "Columnas completas, tipos y restricciones: docs/database/data-dictionary.md.", 40, 1170, 1200, 40, tam=11)
+    p.texto("Triángulo central: FK → tabla referenciada. Extremos: ‖ uno obligatorio; o| opcional único; o&lt; muchos. Todas las FK locales incluyen (empresa_id, sucursal_id); las FK a maestros incluyen empresa_id. "
+            "Columnas completas, tipos y restricciones: docs/database/data-dictionary.md.", 40, pie_y, 1400, 60, tam=11)
     return p
 
 

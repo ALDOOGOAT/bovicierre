@@ -13,7 +13,7 @@ Cadena: AC → RN → UC → ENT/REL → comando/función → API → pantalla �
 | AC-06 | RN-003, RN-004, RN-040, RN-041 | UC-03, UC-18 | ENT-08, 36, todas con nodo_origen | publicaciones `pub_a`/`pub_b`, suscripciones `origin=none`, `fn_validar_conciliacion_propietario` | — | 14 | TEST-13, 21..23 | A-011, A-014, A-026, J-017 | diseñado |
 | AC-07 | RN-042 | UC-16 | ENT-20 (snapshot) | `postgres_fdw`, `ext_proveedor.*` | GET /integraciones/proveedor/tarifas | 6 | TEST-25 | A-012, A-025 | diseñado |
 | AC-09 | RN-040 | — | — | Pgpool raw A/B | — | — | demo de conexión | A-011, A-028 | diseñado |
-| AC-01, AC-02 | todas | — | ENT-01..41, REL-01..37 | migraciones | — | — | TEST-30 | A-003, A-004, A-009 | texto diseñado; láminas pendientes |
+| AC-01, AC-02 | todas | — | ENT-01..41, REL-01..37 | migraciones | — | — | TEST-30 | A-003, A-004, A-009 | láminas v0.2 exportadas y comprobadas; revisión semántica humana pendiente |
 | AC-08 | RN-034 | todos | — | módulos Java, `Money` | todas | — | TEST-01..12 vía API | A-008, A-013..A-024 | diseñado |
 | — | RN-043, RN-044 | UC-06, UC-08 | ENT-29, 30, 31, 34 | outbox/inbox | — | 10 | TEST-24 | A-023 | diseñado |
 | — | RN-020, RN-038 | UC-07, UC-13 | ENT-13, 14 · REL-13 | `cmd_registrar_entrega`, `cmd_registrar_baja` | POST /inventario/movimientos | 5, 10 | TEST-08, 32, 33 | A-018, J-015 | diseñado |

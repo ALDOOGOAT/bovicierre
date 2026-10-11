@@ -2,6 +2,27 @@
 
 Fuentes editables `.drawio` (mxGraph con objetos y conectores reales, se abren en draw.io / diagrams.net) en `sources/`; exportes vectoriales SVG y PDF en `exports/`. Las fuentes se generan de forma reproducible con `tools/diagramas/gen_mer.py` (láminas 1–6) y `tools/diagramas/gen_relacional.py` (lámina 7); después pueden editarse a mano en draw.io (si se edita a mano, no volver a ejecutar el generador sobre ese archivo sin conservar los cambios).
 
+## Revisión visual y direcciones · v0.2 (2026-10-11)
+
+- [Todas las láminas numeradas](exports/laminas-numeradas.pdf): 11 páginas con marcadores (láminas 1–6 y las cinco páginas de la 7).
+- Conectores ortogonales por espacios libres, mayor contraste, saltos en cruces y etiquetas separadas de cajas y entre sí. Las relaciones recursivas conservan dos recorridos y sus roles.
+- **Chen con indicación adicional de máximo uno:** la punta apunta de la entidad al rombo cuando su participación tiene máximo 1. Máximo N queda sin punta; el rango `(mín,máx)` sigue siendo explícito. La línea doble conserva la participación total. En la vista general, sin cardinalidades, las puntas siguen el verbo `A → relación → B`; su leyenda lo distingue.
+- **Relacional:** el triángulo central sigue `FK → clave referenciada`; los extremos mantienen la pata de gallo, opcionalidad y unicidad. La unicidad se determina con la clave completa, no con una columna aislada de una UK compuesta. En la lámina 7, las referencias entre páginas siguen indicadas por `[pN]`.
+- La vista general corrige `LoteOperacion → recibe → Pesaje`, y el sentido de lectura de `rige para`, `es seleccionada en` y `proviene de`, conforme a la matriz de relaciones.
+- PDF completos: A0 horizontal **1189 × 841 mm**. Lámina 1: A2; restantes numeradas: A3. Todos conservan vectores y texto seleccionable. Cada PDF individual contiene una página; se corrigió la exportación de la lámina 7 que antes incluía páginas posteriores.
+
+Regeneración (Python 3, Docker con la imagen existente y PyMuPDF):
+```bash
+python3 tools/diagramas/gen_mer.py
+python3 tools/diagramas/gen_mer_completo.py
+python3 tools/diagramas/gen_relacional.py
+python3 tools/diagramas/gen_relacional_completo.py
+python3 -m unittest discover -s tools/diagramas -p 'test_*.py'
+python3 tools/diagramas/exportar.py
+```
+
+Las puntas centrales y etiquetas tienen posición fija para la exportación: después de mover manualmente una línea, ajustar también su punta/etiqueta o regenerar. Conservar cambios manuales antes de ejecutar generadores. La revisión semántica humana sigue pendiente; las pruebas de dibujo no validan una BD implementada. Convenciones de los extremos: [documentación oficial de draw.io](https://www.drawio.com/docs/tutorials/crows-foot-notation/).
+
 ## Láminas completas (una sola hoja cada una, A0)
 | Archivo | Contenido | Notación | Generador |
 |---|---|---|---|

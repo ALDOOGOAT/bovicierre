@@ -4,15 +4,18 @@ Los .drawio generados son la fuente editable; este script sólo los hace reprodu
 Uso: python3 tools/diagramas/gen_mer.py  → docs/diagrams/sources/*.drawio
 """
 from xml.sax.saxutils import escape
+import re
+import xml.etree.ElementTree as ET
+from rutas import enrutar
 
-VERSION = "v0.1"
-FECHA = "2026-10-10"
+VERSION = "v0.2"
+FECHA = "2026-10-11"
 
 COLORES = {
     "org": "#dae8fc", "ope": "#d5e8d4", "inv": "#fff2cc",
     "liq": "#f8cecc", "evi": "#e1d5e7", "none": "#ffffff",
 }
-BASE = "html=1;whiteSpace=wrap;fontFamily=Helvetica;fontSize=12;strokeColor=#000000;strokeWidth=1.2;"
+BASE = "html=1;whiteSpace=wrap;fontFamily=Helvetica;fontSize=12;strokeColor=#334155;strokeWidth=1.4;"
 
 
 class Pagina:
@@ -81,6 +84,8 @@ class Pagina:
     def linea(self, a, b, card=None, total=False, pos=-0.55, etiqueta_dy=-12, extra="", puntos=None):
         cid = self._id("e")
         estilo = "endArrow=none;html=1;rounded=0;strokeColor=#000000;fontSize=11;fontStyle=1;labelBackgroundColor=#ffffff;"
+        if card and re.search(r"\(\d,1\)", card):
+            estilo += "endArrow=open;endSize=10;endFill=0;"
         estilo += ("shape=link;strokeWidth=1;width=4;" if total else "strokeWidth=1.2;") + extra
         self.celdas.append(
             f'<mxCell id="{cid}" value="" style="{estilo}" edge="1" parent="1" source="{a}" target="{b}">'
@@ -124,8 +129,8 @@ class Pagina:
             rx, ry = x + ew / 2 - w / 2, y + eh + dist
             e1, e2 = "exitX=0.2;exitY=1;entryX=0;entryY=0.5;", "exitX=0.8;exitY=1;entryX=1;entryY=0.5;"
         self.relacion(cid, verbo, rx, ry, w=w, h=h)
-        self.une(ent, cid, rol1, extra=e1 + "edgeStyle=orthogonalEdgeStyle;", pos=-0.3)
-        self.une(ent, cid, rol2, extra=e2 + "edgeStyle=orthogonalEdgeStyle;", pos=-0.3)
+        self.linea(ent, cid, rol1, extra=e1, pos=-0.3, etiqueta_dy=-18)
+        self.linea(ent, cid, rol2, extra=e2, pos=-0.3, etiqueta_dy=18)
         return cid
 
     def ref(self, cid, nombre, lamina, x, y, debil=False, w=150, h=50):
@@ -153,7 +158,7 @@ class Pagina:
         self.texto(f"{etiqueta}<br>{VERSION} · {FECHA} · Fuente: docs/database/",
                    self.ancho - 430, 22, 400, 40, tam=10, alinear="right")
 
-    def leyenda(self, x, y):
+    def leyenda(self, x, y, lectura=False):
         self.texto("<b>Leyenda</b>", x, y, 200, 20, tam=12)
         yy = y + 26
         self._vertex(self._id("lg"), "Entidad fuerte", BASE + "rounded=0;fontSize=10;", x, yy, 100, 30)
@@ -166,12 +171,13 @@ class Pagina:
         self._vertex(self._id("lg"), '<span style="text-decoration: underline dashed;">parcial</span>', BASE + "ellipse;fontSize=10;", x + 72, yy, 64, 26)
         self._vertex(self._id("lg"), "derivado", BASE + "ellipse;dashed=1;fontSize=10;", x + 144, yy, 64, 26)
         yy += 36
-        self.texto("═ participación total &nbsp; ─ parcial<br>(mín,máx): instancias de la relación<br>en que participa UNA instancia de la<br>entidad junto a la que se escribe.<br>Borde discontinuo: definida en otra lámina.",
-                   x, yy, 230, 80, tam=10)
+        flechas = "→ sentido del verbo (vista general)<br>" if lectura else "→ máximo 1 hacia rombo; sin → máximo N<br>"
+        self.texto(flechas + "═ total · ─ parcial<br>(mín,máx): participaciones por instancia.<br>Borde discontinuo: otra lámina.",
+                   x, yy, 230, 65, tam=10)
 
     def xml(self):
         return (f'<diagram id="{escape(self.nombre)}" name="{escape(self.nombre)}">'
-                f'<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="0" '
+                f'<mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" '
                 f'fold="1" page="1" pageScale="1" pageWidth="{self.ancho}" pageHeight="{self.alto}" background="#ffffff" math="0" shadow="0">'
                 f'<root><mxCell id="0"/><mxCell id="1" parent="0"/>{"".join(self.celdas)}</root></mxGraphModel></diagram>')
 
@@ -179,5 +185,6 @@ class Pagina:
 def guardar(ruta, paginas):
     contenido = ('<mxfile host="bovicierre-gen" agent="tools/diagramas/gen_mer.py" version="24.0.0">'
                  + "".join(p.xml() for p in paginas) + "</mxfile>\n")
+    contenido = ET.tostring(enrutar(ET.fromstring(contenido)), encoding="unicode")
     with open(ruta, "w", encoding="utf-8") as f:
         f.write(contenido)

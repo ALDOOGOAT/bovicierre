@@ -4,6 +4,13 @@
 |---|---|---|---|---|---|---|
 | 2026-10-11 | graphifyy 0.9.49 | f7e6db6 (main) · raíz del repo, 62 archivos (58 docs, 4 .py), ~65 mil palabras | `/graphify .` en Claude Code | `graphify-out/graph.json`, `graph.html`, `GRAPH_REPORT.md` (no versionados) | 830 nodos · 3,272 aristas · 45 comunidades · 9 hiperaristas | Ver abajo |
 
+## Actualización estructural de diagramas · 2026-10-11
+
+- Extracción AST de los 8 archivos Python de `tools/diagramas/`, fusionada con el grafo existente mediante `build_merge(root=...)`; conserva los 790 identificadores documentales.
+- Resultado local: **853 nodos, 3,319 aristas, 22 comunidades**. `graph.json`, `graph.html` y `GRAPH_REPORT.md` regenerados; coste LLM de esta actualización: 0 tokens.
+- Nombres de comunidades recuperados por mayoría de sus nombres anteriores. Las comunidades cambian al reagrupar el grafo.
+- Sólo se actualizó código de herramientas; no se reextrajeron semánticamente los documentos ni se marcó su manifiesto como actualizado. Las notas visuales nuevas se incluirán en el siguiente `/graphify . --update` documental.
+
 ## Cómo se ejecutó
 - AST local para los 4 scripts Python (40 nodos, 100 aristas).
 - Extracción semántica: `GEMINI_API_KEY` está definida pero Google la rechazó ("Please pass a valid API key"); se usó el agente anfitrión (3 subagentes de Claude Code, uno por bloque de ~20 documentos), como indica la skill. Consumo reportado por los subagentes: 476,048 tokens (entrada+salida sin desglose).
