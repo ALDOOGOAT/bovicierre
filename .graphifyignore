@@ -1,0 +1,14 @@
+# Se suma a .gitignore. Sintaxis gitignore (graphify/detect.py).
+graphify-out/
+.env*
+*.pem
+*.key
+secrets/
+backups/
+*.dump
+data/
+storage/
+node_modules/
+target/
+dist/
+docs/diagrams/exports/
