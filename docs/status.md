@@ -10,6 +10,7 @@ Actualizado: 2026-10-11.
 - Grafo Graphify local: 853 nodos, 22 comunidades (`docs/knowledge/graph-status.md`; `graphify-out/` no se versiona).
 - Diagramas v0.2: MER completo y relacional completo en PDF A0 ISO; líneas ortogonales, direcciones y cardinalidades revisadas, 42 tablas/80 FK. Las 11 páginas numeradas están reunidas en `docs/diagrams/exports/laminas-numeradas.pdf`. Esquema lógico: `tools/esquema/esquema.py`.
 - 7 láminas `.drawio` (MER Chen 1–6 y relacional por módulo) con exportes SVG/PDF revisados (`docs/diagrams/README.md`).
+- Herramientas UI/UX y web configuradas y probadas localmente; skills descubiertas por Codex y primera mejora documental de liquidación/pagos (`docs/development/web-tools.md`, `docs/ui/references.md`). Los MCP nuevos requieren recargar la sesión; no existe interfaz implementada.
 
 ## No existe todavía
 - Código backend/frontend, migraciones, scripts de bootstrap, Compose, pruebas.

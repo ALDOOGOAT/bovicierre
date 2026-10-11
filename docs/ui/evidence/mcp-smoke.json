@@ -1,0 +1,158 @@
+{
+  "command": [
+    "sh",
+    "/home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/tools/dev/chrome_devtools.sh",
+    "--workspace=/home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/docs/ui/evidence",
+    "--viewport=1440x1000"
+  ],
+  "date": "2026-10-11",
+  "checks": {
+    "3:new_page": "OK",
+    "4:evaluate_script": "OK",
+    "5:list_console_messages": "OK",
+    "6:take_snapshot": "OK",
+    "7:get_css_styles": "OK",
+    "8:emulate": "OK",
+    "9:take_screenshot": "OK",
+    "10:new_page": "OK",
+    "11:evaluate_script": "OK",
+    "12:list_console_messages": "OK",
+    "13:take_snapshot": "OK",
+    "14:get_css_styles": "OK",
+    "15:emulate": "OK",
+    "16:take_screenshot": "OK",
+    "17:emulate": "OK",
+    "18:take_screenshot": "OK",
+    "19:emulate": "OK",
+    "20:take_screenshot": "OK",
+    "21:new_page": "OK",
+    "22:evaluate_script": "OK",
+    "23:list_console_messages": "OK",
+    "24:take_snapshot": "OK",
+    "25:get_css_styles": "OK",
+    "26:emulate": "OK",
+    "27:take_screenshot": "OK",
+    "28:emulate": "OK",
+    "29:take_screenshot": "OK",
+    "30:emulate": "OK",
+    "31:take_screenshot": "OK"
+  },
+  "node": "v24.21.0",
+  "initialize": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "logging": {},
+      "tools": {
+        "listChanged": true
+      }
+    },
+    "serverInfo": {
+      "name": "chrome_devtools",
+      "title": "Chrome DevTools MCP server",
+      "version": "1.10.1"
+    }
+  },
+  "tools": [
+    "click",
+    "close_page",
+    "drag",
+    "emulate",
+    "evaluate_script",
+    "fill",
+    "fill_form",
+    "get_console_message",
+    "get_css_styles",
+    "get_network_request",
+    "handle_dialog",
+    "hover",
+    "lighthouse_audit",
+    "list_console_messages",
+    "list_network_requests",
+    "list_pages",
+    "navigate_page",
+    "new_page",
+    "performance_analyze_insight",
+    "performance_start_trace",
+    "performance_stop_trace",
+    "press_key",
+    "resize_page",
+    "select_page",
+    "take_heapsnapshot",
+    "take_screenshot",
+    "take_snapshot",
+    "type_text",
+    "upload_file",
+    "wait_for"
+  ],
+  "example": {
+    "url": "https://example.com/",
+    "title": "Example Domain",
+    "heading": "Learn more",
+    "font": "system-ui, sans-serif",
+    "fontSize": "16px",
+    "color": "rgb(158, 158, 255)",
+    "headings": [],
+    "renderer": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2)",
+    "console": "## Console messages\n<no console messages found>",
+    "screenshots": {
+      "1440": [
+        1440,
+        1000
+      ]
+    }
+  },
+  "cattlemax-financial": {
+    "url": "https://help.cattlemax.com/article/525-ranch-related-financial-record-keeping",
+    "title": "Ranch-Related Financial Record Keeping - CattleMax Help",
+    "heading": "Ranch-Related Financial Record Keeping",
+    "font": "\"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "fontSize": "22px",
+    "color": "rgb(34, 34, 34)",
+    "headings": [],
+    "renderer": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2)",
+    "console": "## Console messages\nShowing 1-1 of 1 (Page 1 of 1).\nmsgid=1 [warn] <meta name=\"apple-mobile-web-app-capable\" content=\"yes\"> is deprecated. Please include <meta name=\"mobile-web-app-capable\" content=\"yes\"> (0 args)",
+    "screenshots": {
+      "1440": [
+        1440,
+        1000
+      ],
+      "768": [
+        768,
+        1000
+      ],
+      "390": [
+        390,
+        1000
+      ]
+    }
+  },
+  "agriwebb-sale": {
+    "url": "https://help.agriwebb.com/en/articles/3638340-sale-records-iam",
+    "title": "Sale Records (IAM) | AgriWebb Help Center",
+    "heading": "Sale Records (IAM)",
+    "font": "system-ui, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"",
+    "fontSize": "32px",
+    "color": "rgb(26, 26, 26)",
+    "headings": [
+      "",
+      "Common Errors",
+      "Best practices when uploading a CSV file"
+    ],
+    "renderer": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2)",
+    "console": "## Console messages\nShowing 1-4 of 4 (Page 1 of 1).\nmsgid=1 [warn] Allow attribute will take precedence over 'allowfullscreen'. (0 args)\nmsgid=2 [issue] Content Security Policy of your site blocks the use of `eval` in JavaScript (count: 1)\nmsgid=3 [issue] Duplicate form field id in the same form (count: 2)\nmsgid=5 [info] [Intercom] Launcher is disabled in settings or current page does not match display conditions (1 args)",
+    "screenshots": {
+      "1440": [
+        1440,
+        1000
+      ],
+      "768": [
+        768,
+        1000
+      ],
+      "390": [
+        390,
+        1000
+      ]
+    }
+  }
+}

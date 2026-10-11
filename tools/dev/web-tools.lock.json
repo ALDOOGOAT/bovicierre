@@ -1,0 +1,29 @@
+{
+  "verified_at": "2026-10-11",
+  "codex": "0.162.1",
+  "chrome_devtools_mcp": {
+    "version": "1.10.1",
+    "integrity": "sha512-Klw6HWDqHC/XS1JwZldd2r49aUhbUJN9m9Mvcx4SEueIPXtzuQX+QelxAViobv8YUkDZ7HWDrmViR6LeYK0wAw==",
+    "runtime": "Node 24.21.0 (existente)",
+    "license": "Apache-2.0"
+  },
+  "ui_ux_pro_max_cli": {
+    "version": "2.15.0",
+    "integrity": "sha512-D0J/C40xrzzi5si6ZLtRGbEE5v3QjL7d4wJNnasmP3yfDSrGiuqVCdwQiqCNnIkbqOuVoA/uonR2o1WKXh3urw==",
+    "license": "MIT",
+    "skill_sha256": "e5baf9400d4347e5ed3eb1f6b99cd0b9ba545b8b0e507aabb2b87397bbf73ea1"
+  },
+  "api_anything": {
+    "version": "0.1.0",
+    "repository": "https://github.com/goodnight000/api-anything.git",
+    "commit": "fe5cca70fe145634e49a1c9ba1f3e8250b291bea",
+    "runtime": "Node 22.23.3",
+    "license": "MIT",
+    "skill_sha256": "b2dbd72caff789fbba131f99aaa2bf73e6f059289d3f34fa89639873a1a2281c",
+    "skill_adjustment": "Descripción normalizada sin ángulos para validador Codex; cuerpo oficial conservado"
+  },
+  "auxiliary_node": {
+    "version": "22.23.3",
+    "integrity": "sha512-DefCzy9Twv55AA4RQcOnUd6iQtqmnsJ6twWGasZ33F7BKJEMUJ1KVoumiVSRRNVRHKhBtsoPTvNKMxsE1TG0+Q=="
+  }
+}

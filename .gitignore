@@ -32,3 +32,11 @@ storage/documents/
 # Claude Code local
 .claude/settings.local.json
 graphify-out/
+
+# Herramientas de desarrollo y capturas privadas
+.tools/
+.cache/
+artifacts/private/
+*.har
+**/__pycache__/
+.codex/config.toml

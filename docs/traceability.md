@@ -21,3 +21,5 @@ Cadena: AC → RN → UC → ENT/REL → comando/función → API → pantalla �
 | — | RN-035, RN-036 | UC-15 | vistas de reporte | `v_margen_operacion`, `v_saldo_liquidacion` | /reportes/* | 11, 12 | TEST-01, 28 | A-024, J-016 | diseñado |
 
 Cobertura de RN por TEST: ver columna "Prueba" en `docs/domain/business-rules.md`.
+
+Mejora UI/UX del 2026-10-11: RN-029/030/032 → UC-09/10 → pantallas 8/9 → GOLD-04A/B, GOLD-07, TEST-04/07/11/12 → TASK-J-002/J-012/J-013. Especificación y contrato pendiente en `docs/ui/flows-and-screens.md`; referencias en `docs/ui/references.md`; herramientas en `docs/development/web-tools.md`. Estado: **diseñado**, sin pruebas de aplicación ni tareas marcadas completas.

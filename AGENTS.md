@@ -35,3 +35,10 @@ History uses descriptive Spanish Conventional Commits, including `docs(diagramas
 
 ## Agent Instructions
 Use the installed graphify skill when `/graphify` is invoked. Consult `~/.codex/skills/seguridad-bd.md` for database access, permissions, or auditing work. Preserve confirmed economic facts; use exact decimal arithmetic and canonical SQL calculations as required by `CLAUDE.md`.
+
+## UI/UX e integraciones web
+- Nueva pantalla, rediseño o mejora importante: leer `docs/ui/flows-and-screens.md`, consultar `.agents/skills/ui-ux-pro-max/SKILL.md` y usar `revision-ui-referencias` cuando observar referencias ayude a decidir. Reutilizar decisiones vigentes de `docs/ui/references.md` para cambios pequeños.
+- Error visual/responsive: Chrome DevTools MCP para DOM, CSS aplicado y capturas en los tamaños afectados. Cambios de flujo: recorrer interacciones y estados de principio a fin en la aplicación local; comprobar teclado, foco y consola.
+- Datos/funciones externas: buscar primero API oficial o integración mantenida. Evaluar `.agents/skills/api-anything/SKILL.md` sólo si falta una opción suficiente y la operación es accesible y autorizada. Sin importar sesiones personales ni habilitar escrituras por iniciativa propia; el registro MCP no autoriza efectos externos.
+- Backend sin UI ni integración web: usar herramientas de backend; no abrir navegador ni investigar referencias sin necesidad.
+- Configuración, versiones, pruebas y reanudación: `docs/development/web-tools.md`. Herramientas y perfiles separados del producto; no versionar cookies, HAR, credenciales ni capturas privadas. Mientras no exista frontend, mejorar especificaciones y declarar que no hubo prueba de aplicación.

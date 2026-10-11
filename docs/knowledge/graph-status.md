@@ -34,3 +34,5 @@
 | ¿Qué requisito demuestra replicación y FDW? | AC-07 → TEST-25 y AC-06 → TASK-A-026 (1 salto) | correcta; aún no hay scripts (A-011/A-012) |
 
 Siguiente actualización: hito del 18-oct o al terminar TASK-A-011 (`/graphify . --update`).
+
+Documentación UI/UX y herramientas añadida el 2026-10-11: `docs/development/web-tools.md`, `docs/ui/references.md` y detalle de pantallas8/9 aún no están reextraídos semánticamente en el grafo. Usar estos archivos como fuente; los conteos anteriores no acreditan cobertura de esta mejora.

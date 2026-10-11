@@ -65,6 +65,8 @@ Monolito modular (10 módulos), escritor exclusivo por agregado, maestros en A, 
 - `origin = none` evita loops; **no** resuelve conflictos. Si el profesor exige dos escritores sobre la misma fila, se requiere otro diseño (riesgo R-01).
 
 ## Ejecución
+Herramientas de desarrollo UI/UX y web ya verificadas: [configuración, selección y reanudación](docs/development/web-tools.md). La [primera mejora de liquidación/pagos](docs/ui/flows-and-screens.md#liquidación--pago--aplicación-primera-mejora-documental) sigue siendo diseño; no hay frontend conectado.
+
 Aún no hay código. Comandos previstos (se actualizarán con comandos verificados):
 ```bash
 docker compose -f infra/compose/compose.academic.yml up -d   # TASK-A-011
