@@ -7,10 +7,9 @@ Actualizado: 2026-10-10.
 - Contrato OpenAPI validado con Redocly (válido, 26 warnings de estilo).
 - Decisiones DEC-01..11 que resuelven contradicciones del megaprompt (`docs/research/evidence-register.md`).
 - Backlog de 55 tareas con estado Kanban.
+- 7 láminas `.drawio` (MER Chen 1–6 y relacional por módulo) con exportes SVG/PDF revisados (`docs/diagrams/README.md`).
 
 ## No existe todavía
-- Láminas MER Chen `.drawio` + exportes SVG/PDF (TASK-A-003, en curso).
-- Diagrama lógico relacional por módulos.
 - Grafo de Graphify (TASK-A-006).
 - Código backend/frontend, migraciones, scripts de bootstrap, Compose, pruebas.
 - Ninguna prueba TEST-01..35 ejecutada.
@@ -22,7 +21,7 @@ Actualizado: 2026-10-10.
 - Revisión humana de los documentos en estado "Revisión" (Aldo y Jared).
 
 ## Siguiente tarea ejecutable
-1. TASK-A-003: generar láminas MER Chen `.drawio` y exportarlas.
+1. Revisión humana de las láminas (TASK-A-003) y del resto de documentos en "Revisión".
 2. TASK-A-006: ejecutar `/graphify .` y registrar en `graph-status.md`.
 3. TASK-A-011: Compose A/B + Pgpool + experimento M–M mínimo.
 Para Jared: TASK-J-001/J-002 a partir de `docs/ui/flows-and-screens.md` y `docs/domain/glossary.md`.
