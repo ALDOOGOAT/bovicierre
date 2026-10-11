@@ -1,6 +1,6 @@
 # Modelo relacional (lógico)
 
-Estado: diseñado · 2026-10-10. Detalle de columnas por tabla en `data-dictionary.md`. Abreviaturas sólo en este documento: **E** = `empresa_id`, **S** = `sucursal_id`. Claves subrayadas = PK; `UK` = clave candidata alterna; `→` = FK.
+Estado: diseñado · 2026-10-10. Detalle de columnas por tabla en `data-dictionary.md`. Fuente única ejecutable del esquema: `tools/esquema/esquema.py` (42 tablas, 80 FK verificadas); diagrama completo: `docs/diagrams/exports/relacional-completo.pdf`. Abreviaturas sólo en este documento: **E** = `empresa_id`, **S** = `sucursal_id`. Claves subrayadas = PK; `UK` = clave candidata alterna; `→` = FK.
 
 ## 1. Reglas de transformación MER → relacional
 | Construcción MER | Transformación aplicada | Ejemplo |

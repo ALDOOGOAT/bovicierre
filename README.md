@@ -74,7 +74,9 @@ cd frontend && npm ci && npm run dev                          # TASK-J-004
 Bootstrap de replicación: [runbook](docs/runbooks/bootstrap.md). Despliegue a staging pendiente de servidor (sin URL pública).
 
 ## Diagramas
-Fuentes editables en `docs/diagrams/sources/` y exportes en `docs/diagrams/exports/` ([estado](docs/diagrams/README.md)).
+- **MER completo (Chen)**: [`mer-completo.pdf`](docs/diagrams/exports/mer-completo.pdf)
+- **Modelo relacional completo (pata de gallo)**: [`relacional-completo.pdf`](docs/diagrams/exports/relacional-completo.pdf)
+- Láminas por dominio, fuentes editables `.drawio` y criterios de revisión: [`docs/diagrams/README.md`](docs/diagrams/README.md)
 
 ## Roles
 | Producto | PostgreSQL |

@@ -1,6 +1,6 @@
 # Modelo conceptual (MER Chen / EER)
 
-Versión 0.1 · 2026-10-10 · Estado: **texto diseñado**; láminas `.drawio` en `docs/diagrams/sources/` (ver `docs/status.md`).
+Versión 0.1 · 2026-10-10 · Diagrama completo en una hoja: `docs/diagrams/exports/mer-completo.pdf`; láminas por dominio: `docs/diagrams/exports/mer-0*.pdf`.
 
 ## 1. Notación y lectura
 | Símbolo | Significado |

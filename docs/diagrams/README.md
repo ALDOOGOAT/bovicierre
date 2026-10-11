@@ -2,6 +2,15 @@
 
 Fuentes editables `.drawio` (mxGraph con objetos y conectores reales, se abren en draw.io / diagrams.net) en `sources/`; exportes vectoriales SVG y PDF en `exports/`. Las fuentes se generan de forma reproducible con `tools/diagramas/gen_mer.py` (láminas 1–6) y `tools/diagramas/gen_relacional.py` (lámina 7); después pueden editarse a mano en draw.io (si se edita a mano, no volver a ejecutar el generador sobre ese archivo sin conservar los cambios).
 
+## Láminas completas (una sola hoja cada una, A0)
+| Archivo | Contenido | Notación | Generador |
+|---|---|---|---|
+| `mer-completo.drawio` → `exports/mer-completo.pdf/.svg` | **MER conceptual completo**: 31 entidades, atributos (clave, parcial, derivado), 37 relaciones con verbo, cardinalidad (mín,máx) junto a la entidad, participación total (línea doble), débiles e identificantes (doble rectángulo / doble rombo), recursivas con roles | Chen/EER | `tools/diagramas/gen_mer_completo.py` |
+| `relacional-completo.drawio` → `exports/relacional-completo.pdf/.svg` | **Modelo lógico relacional completo**: 42 tablas con todas sus columnas, tipo, PK/FK/UK/NN; 80 FK conectadas columna a columna | Pata de gallo (IE): extremo padre ‖ (1) u o\| (0..1) según NOT NULL; extremo hijo o< (0..N) u o\| (FK única); continua = identificante, discontinua = no identificante | `tools/diagramas/gen_relacional_completo.py` desde `tools/esquema/esquema.py` |
+
+Decisiones: el MER completo omite las tablas técnicas (outbox, inbox, idempotencia, infra.*) porque no son conceptos de negocio; el relacional completo sí las incluye en el carril "Soporte técnico". `tools/esquema/esquema.py` es la fuente única del esquema lógico: alimenta el diagrama y alimentará el DDL (TASK-A-009); `python3 tools/esquema/esquema.py` verifica que toda FK apunte a columnas existentes con la misma aridad.
+
+## Láminas por dominio (detalle, A3)
 | Lámina | Fuente | Contenido | Estado |
 |---|---|---|---|
 | 1 | `mer-01-general.drawio` (A2) | Vista por dominios, relaciones principales sin atributos | exportada, revisada |

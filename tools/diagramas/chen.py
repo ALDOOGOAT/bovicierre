@@ -78,13 +78,15 @@ class Pagina:
                 ax, ay = x + w + dist, y + h / 2 + off * 0.42 - 17
             self.atributo(duenio, nom, ax, ay, clave=t == "k", parcial=t == "p", derivado=t == "d")
 
-    def linea(self, a, b, card=None, total=False, pos=-0.55, etiqueta_dy=-12, extra=""):
+    def linea(self, a, b, card=None, total=False, pos=-0.55, etiqueta_dy=-12, extra="", puntos=None):
         cid = self._id("e")
         estilo = "endArrow=none;html=1;rounded=0;strokeColor=#000000;fontSize=11;fontStyle=1;labelBackgroundColor=#ffffff;"
         estilo += ("shape=link;strokeWidth=1;width=4;" if total else "strokeWidth=1.2;") + extra
         self.celdas.append(
             f'<mxCell id="{cid}" value="" style="{estilo}" edge="1" parent="1" source="{a}" target="{b}">'
-            f'<mxGeometry relative="1" as="geometry"/></mxCell>')
+            f'<mxGeometry relative="1" as="geometry">'
+            + (("<Array as=\"points\">" + "".join(f'<mxPoint x="{px}" y="{py}"/>' for px, py in puntos) + "</Array>") if puntos else "")
+            + '</mxGeometry></mxCell>')
         if card:
             self.celdas.append(
                 f'<mxCell id="{cid}_l" value="{escape(card)}" style="edgeLabel;html=1;align=center;verticalAlign=middle;'

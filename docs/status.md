@@ -8,6 +8,7 @@ Actualizado: 2026-10-11.
 - Decisiones DEC-01..11 que resuelven contradicciones del megaprompt (`docs/research/evidence-register.md`).
 - Backlog de 55 tareas con estado Kanban.
 - Grafo Graphify local: 830 nodos, 45 comunidades (`docs/knowledge/graph-status.md`; `graphify-out/` no se versiona).
+- MER completo (Chen) y relacional completo (pata de gallo) en una hoja A0 cada uno; esquema lógico ejecutable `tools/esquema/esquema.py`.
 - 7 láminas `.drawio` (MER Chen 1–6 y relacional por módulo) con exportes SVG/PDF revisados (`docs/diagrams/README.md`).
 
 ## No existe todavía
