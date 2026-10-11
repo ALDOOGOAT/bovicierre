@@ -1,0 +1,1 @@
+PASS {"database": "bovicierre_release_replay", "command_calls": 3, "source_raw": "12000.0050", "Dinero_importe": "12000.01", "capture_column_type": "numeric(14,2)", "gasto_accepted": true, "immutable_source_precision4_and_hash_preserved": true, "migration_redundant_not_added": true}

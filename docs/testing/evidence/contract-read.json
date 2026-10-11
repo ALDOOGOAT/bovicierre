@@ -1,0 +1,107 @@
+{
+  "scope": "Tr\u00e1fico DEMO de sesi\u00f3n y nueve consultas; no cubre todo el contrato.",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/sesion/actual",
+      "http": 401,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sesion/csrf",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "POST",
+      "path": "/sesion/login",
+      "http": 204,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sesion/csrf",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sesion/actual",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/operaciones",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/inventario/posiciones",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/pagos",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/gastos",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/documentos",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/periodos",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/usuarios",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/reportes/cartera",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/reportes/margen",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/{sedeId}/integraciones/diagnostico",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "GET",
+      "path": "/salud",
+      "http": 200,
+      "errors": []
+    },
+    {
+      "method": "POST",
+      "path": "/sesion/logout",
+      "http": 204,
+      "errors": []
+    }
+  ]
+}

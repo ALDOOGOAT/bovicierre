@@ -1,0 +1,197 @@
+{
+  "base_url": "http://127.0.0.1:15180",
+  "database_version": "V13",
+  "data": "DEMO sintética",
+  "headful": true,
+  "gpu": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2)",
+  "files": {
+    "bovicierre-ui-acuerdos.json": {
+      "bytes": 140,
+      "sha256": "aebe263c804989e5a8be7f32a9856e397d91aa85a70bc8ed4fa868925bba944c"
+    },
+    "bovicierre-ui-auditor.png": {
+      "bytes": 140838,
+      "sha256": "b84feddfe2530e623a5e73a84c3668f3f219c9af44242c608f8d127aeeb831d1"
+    },
+    "bovicierre-ui-bandeja-final-1440.png": {
+      "bytes": 97057,
+      "sha256": "568789e97357f20c2e22b34cf9f2436fd6a60c1cc49c3b9524c8590df9cee1bd"
+    },
+    "bovicierre-ui-bandeja-final-390.png": {
+      "bytes": 54153,
+      "sha256": "46d9857076b3fd81c5f623a3520a21a30d2cb26950d2736fb60d2a7f8e8afbaa"
+    },
+    "bovicierre-ui-bandeja-final-768.png": {
+      "bytes": 94957,
+      "sha256": "3fb65ffd15af5c172a8206d932320e650fb759028ba5338fad609a17c342ef25"
+    },
+    "bovicierre-ui-ciclos-entrega.json": {
+      "bytes": 225,
+      "sha256": "0e44f8aa4296f152f7c04e7eb1c53ad0d580865797d7651e58b395b66ecee4e2"
+    },
+    "bovicierre-ui-ciclos-entrega.png": {
+      "bytes": 81639,
+      "sha256": "62d1bfc0cefe5296e3c97794bf9a01346d60eca6bc540fff1103327c29ffe6af"
+    },
+    "bovicierre-ui-e2e.json": {
+      "bytes": 664,
+      "sha256": "be9e23260b293104321d75f0d471097fdae54edd0fce4f2777778f3d1295cd18"
+    },
+    "bovicierre-ui-final-run-v11.json": {
+      "bytes": 907,
+      "sha256": "d3b5163ab27a766cd887bd60f5eb2b84518c0e2614e5361e87c09ab57c7a9e04"
+    },
+    "bovicierre-ui-final-run.json": {
+      "bytes": 11879,
+      "sha256": "9ac85c2c6ae68619a633d05c7ca16ed38f9dea225984686ace975225813ad74f"
+    },
+    "bovicierre-ui-flow-1440.png": {
+      "bytes": 100668,
+      "sha256": "4ca4a28807efb4c377bec91eee92fb8af6276f733c85ebad4be00ce1ee8b9582"
+    },
+    "bovicierre-ui-flow-390.png": {
+      "bytes": 48225,
+      "sha256": "f29e3439a9acf0d9c4a0d9fdc888b2ce37342392ca7374da856f9f0724eff5ee"
+    },
+    "bovicierre-ui-flow-768.png": {
+      "bytes": 95023,
+      "sha256": "3debcfc0315cca1235de7d94c793c6e157d5cc6b6ff1dcfa1895d735199bc7c2"
+    },
+    "bovicierre-ui-gastos-fdw-1440.png": {
+      "bytes": 94369,
+      "sha256": "fe696f0b641e1700991e20aef61f651bf463f8d424f1a377a311806c491b534d"
+    },
+    "bovicierre-ui-gastos-fdw-390.png": {
+      "bytes": 51621,
+      "sha256": "8954da9644a115d6d888545fa6ccdd05764fee98be5ea0e5eb117ceed8148f0c"
+    },
+    "bovicierre-ui-gastos-fdw-768.png": {
+      "bytes": 85453,
+      "sha256": "d65c945b54c8d6a0743efd9a072f4accf365003a106973f3b16735225813fee3"
+    },
+    "bovicierre-ui-gastos-fdw.png": {
+      "bytes": 62666,
+      "sha256": "27f9aa099dc0e045a1fbccec9acee9c16dfef4f790cb339f5a8dae83e03f4257"
+    },
+    "bovicierre-ui-gastos.json": {
+      "bytes": 879,
+      "sha256": "8a1056b3e7c513e94f4efc6df2c9e915c8bbd01dd84be0746b2ae77007c4a306"
+    },
+    "bovicierre-ui-gpu.json": {
+      "bytes": 519,
+      "sha256": "6df36d9868466cb09f8b11de0a2442f2620b851bf07ce03c6ce8584bcfc5d0bc"
+    },
+    "bovicierre-ui-http502.json": {
+      "bytes": 140,
+      "sha256": "9b799ce0bca3eb68e44a105ef80cfc3e27fd515d350e4f1158cba45f377fbd14"
+    },
+    "bovicierre-ui-keyboard390.json": {
+      "bytes": 633,
+      "sha256": "c54b929c948059b087dc508be7b3f86140160041107f3fc1cfbd5e54507af6fc"
+    },
+    "bovicierre-ui-keyboard390.png": {
+      "bytes": 45967,
+      "sha256": "7d3eea439a52a10547b09265de4bf34b2724dbbaae3aa63c22d196a8a6f15ef8"
+    },
+    "bovicierre-ui-periodos.json": {
+      "bytes": 119,
+      "sha256": "46465eedabddb69a397a1cfcd89de54501b74d92fc2f0839040a884d2e70e60d"
+    },
+    "bovicierre-ui-periodos.png": {
+      "bytes": 125334,
+      "sha256": "40f46a58bd52c40a61007b0f63eb6ed3274b8bb1d3e928e651c7b1ad00f784e8"
+    },
+    "bovicierre-ui-pesajes-correccion-1440.png": {
+      "bytes": 198320,
+      "sha256": "739f4a649c747a8ac9918f3399d4a844824ec755f321361d5e356bbd86605fff"
+    },
+    "bovicierre-ui-pesajes-correccion-390.png": {
+      "bytes": 151996,
+      "sha256": "cddc5d61798253003bce9b2a070d066e7c235661f24a22fea8cc87a5d39034c6"
+    },
+    "bovicierre-ui-pesajes-correccion-768.png": {
+      "bytes": 220582,
+      "sha256": "a835556ee3a29fb84f6daedf638df9639d7c64780b6c733144f47b09215bbc2d"
+    },
+    "bovicierre-ui-pesajes-correccion-responsive.json": {
+      "bytes": 155,
+      "sha256": "ac74926694d34c08eb413b5947fdd05bc3a9b012f0efd652b87c589ecbd21472"
+    },
+    "bovicierre-ui-pesajes-correccion.json": {
+      "bytes": 315,
+      "sha256": "4155837a2ba3c25dc6efba83c74944a733e2fac65893f201c744251eb5eebeae"
+    },
+    "bovicierre-ui-predios-1440.png": {
+      "bytes": 123792,
+      "sha256": "00a6b6b86306d10c5925d2a70c19f5b17654e660d322824ccb0fce91e9bd72a3"
+    },
+    "bovicierre-ui-predios-390.png": {
+      "bytes": 79962,
+      "sha256": "2f02f419f2e930c6caeb463aed50b75644a30722756de840ebbfdd9d1ff896a0"
+    },
+    "bovicierre-ui-predios-768.png": {
+      "bytes": 121031,
+      "sha256": "4b231473c6fdf4f8d7928e36cfc9fb7d73e1f6d583e0b13be8fadea21ce53f69"
+    },
+    "bovicierre-ui-predios-responsive.json": {
+      "bytes": 155,
+      "sha256": "ac74926694d34c08eb413b5947fdd05bc3a9b012f0efd652b87c589ecbd21472"
+    },
+    "bovicierre-ui-predios.json": {
+      "bytes": 205,
+      "sha256": "36a026b549a4c6740247d9baef04b99b232e1612b0347d2d5a026db93fd7b06d"
+    },
+    "bovicierre-ui-proveedor-caido.png": {
+      "bytes": 76172,
+      "sha256": "6acde46a7ebcc1b243d111ebdabb56b284dcfffc53b99aeef4da020b82cdf83b"
+    },
+    "bovicierre-ui-proveedor-incidencia.json": {
+      "bytes": 299,
+      "sha256": "fcd1a0566556c796b86248f130c8b60fa9464c200bd379a5472fcf86bedb6ad3"
+    },
+    "bovicierre-ui-proveedor-recuperado.png": {
+      "bytes": 138745,
+      "sha256": "212dd344d0aa35e0c11c33fd4ce3c9181d845ddb5d95b2ed3fde2a5a7f66e92c"
+    },
+    "bovicierre-ui-regresion-kg-lotes.json": {
+      "bytes": 404,
+      "sha256": "7a73109e9d69967fc7d89a79e1b5c3e09331b2f29b26dbf8ee2fae024f184b9e"
+    },
+    "bovicierre-ui-reporte-cartera.png": {
+      "bytes": 102733,
+      "sha256": "ed1509168b2458073d2a54be100ce940898cee59955f37d9897b1270007156b0"
+    },
+    "bovicierre-ui-reporte-margen.png": {
+      "bytes": 91936,
+      "sha256": "b70b4981df10df27be299aa2c3da3e2444c5194cd88b4873a3cecfecf52789d7"
+    },
+    "bovicierre-ui-reportes.json": {
+      "bytes": 869,
+      "sha256": "cc3500e794bfa8190254fe0ae6c395ae2c690bad686b86b306283af26b8f602a"
+    },
+    "bovicierre-ui-reservas-conflicto.png": {
+      "bytes": 101213,
+      "sha256": "6c536f7904c3ce3d631b8ac2c4ef2840e0696eddd1ba7523cab3ceae4d3dbd0d"
+    },
+    "bovicierre-ui-reservas-expiracion.png": {
+      "bytes": 110415,
+      "sha256": "18cbfe1474aff0adc7ad051be1005619acc10a46f45637ca38671ebf19798910"
+    },
+    "bovicierre-ui-reservas.json": {
+      "bytes": 581,
+      "sha256": "ecdea59525e39e5aea265efba7c4ed06739988bc4c2982be693cc5980025be45"
+    },
+    "bovicierre-ui-retry.json": {
+      "bytes": 74,
+      "sha256": "c9f6b9e7f9a21083871b34a778a87f154221903c162e62392f4511fe2f6e1310"
+    },
+    "bovicierre-ui-roles.json": {
+      "bytes": 114,
+      "sha256": "f52642497496647d3ba4dc3bdc3c6c6e4c32d3c8edd261c2c2502ecb1574dc0b"
+    },
+    "bovicierre-ui-scope-cancel.json": {
+      "bytes": 189,
+      "sha256": "74a720b30801bbf114a154d7eb1f7c0e3820ea3912ba04739bce5f70d313ae07"
+    }
+  }
+}

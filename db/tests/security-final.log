@@ -1,0 +1,29 @@
+                     resultado
+----------------------------------------------------
+ PASS SECURITY DEFINER ACLs/safe path/runtime roles
+(1 row)
+
+              resultado
+--------------------------------------
+ PASS auditor role protected DML42501
+(1 row)
+
+                                resultado
+-------------------------------------------------------------------------
+ PASS immutable accepted contract/condition triggers (definer-owner DML)
+(1 row)
+
+                     resultado
+----------------------------------------------------
+ PASS SECURITY DEFINER ACLs/safe path/runtime roles
+(1 row)
+
+              resultado
+--------------------------------------
+ PASS auditor role protected DML42501
+(1 row)
+
+                                resultado
+-------------------------------------------------------------------------
+ PASS immutable accepted contract/condition triggers (definer-owner DML)
+(1 row)

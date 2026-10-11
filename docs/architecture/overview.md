@@ -79,7 +79,7 @@ sequenceDiagram
     participant DB as PostgreSQL dueño
     UI->>API: POST /api/v1/pagos/{id}/aplicaciones (Idempotency-Key)
     API->>DB: BEGIN; SELECT cmd_aplicar_pago(...)
-    DB->>DB: reclamar clave; FOR UPDATE pago; FOR UPDATE liquidaciones (id asc)
+    DB->>DB: reclamar clave; FOR UPDATE periodo; FOR UPDATE pagos (id asc); FOR UPDATE liquidaciones (id asc)
     DB->>DB: verificar E/S/parte/moneda/dirección; Σ ≤ disponible; Σ ≤ saldo
     DB->>DB: INSERT aplicacion_pago; auditoría; outbox
     API->>DB: COMMIT

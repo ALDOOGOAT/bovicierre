@@ -1,42 +1,54 @@
 openapi: 3.1.0
 info:
   title: BoviCierre API
-  version: 0.1.0
-  summary: Contrato inicial del MVP (diseño; ninguna operación implementada aún).
-  description: |
-    Reglas transversales:
-    - Importes y pesos se envían como cadenas decimales (`"240000.00"`, `"5000.000"`), con moneda/unidad explícitas.
-    - El servidor calcula todos los totales; nunca acepta totales del navegador.
-    - Comandos con efecto exigen `Idempotency-Key`; ediciones de borrador exigen `If-Match` (version_lock).
-    - Scope (empresa/sede) se deriva de la sesión y se verifica; el cliente no elige nodo ni credenciales.
-    - Errores: 401 sin sesión, 403 sin permiso, 404 recurso no accesible, 409 conflicto/idempotencia,
-      422 regla de dominio, 503 nodo dueño no disponible.
-    - Todos los ejemplos son datos sintéticos.
+  version: 0.2.0
+  summary: Contrato de implementación local; evidencia de operaciones disponibles registrada por incremento.
+  description: "Reglas transversales:\n- Importes y pesos se envían como cadenas decimales (`\"240000.00\"\
+    `, `\"5000.000\"`), con moneda/unidad explícitas.\n- El servidor calcula todos los totales; nunca\
+    \ acepta totales del navegador.\n- Comandos con efecto exigen `Idempotency-Key`; ediciones de borrador\
+    \ exigen `If-Match` (version_lock).\n- Scope (empresa/sede) se deriva de la sesión y se verifica;\
+    \ el cliente no elige nodo ni credenciales.\n- Errores: 401 sin sesión, 403 sin permiso, 404 recurso\
+    \ no accesible, 409 conflicto/idempotencia,\n  422 regla de dominio, 503 nodo dueño no disponible.\n\
+    - Todos los ejemplos son datos sintéticos.\n"
   license:
     name: Propietario (proyecto académico)
     identifier: LicenseRef-Proprietary
 servers:
-  - url: /api/v1
+- url: /api/v1
 security:
-  - sesion: []
+- sesion: []
 tags:
-  - name: sesion
-  - name: catalogos
-  - name: identidad
-  - name: operaciones
-  - name: pesajes
-  - name: reservas
-  - name: inventario
-  - name: liquidaciones
-  - name: costos
-  - name: pagos
-  - name: reportes
-  - name: evidencia
-  - name: integraciones
+- name: sesion
+  description: Operaciones de sesion con autorización por sede.
+- name: catalogos
+  description: Operaciones de catalogos con autorización por sede.
+- name: identidad
+  description: Operaciones de identidad con autorización por sede.
+- name: operaciones
+  description: Operaciones de operaciones con autorización por sede.
+- name: pesajes
+  description: Operaciones de pesajes con autorización por sede.
+- name: reservas
+  description: Operaciones de reservas con autorización por sede.
+- name: inventario
+  description: Operaciones de inventario con autorización por sede.
+- name: liquidaciones
+  description: Operaciones de liquidaciones con autorización por sede.
+- name: costos
+  description: Operaciones de costos con autorización por sede.
+- name: pagos
+  description: Operaciones de pagos con autorización por sede.
+- name: reportes
+  description: Operaciones de reportes con autorización por sede.
+- name: evidencia
+  description: Operaciones de evidencia con autorización por sede.
+- name: integraciones
+  description: Operaciones de integraciones con autorización por sede.
 paths:
   /sesion/login:
     post:
-      tags: [sesion]
+      tags:
+      - sesion
       operationId: login
       security: []
       summary: Inicia sesión (cookie HttpOnly)
@@ -46,25 +58,50 @@ paths:
           application/json:
             schema:
               type: object
-              required: [login, contrasena]
+              required:
+              - login
+              - contrasena
               properties:
-                login: { type: string, maxLength: 80 }
-                contrasena: { type: string, format: password }
+                login:
+                  type: string
+                  maxLength: 80
+                contrasena:
+                  type: string
+                  format: password
       responses:
-        '204': { description: Sesión creada (Set-Cookie) }
-        '401': { $ref: '#/components/responses/NoAutenticado' }
-        '503': { $ref: '#/components/responses/DuenoNoDisponible' }
+        '204':
+          description: Sesión creada (Set-Cookie)
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+      parameters:
+      - $ref: '#/components/parameters/CsrfToken'
   /sesion/logout:
     post:
-      tags: [sesion]
+      tags:
+      - sesion
       operationId: logout
       summary: Logout
-      parameters: [ { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/CsrfToken'
       responses:
-        '204': { description: Sesión cerrada }
+        '204':
+          description: Sesión cerrada
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
   /sesion/actual:
     get:
-      tags: [sesion]
+      tags:
+      - sesion
       operationId: sesionActual
       summary: Usuario actual, sedes y capacidades autorizadas
       responses:
@@ -72,18 +109,30 @@ paths:
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/SesionActual' }
-        '401': { $ref: '#/components/responses/NoAutenticado' }
+              schema:
+                $ref: '#/components/schemas/SesionActual'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
   /sedes/{sedeId}/contrapartes:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     get:
-      tags: [catalogos]
+      tags:
+      - catalogos
       operationId: listarContrapartes
       summary: Listar contrapartes
       parameters:
-        - { $ref: '#/components/parameters/Pagina' }
-        - { $ref: '#/components/parameters/Tamano' }
-        - { name: q, in: query, schema: { type: string, maxLength: 80 } }
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 200
       responses:
         '200':
           description: OK
@@ -91,84 +140,143 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Pagina'
-                  - type: object
-                    properties:
-                      elementos: { type: array, items: { $ref: '#/components/schemas/Contraparte' } }
-        '403': { $ref: '#/components/responses/SinPermiso' }
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Contraparte'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
-      tags: [catalogos]
+      tags:
+      - catalogos
       operationId: crearContraparte
       summary: Crear contraparte
       description: Escritura maestra; se ejecuta en el nodo A.
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/ContraparteNueva' }
+            schema:
+              $ref: '#/components/schemas/ContraparteNueva'
       responses:
         '201':
           description: Creada
-          content: { application/json: { schema: { $ref: '#/components/schemas/Contraparte' } } }
-        '409': { $ref: '#/components/responses/Conflicto' }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
-        '503': { $ref: '#/components/responses/DuenoNoDisponible' }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contraparte'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/animales:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     post:
-      tags: [identidad]
+      tags:
+      - identidad
       operationId: registrarIdentidadAnimal
       summary: Registrar identidad animal
-      description: Ejecutado en el maestro A. Si la sede es B, la respuesta indica PENDIENTE_CONVERGENCIA hasta que la identidad sea visible en B.
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      description: Ejecutado en el maestro A. Si la sede es B, la respuesta indica PENDIENTE_CONVERGENCIA
+        hasta que la identidad sea visible en B.
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [sexo, identificaciones]
+              required:
+              - sexo
+              - identificaciones
               properties:
-                sexo: { type: string, enum: [M, H] }
-                fecha_nacimiento_declarada: { type: string, format: date }
+                sexo:
+                  type: string
+                  enum:
+                  - M
+                  - H
+                fecha_nacimiento_declarada:
+                  type: string
+                  format: date
                 identificaciones:
                   type: array
                   minItems: 1
                   items:
                     type: object
-                    required: [sistema, codigo]
+                    required:
+                    - sistema
+                    - codigo
                     properties:
-                      sistema: { type: string, enum: [SINIIGA, SINIDA, INTERNO, OTRO] }
-                      codigo: { type: string, maxLength: 40, examples: ['DEMO-000123'] }
+                      sistema:
+                        type: string
+                        enum:
+                        - SINIIGA
+                        - SINIDA
+                        - INTERNO
+                        - OTRO
+                      codigo:
+                        type: string
+                        maxLength: 40
+                        examples:
+                        - DEMO-000123
       responses:
         '201':
           description: Registrado
-          content: { application/json: { schema: { $ref: '#/components/schemas/Animal' } } }
-        '409': { $ref: '#/components/responses/Conflicto' }
-        '503': { $ref: '#/components/responses/DuenoNoDisponible' }
-  /sedes/{sedeId}/animales/{animalId}:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: animalId, in: path, required: true, schema: { type: string, format: uuid } } ]
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Animal'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     get:
-      tags: [identidad]
-      operationId: fichaAnimal
-      summary: Ficha animal
-      responses:
-        '200':
-          description: Ficha con ciclos históricos
-          content: { application/json: { schema: { $ref: '#/components/schemas/FichaAnimal' } } }
-        '404': { $ref: '#/components/responses/NoEncontrado' }
-  /sedes/{sedeId}/operaciones:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
-    get:
-      tags: [operaciones]
-      operationId: bandejaOperaciones
-      summary: Bandeja operaciones
-      parameters:
-        - { $ref: '#/components/parameters/Pagina' }
-        - { $ref: '#/components/parameters/Tamano' }
-        - { name: estado, in: query, schema: { $ref: '#/components/schemas/EstadoOperacion' } }
-        - { name: tipo, in: query, schema: { type: string, enum: [COMPRA, VENTA] } }
+      tags:
+      - identidad
+      operationId: listarAnimales
+      summary: listarAnimales
       responses:
         '200':
           description: OK
@@ -176,168 +284,566 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Pagina'
-                  - type: object
-                    properties:
-                      elementos: { type: array, items: { $ref: '#/components/schemas/OperacionResumen' } }
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Animal'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+  /sedes/{sedeId}/animales/{animalId}:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: animalId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - identidad
+      operationId: fichaAnimal
+      summary: Ficha animal
+      responses:
+        '200':
+          description: Ficha con ciclos históricos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FichaAnimal'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sedes/{sedeId}/operaciones:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - operaciones
+      operationId: bandejaOperaciones
+      summary: Bandeja operaciones
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: estado
+        in: query
+        schema:
+          $ref: '#/components/schemas/EstadoOperacion'
+      - name: tipo
+        in: query
+        schema:
+          type: string
+          enum:
+          - COMPRA
+          - VENTA
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/OperacionResumen'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
-      tags: [operaciones]
+      tags:
+      - operaciones
       operationId: crearBorrador
       summary: Crear borrador
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required: [tipo, parte_id, fecha_operacion]
-              properties:
-                tipo: { type: string, enum: [COMPRA, VENTA] }
-                parte_id: { type: string, format: uuid }
-                fecha_operacion: { type: string, format: date }
+              $ref: '#/components/schemas/OperacionNueva'
       responses:
         '201':
           description: Borrador creado
-          headers: { ETag: { schema: { type: string }, description: version_lock } }
-          content: { application/json: { schema: { $ref: '#/components/schemas/Operacion' } } }
+          headers:
+            ETag:
+              schema:
+                type: string
+              description: version_lock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operacion'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/operaciones/{operacionId}:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/OperacionId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/OperacionId'
     get:
-      tags: [operaciones]
+      tags:
+      - operaciones
       operationId: obtenerOperacion
       summary: Obtener operacion
       responses:
         '200':
           description: OK
-          headers: { ETag: { schema: { type: string } } }
-          content: { application/json: { schema: { $ref: '#/components/schemas/Operacion' } } }
-        '404': { $ref: '#/components/responses/NoEncontrado' }
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operacion'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     patch:
-      tags: [operaciones]
+      tags:
+      - operaciones
       operationId: editarBorrador
       summary: Editar borrador
       description: Edita lotes, selecciones y condiciones de la versión en curso. Sólo BORRADOR/ACORDADA.
-      parameters: [ { $ref: '#/components/parameters/IfMatch' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      - $ref: '#/components/parameters/CsrfToken'
+      - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/EdicionBorrador' }
+            schema:
+              $ref: '#/components/schemas/EdicionBorrador'
       responses:
-        '200': { description: Actualizado, content: { application/json: { schema: { $ref: '#/components/schemas/Operacion' } } } }
-        '409': { $ref: '#/components/responses/Conflicto' }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
+        '200':
+          description: Actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operacion'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '412':
+          $ref: '#/components/responses/VersionObsoleta'
+        '428':
+          $ref: '#/components/responses/VersionRequerida'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/operaciones/{operacionId}/confirmar:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/OperacionId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/OperacionId'
     post:
-      tags: [operaciones]
+      tags:
+      - operaciones
       operationId: confirmarOperacion
       summary: Confirmar operacion
       description: ConfirmarCompra o ConfirmarVenta según el tipo (RN-021, RN-022). Atómico.
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/IfMatch' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/IfMatch'
+      - $ref: '#/components/parameters/CsrfToken'
       responses:
         '200':
           description: Confirmada (o resultado previo si es reintento con la misma clave y payload)
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Liquidacion' }
+              schema:
+                $ref: '#/components/schemas/Liquidacion'
               examples:
                 gold01Compra:
                   value:
                     id: 0192f0a0-0000-7000-8000-000000000001
                     operacion_id: 0192f0a0-0000-7000-8000-0000000000c1
                     direccion: POR_PAGAR
-                    total: { importe: '240000.00', moneda: MXN }
-                    saldo: { importe: '240000.00', moneda: MXN }
+                    total:
+                      importe: '240000.00'
+                      moneda: MXN
+                    saldo:
+                      importe: '240000.00'
+                      moneda: MXN
                     conceptos:
-                      - { numero: 1, tipo: BASE, cantidad: '5000.000', unidad: KG, precio_unitario: '48.0000', importe: { importe: '240000.00', moneda: MXN } }
-        '409': { $ref: '#/components/responses/Conflicto' }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
-        '503': { $ref: '#/components/responses/DuenoNoDisponible' }
-  /sedes/{sedeId}/operaciones/{operacionId}/pesajes:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/OperacionId' } ]
-    post:
-      tags: [pesajes]
-      operationId: proponerPesaje
-      summary: Proponer pesaje
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+                    - numero: 1
+                      tipo: BASE
+                      cantidad: '5000.000'
+                      unidad: KG
+                      precio_unitario: '48.0000'
+                      importe:
+                        importe: '240000.00'
+                        moneda: MXN
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '412':
+          $ref: '#/components/responses/VersionObsoleta'
+        '428':
+          $ref: '#/components/responses/VersionRequerida'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
       requestBody:
         required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/PesajeNuevo' } } }
-      responses:
-        '201': { description: Propuesto, content: { application/json: { schema: { $ref: '#/components/schemas/Pesaje' } } } }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
-  /sedes/{sedeId}/pesajes/{pesajeId}/aprobar:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: pesajeId, in: path, required: true, schema: { type: string, format: uuid } } ]
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reconocimiento'
+  /sedes/{sedeId}/operaciones/{operacionId}/pesajes:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/OperacionId'
     post:
-      tags: [pesajes]
+      tags:
+      - pesajes
+      operationId: proponerPesaje
+      summary: Proponer pesaje
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PesajeNuevo'
+      responses:
+        '201':
+          description: Propuesto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pesaje'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sedes/{sedeId}/pesajes/{pesajeId}/aprobar:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: pesajeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    post:
+      tags:
+      - pesajes
       operationId: aprobarPesaje
       summary: Aprobar pesaje
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       responses:
-        '200': { description: Aprobado y composición congelada, content: { application/json: { schema: { $ref: '#/components/schemas/Pesaje' } } } }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
+        '200':
+          description: Aprobado y composición congelada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pesaje'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/pesajes/{pesajeId}/correcciones:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: pesajeId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: pesajeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     post:
-      tags: [pesajes]
+      tags:
+      - pesajes
       operationId: corregirPesaje
       summary: Corregir pesaje
       description: Crea un nuevo pesaje que corrige al original (no lo edita).
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/PesajeNuevo' } } }
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PesajeCorreccion'
       responses:
-        '201': { description: Corrección registrada, content: { application/json: { schema: { $ref: '#/components/schemas/Pesaje' } } } }
+        '201':
+          description: Corrección registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pesaje'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/operaciones/{operacionId}/reservas:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/OperacionId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/OperacionId'
     post:
-      tags: [reservas]
+      tags:
+      - reservas
       operationId: reservarPosiciones
       summary: Reservar posiciones
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [posiciones, vence_en]
+              required:
+              - posiciones
+              - vence_en
               properties:
-                posiciones: { type: array, minItems: 1, items: { type: string, format: uuid } }
-                vence_en: { type: string, format: date-time }
+                posiciones:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uuid
+                vence_en:
+                  type: string
+                  format: date-time
       responses:
         '201':
           description: Reservas activas
-          content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Reserva' } } } }
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reserva'
         '409':
           description: Posición no disponible (otra reserva activa o vendida)
           content:
             application/problem+json:
-              schema: { $ref: '#/components/schemas/Error' }
-              example: { codigo: BV402, mensaje: 'La posición ya está reservada por otra venta.', regla_id: RN-018, correlation_id: 0192f0a0-0000-7000-8000-00000000ffff, campos: [] }
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                codigo: BV402
+                mensaje: La posición ya está reservada por otra venta.
+                regla_id: RN-018
+                correlation_id: 0192f0a0-0000-7000-8000-00000000ffff
+                campos: []
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/reservas/{reservaId}/liberar:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: reservaId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: reservaId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     post:
-      tags: [reservas]
+      tags:
+      - reservas
       operationId: liberarReserva
       summary: Liberar reserva
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       responses:
-        '200': { description: Liberada, content: { application/json: { schema: { $ref: '#/components/schemas/Reserva' } } } }
+        '200':
+          description: Liberada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reserva'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/inventario/posiciones:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     get:
-      tags: [inventario]
+      tags:
+      - inventario
       operationId: listarPosiciones
       summary: Listar posiciones
       parameters:
-        - { $ref: '#/components/parameters/Pagina' }
-        - { $ref: '#/components/parameters/Tamano' }
-        - { name: estado, in: query, schema: { $ref: '#/components/schemas/EstadoPosicion' } }
-        - { name: disponibles_para_venta, in: query, schema: { type: boolean } }
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: estado
+        in: query
+        schema:
+          $ref: '#/components/schemas/EstadoPosicion'
+      - name: disponibles_para_venta
+        in: query
+        schema:
+          type: boolean
+        description: 'true: sólo posiciones disponibles, sin reserva activa vigente ni identidad bloqueada;
+          false: no aplicar ese filtro.'
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+        description: Filtro de búsqueda acotado.
       responses:
         '200':
           description: OK
@@ -345,252 +851,2375 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Pagina'
-                  - type: object
-                    properties:
-                      elementos: { type: array, items: { $ref: '#/components/schemas/Posicion' } }
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Posicion'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/inventario/movimientos:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     post:
-      tags: [inventario]
+      tags:
+      - inventario
       operationId: registrarMovimiento
       summary: Registrar movimiento
       description: Recepción, entrega o baja. No genera venta, costo ni obligación (RN-020).
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [tipo, posiciones, ocurrido_en]
+              required:
+              - tipo
+              - posiciones
+              - ocurrido_en
               properties:
-                tipo: { type: string, enum: [RECEPCION, ENTREGA, BAJA] }
-                motivo_baja: { type: string, enum: [PERDIDA, MUERTE] }
-                posiciones: { type: array, minItems: 1, items: { type: string, format: uuid } }
-                ocurrido_en: { type: string, format: date-time }
-                documento_id: { type: string, format: uuid }
+                tipo:
+                  type: string
+                  enum:
+                  - RECEPCION
+                  - ENTREGA
+                  - BAJA
+                motivo_baja:
+                  type: string
+                  enum:
+                  - PERDIDA
+                  - MUERTE
+                posiciones:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uuid
+                ocurrido_en:
+                  type: string
+                  format: date-time
+                documento_id:
+                  type: string
+                  format: uuid
       responses:
-        '201': { description: Registrado }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
+        '201':
+          description: Registrado
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/liquidaciones/{liquidacionId}:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/LiquidacionId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/LiquidacionId'
     get:
-      tags: [liquidaciones]
+      tags:
+      - liquidaciones
       operationId: detalleLiquidacion
       summary: Detalle liquidacion
       responses:
-        '200': { description: 'Snapshot, ajustes, aplicaciones y saldo', content: { application/json: { schema: { $ref: '#/components/schemas/Liquidacion' } } } }
-        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '200':
+          description: Snapshot, ajustes, aplicaciones y saldo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liquidacion'
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/liquidaciones/{liquidacionId}/ajustes:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/LiquidacionId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/LiquidacionId'
     post:
-      tags: [liquidaciones]
+      tags:
+      - liquidaciones
       operationId: ajustarLiquidacion
       summary: Ajustar liquidacion
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [naturaleza, monto, motivo, fuente]
+              required:
+              - naturaleza
+              - monto
+              - motivo
+              - fuente
+              - periodo_id
+              - fecha_reconocimiento
               properties:
-                naturaleza: { type: string, enum: [CARGO, ABONO] }
-                monto: { $ref: '#/components/schemas/Dinero' }
-                motivo: { type: string, maxLength: 200 }
-                fuente: { type: string, enum: [PRECIO_GANADO, BONIFICACION_COMERCIAL, OTRO] }
-                reaplicar_pagos: { type: boolean, description: 'Si la obligación queda por debajo de lo aplicado, revierte y reaplica (GOLD-07).' }
+                naturaleza:
+                  type: string
+                  enum:
+                  - CARGO
+                  - ABONO
+                monto:
+                  $ref: '#/components/schemas/Dinero'
+                motivo:
+                  type: string
+                  maxLength: 200
+                fuente:
+                  type: string
+                  enum:
+                  - PRECIO_GANADO
+                  - BONIFICACION_COMERCIAL
+                  - OTRO
+                reaplicar_pagos:
+                  type: boolean
+                  description: Si la obligación queda por debajo de lo aplicado, revierte y reaplica (GOLD-07).
+                periodo_id: &id001
+                  type: string
+                  format: uuid
+                fecha_reconocimiento: &id002
+                  type: string
+                  format: date
       responses:
-        '201': { description: Ajuste registrado, content: { application/json: { schema: { $ref: '#/components/schemas/Liquidacion' } } } }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
+        '201':
+          description: Ajuste registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liquidacion'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/liquidaciones/{liquidacionId}/comprobante:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/LiquidacionId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/LiquidacionId'
     get:
-      tags: [liquidaciones]
+      tags:
+      - liquidaciones
       operationId: comprobanteInterno
       summary: Comprobante interno
       description: PDF interno (no es CFDI). No genera ningún hecho económico.
       responses:
-        '200': { description: PDF, content: { application/pdf: { schema: { type: string, format: binary } } } }
+        '200':
+          description: PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/gastos:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     post:
-      tags: [costos]
+      tags:
+      - costos
       operationId: registrarGasto
       summary: Registrar gasto
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/GastoNuevo' } } }
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GastoNuevo'
       responses:
-        '201': { description: Registrado (BORRADOR) }
-  /sedes/{sedeId}/gastos/{gastoId}/reparto:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: gastoId, in: path, required: true, schema: { type: string, format: uuid } } ]
+        '201':
+          description: Gasto registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gasto'
+          headers:
+            Location:
+              description: URL del gasto creado
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     get:
-      tags: [costos]
+      tags:
+      - costos
+      operationId: listarGastos
+      summary: listarGastos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Gasto'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+  /sedes/{sedeId}/gastos/{gastoId}/reparto:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: gastoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - costos
       operationId: previsualizarReparto
       summary: Previsualizar reparto
-      parameters: [ { name: metodo, in: query, required: true, schema: { type: string, enum: [POR_CABEZA, POR_PESO_MEDIDO, IMPORTE_INDIVIDUAL] } } ]
+      parameters:
+      - name: metodo
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - POR_CABEZA
+          - POR_PESO_MEDIDO
+          - IMPORTE_INDIVIDUAL
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
       responses:
-        '200': { description: Asignaciones propuestas (sin persistir), content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Asignacion' } } } } }
+        '200':
+          description: Asignaciones propuestas (sin persistir)
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Asignacion'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
-      tags: [costos]
+      tags:
+      - costos
       operationId: aprobarReparto
       summary: Aprobar reparto
-      description: Aprueba el gasto y crea asignaciones y asientos según destino económico (incluye costos tardíos).
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      description: Aprueba el gasto y crea asignaciones y asientos según destino económico (incluye costos
+        tardíos).
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
-        content: { application/json: { schema: { type: object, required: [metodo], properties: { metodo: { type: string, enum: [POR_CABEZA, POR_PESO_MEDIDO, IMPORTE_INDIVIDUAL] } } } } }
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DistribucionInput'
       responses:
-        '201': { description: Aprobado }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
+        '201':
+          description: Aprobado
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/pagos:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     post:
-      tags: [pagos]
+      tags:
+      - pagos
       operationId: registrarPago
       summary: Registrar pago
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
-        content: { application/json: { schema: { $ref: '#/components/schemas/PagoNuevo' } } }
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PagoNuevo'
       responses:
-        '201': { description: Registrado, content: { application/json: { schema: { $ref: '#/components/schemas/Pago' } } } }
+        '201':
+          description: Registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pago'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags:
+      - pagos
+      operationId: listarPagos
+      summary: listarPagos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Pago'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+      - name: estado
+        in: query
+        schema:
+          type: string
+          enum:
+          - REGISTRADO
+          - VALIDADO
+      - name: tipo
+        in: query
+        schema:
+          type: string
+          enum:
+          - COBRO
+          - PAGO
   /sedes/{sedeId}/pagos/{pagoId}/aplicaciones:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/PagoId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/PagoId'
     post:
-      tags: [pagos]
+      tags:
+      - pagos
       operationId: aplicarPago
       summary: Aplicar pago
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [aplicaciones]
+              required:
+              - aplicaciones
+              - periodo_id
+              - fecha_reconocimiento
               properties:
                 aplicaciones:
                   type: array
                   minItems: 1
                   items:
                     type: object
-                    required: [liquidacion_id, importe]
+                    required:
+                    - liquidacion_id
+                    - importe
                     properties:
-                      liquidacion_id: { type: string, format: uuid }
-                      importe: { $ref: '#/components/schemas/Dinero' }
+                      liquidacion_id:
+                        type: string
+                        format: uuid
+                      importe:
+                        $ref: '#/components/schemas/Dinero'
+                periodo_id: *id001
+                fecha_reconocimiento: *id002
       responses:
-        '201': { description: Aplicado, content: { application/json: { schema: { $ref: '#/components/schemas/Pago' } } } }
+        '201':
+          description: Aplicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pago'
         '422':
           description: Excede disponible o saldo (RN-029)
           content:
             application/problem+json:
-              schema: { $ref: '#/components/schemas/Error' }
-              example: { codigo: BV020, mensaje: 'El importe excede el saldo de la obligación (400.00 MXN).', regla_id: RN-029, correlation_id: 0192f0a0-0000-7000-8000-00000000eeee, campos: [ { campo: 'aplicaciones[0].importe', problema: excede_saldo } ] }
-        '409': { $ref: '#/components/responses/Conflicto' }
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                codigo: BV020
+                mensaje: El importe excede el saldo de la obligación (400.00 MXN).
+                regla_id: RN-029
+                correlation_id: 0192f0a0-0000-7000-8000-00000000eeee
+                campos:
+                - campo: aplicaciones[0].importe
+                  problema: excede_saldo
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/aplicaciones/{aplicacionId}/reverso:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: aplicacionId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: aplicacionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     post:
-      tags: [pagos]
+      tags:
+      - pagos
       operationId: revertirAplicacion
       summary: Revertir aplicacion
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
-        content: { application/json: { schema: { type: object, required: [motivo], properties: { motivo: { type: string, maxLength: 200 } } } } }
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - motivo
+              - periodo_id
+              - fecha_reconocimiento
+              properties:
+                motivo:
+                  type: string
+                  maxLength: 200
+                periodo_id: *id001
+                fecha_reconocimiento: *id002
       responses:
-        '201': { description: Reverso completo registrado }
-        '409': { $ref: '#/components/responses/Conflicto' }
+        '201':
+          description: Reverso completo registrado
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/pagos/{pagoId}/reembolsos:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { $ref: '#/components/parameters/PagoId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/PagoId'
     post:
-      tags: [pagos]
+      tags:
+      - pagos
       operationId: registrarReembolso
       summary: Registrar reembolso
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
-        content: { application/json: { schema: { type: object, required: [importe, recibido_el], properties: { importe: { $ref: '#/components/schemas/Dinero' }, recibido_el: { type: string, format: date } } } } }
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - importe
+              - recibido_el
+              - periodo_id
+              - fecha_reconocimiento
+              properties:
+                importe:
+                  $ref: '#/components/schemas/Dinero'
+                recibido_el:
+                  type: string
+                  format: date
+                periodo_id: *id001
+                fecha_reconocimiento: *id002
       responses:
-        '201': { description: Reembolso registrado, content: { application/json: { schema: { $ref: '#/components/schemas/Pago' } } } }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
+        '201':
+          description: Reembolso registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pago'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/reportes/cartera:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     get:
-      tags: [reportes]
+      tags:
+      - reportes
       operationId: reporteCartera
       summary: Reporte cartera
       parameters:
-        - { name: direccion, in: query, schema: { type: string, enum: [POR_COBRAR, POR_PAGAR] } }
-        - { name: vencida, in: query, schema: { type: boolean } }
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: direccion
+        in: query
+        schema:
+          type: string
+          enum:
+          - POR_COBRAR
+          - POR_PAGAR
+      - name: vencida
+        in: query
+        schema:
+          type: boolean
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+        description: Filtro de búsqueda acotado.
       responses:
-        '200': { description: Cartera con corte, content: { application/json: { schema: { $ref: '#/components/schemas/ReporteCartera' } } } }
+        '200':
+          description: Cartera con corte
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReporteCartera'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/reportes/margen:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     get:
-      tags: [reportes]
+      tags:
+      - reportes
       operationId: reporteMargen
       summary: Reporte margen
       parameters:
-        - { name: operacion_id, in: query, schema: { type: string, format: uuid } }
-        - { name: periodo_id, in: query, schema: { type: string, format: uuid } }
+      - name: operacion_id
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: periodo_id
+        in: query
+        schema:
+          type: string
+          format: uuid
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+        description: Filtro de búsqueda acotado.
       responses:
-        '200': { description: Margen etiquetado PROVISIONAL/ACTUALIZADO/CERRADO, content: { application/json: { schema: { $ref: '#/components/schemas/ReporteMargen' } } } }
+        '200':
+          description: Margen etiquetado PROVISIONAL/ACTUALIZADO/CERRADO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReporteMargen'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/periodos/{periodoId}/cierre:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: periodoId, in: path, required: true, schema: { type: string, format: uuid } } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: periodoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     post:
-      tags: [reportes]
+      tags:
+      - reportes
       operationId: cerrarPeriodo
       summary: Cerrar periodo
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       responses:
-        '201': { description: Versión de cierre creada }
-        '409': { $ref: '#/components/responses/Conflicto' }
+        '201':
+          description: Versión de cierre creada
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - motivo
+              properties:
+                motivo:
+                  type: string
+                  minLength: 1
   /sedes/{sedeId}/documentos:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     post:
-      tags: [evidencia]
+      tags:
+      - evidencia
       operationId: subirDocumento
       summary: Subir documento
-      parameters: [ { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/CsrfToken' } ]
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
-              required: [archivo, tipo_documental]
+              required:
+              - archivo
+              - tipo_documental
               properties:
-                archivo: { type: string, format: binary, description: 'PDF/JPEG/PNG, máx. 20 MiB; MIME real validado.' }
-                tipo_documental: { type: string, enum: [TICKET_BASCULA, CONTRATO, GUIA_MOVILIZACION, COMPROBANTE_PAGO, IDENTIFICACION, OTRO] }
-                documento_previo_id: { type: string, format: uuid }
+                archivo:
+                  type: string
+                  format: binary
+                  description: PDF/JPEG/PNG, máx. 20 MiB; MIME real validado.
+                tipo_documental:
+                  type: string
+                  enum:
+                  - TICKET_BASCULA
+                  - CONTRATO
+                  - GUIA_MOVILIZACION
+                  - COMPROBANTE_PAGO
+                  - IDENTIFICACION
+                  - OTRO
+                documento_previo_id:
+                  type: string
+                  format: uuid
+                operacion_id: &id004
+                  type: string
+                  format: uuid
       responses:
-        '201': { description: Documento (metadatos y sha256), content: { application/json: { schema: { $ref: '#/components/schemas/Documento' } } } }
-        '422': { $ref: '#/components/responses/ReglaDominio' }
-  /sedes/{sedeId}/documentos/{documentoId}/contenido:
-    parameters: [ { $ref: '#/components/parameters/SedeId' }, { name: documentoId, in: path, required: true, schema: { type: string, format: uuid } } ]
+        '201':
+          description: Documento (metadatos y sha256)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documento'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '413':
+          $ref: '#/components/responses/ArchivoDemasiadoGrande'
+        '415':
+          $ref: '#/components/responses/TipoArchivoNoAdmitido'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     get:
-      tags: [evidencia]
+      tags:
+      - reportes
+      operationId: listarDocumentos
+      summary: Consultar versiones de documentos privadas
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  - corte
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Documento'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+  /sedes/{sedeId}/documentos/{documentoId}/contenido:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: documentoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    get:
+      tags:
+      - evidencia
       operationId: descargarDocumento
       summary: Descargar documento
       responses:
-        '200': { description: Contenido autorizado, content: { application/octet-stream: { schema: { type: string, format: binary } } } }
-        '404': { $ref: '#/components/responses/NoEncontrado' }
+        '200':
+          description: Contenido autorizado
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/NoEncontrado'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /sedes/{sedeId}/integraciones/proveedor/tarifas:
-    parameters: [ { $ref: '#/components/parameters/SedeId' } ]
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
     get:
-      tags: [integraciones]
+      tags:
+      - integraciones
       operationId: consultarTarifasProveedor
       summary: Consultar tarifas proveedor
-      description: Consulta FDW al proveedor SIMULADO (datos sintéticos). Fuera de transacciones con locks.
-      parameters: [ { name: ruta, in: query, schema: { type: string } } ]
+      description: Consulta y captura técnica local de proveedor simulado por el dueño de la sede; sin
+        locks financieros. No-store. Una captura no constituye todavía un gasto.
+      parameters:
+      - name: ruta
+        in: query
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
       responses:
-        '200': { description: Tarifas, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/TarifaExterna' } } } } }
-        '503': { $ref: '#/components/responses/DuenoNoDisponible' }
+        '200':
+          description: Tarifas
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  - corte
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/TarifaCapturada'
+                    corte:
+                      type: string
+                      format: date-time
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sesion/csrf:
+    get:
+      tags:
+      - sesion
+      operationId: obtenerCsrf
+      summary: obtenerCsrf
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Csrf'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+      security: []
+  /sedes/{sedeId}/liquidaciones:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - liquidaciones
+      operationId: listarLiquidaciones
+      summary: listarLiquidaciones
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Liquidacion'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+  /sedes/{sedeId}/pagos/{pagoId}/validar:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/PagoId'
+    post:
+      tags:
+      - pagos
+      operationId: validarPago
+      summary: Valida dinero registrado y su periodo
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reconocimiento'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pago'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sedes/{sedeId}/comandos/{comando}/{clave}:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: comando
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: ^[a-z_]{3,60}$
+    - name: clave
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 80
+    get:
+      tags:
+      - operaciones
+      operationId: consultarResultadoComando
+      summary: Recuperar un resultado propio comprometido
+      description: Un 404 no prueba rollback de una petición anterior. Reintentar conserva clave, contenido
+        y ETag.
+      responses:
+        '200':
+          description: Resultado comprometido
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - estado
+                - resultado
+                properties:
+                  estado:
+                    type: string
+                    const: COMPLETADA
+                  resultado:
+                    type: object
+        '404':
+          description: Sin resultado visible en este instante
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sedes/{sedeId}/usuarios:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - reportes
+      operationId: listarUsuarios
+      summary: Consultar usuarios
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  - corte
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Usuario'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+    post:
+      tags:
+      - reportes
+      operationId: crearUsuario
+      summary: Crear usuario por ADMIN
+      responses:
+        '201':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioNuevo'
+  /sedes/{sedeId}/periodos:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - reportes
+      operationId: listarPeriodos
+      summary: Consultar periodos
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  - corte
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Periodo'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+    post:
+      tags:
+      - reportes
+      operationId: crearPeriodo
+      summary: Abrir mes calendario consecutivo
+      responses:
+        '201':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - fecha_inicio
+              - fecha_fin
+              properties:
+                fecha_inicio: &id003
+                  type: string
+                  format: date
+                fecha_fin: *id003
+  /sedes/{sedeId}/predios:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - reportes
+      operationId: listarPredios
+      summary: Consultar predios
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  required:
+                  - elementos
+                  - corte
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Predio'
+                    corte:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        description: Búsqueda literal acotada; % y _ no actúan como comodines.
+        schema:
+          type: string
+          maxLength: 200
+    post:
+      tags:
+      - reportes
+      operationId: crearPredio
+      summary: Crear predio declarado
+      responses:
+        '201':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredioNuevo'
+  /sedes/{sedeId}/usuarios/{usuarioId}:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: usuarioId
+      in: path
+      required: true
+      schema: *id004
+    patch:
+      tags:
+      - reportes
+      operationId: editarUsuario
+      summary: Cambiar nombre o vigencia del acceso
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre: &id005
+                  type: string
+                estado:
+                  type: string
+                  enum:
+                  - ACTIVO
+                  - BLOQUEADO
+  /sedes/{sedeId}/usuarios/{usuarioId}/membresias:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: usuarioId
+      in: path
+      required: true
+      schema: *id004
+    post:
+      tags:
+      - reportes
+      operationId: asignarMembresia
+      summary: Asignar o retirar rol en la sede autorizada
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - rol_codigo
+              - vigente
+              properties:
+                rol_codigo:
+                  type: string
+                  enum:
+                  - ADMIN
+                  - OPERADOR
+                  - CAJA
+                  - AUDITOR
+                vigente:
+                  type: boolean
+  /sedes/{sedeId}/periodos/{periodoId}/reabrir:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: periodoId
+      in: path
+      required: true
+      schema: *id004
+    post:
+      tags:
+      - reportes
+      operationId: reabrirPeriodo
+      summary: Reabrir último periodo sin periodos posteriores
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - motivo
+              properties:
+                motivo:
+                  type: string
+                  minLength: 1
+  /sedes/{sedeId}/periodos/{periodoId}/versiones:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: periodoId
+      in: path
+      required: true
+      schema: *id004
+    get:
+      tags:
+      - reportes
+      operationId: consultarVersionesCierre
+      summary: Consultar versiones históricas conservadas
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - elementos
+                properties:
+                  elementos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CierreVersion'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/operaciones/{operacionId}/acordar:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: operacionId
+      in: path
+      required: true
+      schema: *id004
+    post:
+      tags:
+      - operaciones
+      operationId: acordarOperacion
+      summary: Acordar operación conservando versiones
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '412':
+          $ref: '#/components/responses/VersionObsoleta'
+        '428':
+          $ref: '#/components/responses/VersionRequerida'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requiere_recepcion:
+                  type: boolean
+  /sedes/{sedeId}/operaciones/{operacionId}/reabrir:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: operacionId
+      in: path
+      required: true
+      schema: *id004
+    post:
+      tags:
+      - operaciones
+      operationId: reabrirOperacion
+      summary: Reabrir operación conservando versiones
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '412':
+          $ref: '#/components/responses/VersionObsoleta'
+        '428':
+          $ref: '#/components/responses/VersionRequerida'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - motivo
+              properties:
+                motivo:
+                  type: string
+                  minLength: 1
+  /sedes/{sedeId}/operaciones/{operacionId}/cancelar:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: operacionId
+      in: path
+      required: true
+      schema: *id004
+    post:
+      tags:
+      - operaciones
+      operationId: cancelarOperacion
+      summary: Cancelar operación conservando versiones
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '412':
+          $ref: '#/components/responses/VersionObsoleta'
+        '428':
+          $ref: '#/components/responses/VersionRequerida'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - motivo
+              properties:
+                motivo:
+                  type: string
+                  minLength: 1
+  /sedes/{sedeId}/operaciones/{operacionId}/anular:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: operacionId
+      in: path
+      required: true
+      schema: *id004
+    post:
+      tags:
+      - operaciones
+      operationId: anularOperacion
+      summary: Anular operación conservando versiones
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '412':
+          $ref: '#/components/responses/VersionObsoleta'
+        '428':
+          $ref: '#/components/responses/VersionRequerida'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reconocimiento'
+  /sedes/{sedeId}/operaciones/{operacionId}/simulador:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: operacionId
+      in: path
+      required: true
+      schema: *id004
+    get:
+      tags:
+      - operaciones
+      operationId: simularOperacion
+      summary: Previsualizar sin reconocer hechos
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - operacion_id
+                - total
+                properties:
+                  operacion_id: *id004
+                  total:
+                    $ref: '#/components/schemas/Dinero'
+                  lotes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CalculoLote'
+                  conceptos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tipo: *id005
+                        cantidad: *id005
+                        unidad: *id005
+                        precio_unitario:
+                          $ref: '#/components/schemas/Decimal4'
+                        importe:
+                          $ref: '#/components/schemas/Dinero'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/operaciones/{operacionId}/expediente:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: operacionId
+      in: path
+      required: true
+      schema: *id004
+    get:
+      tags:
+      - operaciones
+      operationId: consultarExpediente
+      summary: Consultar hechos y documentos de la operación
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - operacion_id
+                - eventos
+                - documentos
+                properties:
+                  operacion_id: *id004
+                  eventos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: *id004
+                        ocurrido_en:
+                          type: string
+                          format: date-time
+                        tipo: *id005
+                        descripcion: *id005
+                  documentos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Documento'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/pagos/{pagoId}:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: pagoId
+      in: path
+      required: true
+      schema: *id004
+    get:
+      tags:
+      - reportes
+      operationId: consultarPago
+      summary: Consultar dinero disponible canónico
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pago'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/gastos/{gastoId}:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: gastoId
+      in: path
+      required: true
+      schema: *id004
+    get:
+      tags:
+      - reportes
+      operationId: consultarGasto
+      summary: Consultar gasto persistido y procedencia
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gasto'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/documentos/{documentoId}:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: documentoId
+      in: path
+      required: true
+      schema: *id004
+    get:
+      tags:
+      - reportes
+      operationId: consultarDocumento
+      summary: Consultar metadatos y revisión exacta
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documento'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/documentos/{documentoId}/revisiones:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: documentoId
+      in: path
+      required: true
+      schema: *id004
+    post:
+      tags:
+      - reportes
+      operationId: revisarDocumento
+      summary: Registrar revisión administrativa de esta versión
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - criterio
+              - resultado
+              properties:
+                criterio:
+                  type: string
+                  minLength: 1
+                resultado:
+                  type: string
+                  enum:
+                  - SIN_OBSERVACIONES
+                  - CON_OBSERVACIONES
+                  - RECHAZADA
+                documentos:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - documento_id
+                    - resultado
+                    properties:
+                      documento_id:
+                        type: string
+                        format: uuid
+                      resultado:
+                        type: string
+                      observacion:
+                        type: string
+  /sedes/{sedeId}/pesajes/comparacion:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - reportes
+      operationId: compararPesajes
+      summary: Comparar exclusivamente conjuntos compatibles
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - estado
+                properties:
+                  estado:
+                    type: string
+                    enum:
+                    - COMPARABLE
+                    - NO_COMPARABLE
+                  motivo: *id005
+                  peso_inicial_kg:
+                    $ref: '#/components/schemas/Decimal3'
+                  peso_final_kg:
+                    $ref: '#/components/schemas/Decimal3'
+                  variacion_kg: *id005
+                  variacion_pct: *id005
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: inicial_id
+        in: query
+        required: true
+        schema: *id004
+      - name: final_id
+        in: query
+        required: true
+        schema: *id004
+  /sedes/{sedeId}/animales/{animalId}/qr:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: animalId
+      in: path
+      required: true
+      schema: *id004
+    get:
+      tags:
+      - reportes
+      operationId: qrAnimal
+      summary: Exportar recurso autenticado
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/reportes/{tipo}/csv:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: tipo
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - cartera
+        - margen
+        - inventario
+    get:
+      tags:
+      - reportes
+      operationId: exportarCsv
+      summary: Exportar recurso autenticado
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            text/csv:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/sincronizacion:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - reportes
+      operationId: consultarSincronizacion
+      summary: Consultar incidencias del propietario
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - nodo
+                - estado
+                properties:
+                  nodo:
+                    type: string
+                    enum:
+                    - A
+                    - B
+                  estado: *id005
+                  corte:
+                    type: string
+                    format: date-time
+                  ultima_sincronizacion:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                  pendientes:
+                    type: integer
+                  fallos_apply:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters: []
+  /sedes/{sedeId}/integraciones/proveedor/tarifas/aceptaciones:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    post:
+      tags:
+      - integraciones
+      operationId: aceptarTarifa
+      summary: Aceptar captura local sin consultar de nuevo el proveedor
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - snapshot_id
+              additionalProperties: false
+              properties:
+                snapshot_id: &id006
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Captura aceptada para registrar gasto en el mismo actor/sede
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+  /sedes/{sedeId}/integraciones/diagnostico:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      operationId: consultarDiagnostico
+      tags:
+      - integraciones
+      summary: Diagnóstico técnico acotado de ADMIN
+      description: Cache-Control:no-store; sin URLs, credenciales ni SQL. Duraciones acumuladas de proceso,
+        sin histogramas ni certificaciónSLO.
+      responses:
+        '200':
+          description: Contadores del proceso y pools reales, sólo ADMIN; reinician al reiniciar API.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagnosticoProceso'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+  /salud:
+    get:
+      operationId: consultarSaludProceso
+      tags:
+      - sesion
+      security: []
+      summary: Salud del proceso y conectividad de componentes
+      responses:
+        '200':
+          description: El proceso sigue activo aunque un nodo falle; no sustituye disponibilidad autenticada.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - estado
+                - nodos
+                properties:
+                  estado:
+                    type: string
+                    const: ACTIVO
+                  nodos:
+                    type: object
+                    additionalProperties:
+                      type: string
+                      enum:
+                      - DISPONIBLE
+                      - NO_DISPONIBLE
 components:
   securitySchemes:
     sesion:
@@ -598,305 +3227,1260 @@ components:
       in: cookie
       name: BOVI_SESSION
   parameters:
-    SedeId: { name: sedeId, in: path, required: true, schema: { type: string, format: uuid } }
-    OperacionId: { name: operacionId, in: path, required: true, schema: { type: string, format: uuid } }
-    LiquidacionId: { name: liquidacionId, in: path, required: true, schema: { type: string, format: uuid } }
-    PagoId: { name: pagoId, in: path, required: true, schema: { type: string, format: uuid } }
-    IdempotencyKey: { name: Idempotency-Key, in: header, required: true, schema: { type: string, minLength: 16, maxLength: 80 } }
-    IfMatch: { name: If-Match, in: header, required: true, schema: { type: string }, description: version_lock recibido en ETag }
-    CsrfToken: { name: X-XSRF-TOKEN, in: header, required: true, schema: { type: string } }
-    Pagina: { name: pagina, in: query, schema: { type: integer, minimum: 0, default: 0 } }
-    Tamano: { name: tamano, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 25 } }
+    SedeId:
+      name: sedeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OperacionId:
+      name: operacionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    LiquidacionId:
+      name: liquidacionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PagoId:
+      name: pagoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 80
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema:
+        type: string
+      description: version_lock recibido en ETag
+    CsrfToken:
+      name: X-XSRF-TOKEN
+      in: header
+      required: true
+      schema:
+        type: string
+    Pagina:
+      name: pagina
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Tamano:
+      name: tamano
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
   responses:
-    NoAutenticado: { description: Sin sesión, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    SinPermiso: { description: Sin permiso para la sede o la acción, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    NoEncontrado: { description: No existe o no es accesible (política uniforme), content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    NoAutenticado:
+      description: Sin sesión
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    SinPermiso:
+      description: Sin permiso para la sede o la acción
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NoEncontrado:
+      description: No existe o no es accesible (política uniforme)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
     Conflicto:
       description: Conflicto de concurrencia, version_lock o idempotencia (misma clave, payload distinto)
       content:
         application/problem+json:
-          schema: { $ref: '#/components/schemas/Error' }
-          example: { codigo: BV405, mensaje: 'La clave de idempotencia ya se usó con otro contenido.', regla_id: RN-032, correlation_id: 0192f0a0-0000-7000-8000-00000000dddd, campos: [] }
-    ReglaDominio: { description: Viola una regla de negocio, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
-    DuenoNoDisponible:
-      description: El nodo dueño no está disponible; la escritura no se confirmó
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            codigo: BV405
+            mensaje: La clave de idempotencia ya se usó con otro contenido.
+            regla_id: RN-032
+            correlation_id: 0192f0a0-0000-7000-8000-00000000dddd
+            campos: []
+    ReglaDominio:
+      description: Viola una regla de negocio
       content:
         application/problem+json:
-          schema: { $ref: '#/components/schemas/Error' }
-          example: { codigo: BV501, mensaje: 'La sede no está disponible; la operación no se registró. Reintente más tarde.', regla_id: RN-041, correlation_id: 0192f0a0-0000-7000-8000-00000000cccc, campos: [] }
+          schema:
+            $ref: '#/components/schemas/Error'
+    DuenoNoDisponible:
+      description: Dependencia no disponible; una respuesta perdida puede requerir comprobar resultado
+        con la misma clave.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            codigo: BV501
+            mensaje: La dependencia no está disponible. Compruebe el resultado antes de iniciar otra intención.
+            regla_id: RN-041
+            correlation_id: 0192f0a0-0000-7000-8000-00000000cccc
+            campos: []
+    VersionObsoleta:
+      description: If-Match no corresponde a la versión revisada
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    VersionRequerida:
+      description: Falta If-Match obligatorio
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ArchivoDemasiadoGrande:
+      description: Archivo excede 20 MiB
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TipoArchivoNoAdmitido:
+      description: Contenido real de archivo no admitido
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    Decimal2: { type: string, pattern: '^-?\d{1,16}\.\d{2}$', examples: ['240000.00'] }
-    Decimal3: { type: string, pattern: '^\d{1,11}\.\d{3}$', examples: ['5000.000'] }
-    Decimal4: { type: string, pattern: '^\d{1,10}\.\d{4}$', examples: ['48.0000'] }
+    Decimal2:
+      type: string
+      pattern: ^-?\d{1,16}\.\d{2}$
+      examples:
+      - '240000.00'
+    Decimal3:
+      type: string
+      pattern: ^\d{1,11}\.\d{3}$
+      examples:
+      - '5000.000'
+    Decimal4:
+      type: string
+      pattern: ^\d{1,10}\.\d{4}$
+      examples:
+      - '48.0000'
     Dinero:
       type: object
-      required: [importe, moneda]
+      required:
+      - importe
+      - moneda
       properties:
-        importe: { $ref: '#/components/schemas/Decimal2' }
-        moneda: { type: string, enum: [MXN] }
+        importe:
+          $ref: '#/components/schemas/Decimal2'
+        moneda:
+          type: string
+          enum:
+          - MXN
     Peso:
       type: object
-      required: [kg]
+      required:
+      - kg
       properties:
-        kg: { $ref: '#/components/schemas/Decimal3' }
+        kg:
+          $ref: '#/components/schemas/Decimal3'
     Error:
       type: object
-      required: [codigo, mensaje, correlation_id]
+      required:
+      - codigo
+      - mensaje
+      - correlation_id
       properties:
-        codigo: { type: string, examples: [BV402] }
-        mensaje: { type: string }
-        regla_id: { type: string, examples: [RN-018] }
-        correlation_id: { type: string, format: uuid }
+        codigo:
+          type: string
+          examples:
+          - BV402
+        mensaje:
+          type: string
+        regla_id:
+          type: string
+          examples:
+          - RN-018
+        correlation_id:
+          type: string
+          format: uuid
         campos:
           type: array
-          items: { type: object, properties: { campo: { type: string }, problema: { type: string } } }
+          items:
+            type: object
+            properties:
+              campo:
+                type: string
+              problema:
+                type: string
     Pagina:
       type: object
-      required: [pagina, tamano, total]
+      required:
+      - pagina
+      - tamano
+      - total
       properties:
-        pagina: { type: integer }
-        tamano: { type: integer }
-        total: { type: integer }
+        pagina:
+          type: integer
+        tamano:
+          type: integer
+        total:
+          type: integer
     SesionActual:
       type: object
+      required:
+      - usuario_id
+      - nombre
+      - sedes
       properties:
-        usuario: { type: object, properties: { id: { type: string, format: uuid }, nombre: { type: string } } }
+        usuario_id: *id001
+        nombre:
+          type: string
         sedes:
           type: array
           items:
             type: object
+            required:
+            - id
+            - empresa_id
+            - codigo
+            - nombre
+            - roles
+            - capacidades
             properties:
-              id: { type: string, format: uuid }
-              codigo: { type: string }
-              nombre: { type: string }
-              roles: { type: array, items: { type: string, enum: [ADMIN, OPERADOR, CAJA, AUDITOR] } }
-              disponible: { type: boolean, description: Nodo dueño alcanzable }
+              id: *id001
+              empresa_id: *id001
+              codigo:
+                type: string
+              nombre:
+                type: string
+              nodo_dueno:
+                type: string
+                enum:
+                - A
+                - B
+              roles:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - ADMIN
+                  - OPERADOR
+                  - CAJA
+                  - AUDITOR
+              capacidades:
+                type: array
+                items:
+                  type: string
     ContraparteNueva:
       type: object
-      required: [tipo_persona, nombre]
+      required:
+      - tipo_persona
+      - nombre
       properties:
-        tipo_persona: { type: string, enum: [FISICA, MORAL] }
-        nombre: { type: string, maxLength: 200 }
-        rfc: { type: string, maxLength: 13 }
-        telefono: { type: string, maxLength: 20 }
+        tipo_persona:
+          type: string
+          enum:
+          - FISICA
+          - MORAL
+        nombre:
+          type: string
+          maxLength: 200
+        rfc:
+          type: string
+          maxLength: 13
+        telefono:
+          type: string
+          maxLength: 20
     Contraparte:
       allOf:
-        - $ref: '#/components/schemas/ContraparteNueva'
-        - type: object
-          properties: { id: { type: string, format: uuid }, es_sintetico: { type: boolean } }
+      - $ref: '#/components/schemas/ContraparteNueva'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          es_sintetico:
+            type: boolean
     Animal:
       type: object
       properties:
-        id: { type: string, format: uuid }
-        sede_operadora_id: { type: string, format: uuid }
-        situacion: { type: string, enum: [VIGENTE, IDENTIDAD_EN_REVISION, MUERTO] }
-        estado_convergencia: { type: string, enum: [VISIBLE, PENDIENTE_CONVERGENCIA] }
+        id:
+          type: string
+          format: uuid
+        sede_operadora_id:
+          type: string
+          format: uuid
+        situacion:
+          type: string
+          enum:
+          - VIGENTE
+          - IDENTIDAD_EN_REVISION
+          - MUERTO
+        estado_convergencia:
+          type: string
+          enum:
+          - VISIBLE
+          - PENDIENTE_CONVERGENCIA
         identificaciones:
           type: array
-          items: { type: object, properties: { sistema: { type: string }, codigo_declarado: { type: string }, estado: { type: string } } }
+          items:
+            type: object
+            properties:
+              sistema:
+                type: string
+              codigo_declarado:
+                type: string
+              estado:
+                type: string
     FichaAnimal:
       allOf:
-        - $ref: '#/components/schemas/Animal'
-        - type: object
-          properties:
-            ciclos: { type: array, items: { $ref: '#/components/schemas/Posicion' } }
-    EstadoOperacion: { type: string, enum: [BORRADOR, ACORDADA, CONFIRMADA, CANCELADA, ANULADA] }
-    EstadoPosicion: { type: string, enum: [PENDIENTE_RECEPCION, DISPONIBLE, VENDIDA_PENDIENTE_ENTREGA, CERRADA_VENTA, BAJA] }
+      - $ref: '#/components/schemas/Animal'
+      - type: object
+        properties:
+          ciclos:
+            type: array
+            items:
+              $ref: '#/components/schemas/Posicion'
+    EstadoOperacion:
+      type: string
+      enum:
+      - BORRADOR
+      - ACORDADA
+      - CONFIRMADA
+      - CANCELADA
+      - ANULADA
+    EstadoPosicion:
+      type: string
+      enum:
+      - PENDIENTE_RECEPCION
+      - DISPONIBLE
+      - VENDIDA_PENDIENTE_ENTREGA
+      - CERRADA_VENTA
+      - BAJA
     OperacionResumen:
       type: object
       properties:
-        id: { type: string, format: uuid }
-        tipo: { type: string, enum: [COMPRA, VENTA] }
-        folio: { type: string }
-        contraparte: { type: string }
-        estado: { $ref: '#/components/schemas/EstadoOperacion' }
-        estado_entrega: { type: string, enum: [PENDIENTE, PARCIAL, COMPLETA] }
-        pendientes: { type: array, items: { type: string, enum: [PESAJE, LIQUIDACION, ENTREGA, PAGO, DOCUMENTO] } }
+        id:
+          type: string
+          format: uuid
+        tipo:
+          type: string
+          enum:
+          - COMPRA
+          - VENTA
+        folio:
+          type: string
+        contraparte:
+          type: string
+        estado:
+          $ref: '#/components/schemas/EstadoOperacion'
+        estado_entrega:
+          type: string
+          enum:
+          - PENDIENTE
+          - PARCIAL
+          - COMPLETA
+        pendientes:
+          type: array
+          items:
+            type: string
+            enum:
+            - PESAJE
+            - LIQUIDACION
+            - ENTREGA
+            - PAGO
+            - DOCUMENTO
     Operacion:
       allOf:
-        - $ref: '#/components/schemas/OperacionResumen'
-        - type: object
-          properties:
-            version_lock: { type: integer }
-            lotes:
-              type: array
-              items:
-                type: object
-                properties:
-                  numero_lote: { type: integer }
-                  animales: { type: array, items: { type: string, format: uuid } }
-                  posiciones: { type: array, items: { type: string, format: uuid } }
-            version_en_curso: { $ref: '#/components/schemas/Version' }
+      - $ref: '#/components/schemas/OperacionResumen'
+      - type: object
+        properties:
+          version_lock:
+            type: integer
+          lotes:
+            type: array
+            items:
+              type: object
+              properties:
+                numero_lote:
+                  type: integer
+                animales:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                posiciones:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+          version_en_curso:
+            $ref: '#/components/schemas/Version'
     Version:
       type: object
       properties:
-        numero_version: { type: integer }
-        estado: { type: string, enum: [PROPUESTA, ACEPTADA, SUPERADA] }
+        numero_version:
+          type: integer
+        estado:
+          type: string
+          enum:
+          - PROPUESTA
+          - ACEPTADA
+          - SUPERADA
         condiciones:
           type: array
           items:
             type: object
-            required: [numero_lote, unidad_precio, precio_unitario]
+            required:
+            - numero_lote
+            - unidad_precio
+            - precio_unitario
             properties:
-              numero_lote: { type: integer }
-              unidad_precio: { type: string, enum: [KG, CABEZA] }
-              precio_unitario: { $ref: '#/components/schemas/Decimal4' }
-              pesaje_base_id: { type: string, format: uuid }
-              deduccion_pct: { type: string, pattern: '^\d{1,2}\.\d{1,6}$' }
+              numero_lote:
+                type: integer
+              unidad_precio:
+                type: string
+                enum:
+                - KG
+                - CABEZA
+              precio_unitario:
+                $ref: '#/components/schemas/Decimal4'
+              pesaje_base_id:
+                type: string
+                format: uuid
+              deduccion_pct:
+                type: string
+                pattern: ^\d{1,2}\.\d{1,6}$
     EdicionBorrador:
       type: object
+      required:
+      - lotes
       properties:
-        lotes: { type: array, items: { type: object } }
-        version: { $ref: '#/components/schemas/Version' }
-        acordar: { type: boolean }
+        lotes:
+          type: array
+          minItems: 1
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/LoteCompraInput'
+            - $ref: '#/components/schemas/LoteVentaInput'
+        acordar:
+          type: boolean
+        requiere_recepcion:
+          type: boolean
     PesajeNuevo:
       type: object
-      required: [numero_lote, modo, neto, pesado_en, animales]
+      required:
+      - numero_lote
+      - modo
+      - neto
+      - pesado_en
+      - animales
       properties:
-        numero_lote: { type: integer }
-        modo: { type: string, enum: [BRUTO_TARA, NETO_REPORTADO] }
-        bruto: { $ref: '#/components/schemas/Peso' }
-        tara: { $ref: '#/components/schemas/Peso' }
-        neto: { $ref: '#/components/schemas/Peso' }
-        ticket_folio: { type: string }
-        pesado_en: { type: string, format: date-time }
-        documento_id: { type: string, format: uuid }
+        numero_lote:
+          type: integer
+        modo:
+          type: string
+          enum:
+          - BRUTO_TARA
+          - NETO_REPORTADO
+        bruto:
+          $ref: '#/components/schemas/Peso'
+        tara:
+          $ref: '#/components/schemas/Peso'
+        neto:
+          $ref: '#/components/schemas/Peso'
+        ticket_folio:
+          type: string
+        pesado_en:
+          type: string
+          format: date-time
+        documento_id:
+          type: string
+          format: uuid
         animales:
           type: array
           items:
             type: object
-            required: [animal_id]
+            required:
+            - animal_id
             properties:
-              animal_id: { type: string, format: uuid }
-              peso_individual: { $ref: '#/components/schemas/Peso' }
+              animal_id:
+                type: string
+                format: uuid
+              peso_individual:
+                anyOf:
+                - $ref: '#/components/schemas/Peso'
+                - type: 'null'
+                description: Null identifica un peso individual no medido; no se infiere del total.
+    PesajeCorreccion:
+      allOf:
+      - $ref: '#/components/schemas/PesajeNuevo'
+      - type: object
+        required: [motivo]
+        properties:
+          motivo:
+            type: string
+            minLength: 1
+            maxLength: 200
+            description: Motivo conservado en auditoría; el original se identifica por la ruta.
+          corrige_a_id:
+            type: string
+            format: uuid
+            description: Si se envía, debe coincidir con pesajeId de la ruta.
     Pesaje:
       allOf:
-        - $ref: '#/components/schemas/PesajeNuevo'
-        - type: object
-          properties:
-            id: { type: string, format: uuid }
-            estado: { type: string, enum: [PROPUESTA, APROBADO, CORREGIDO] }
-            fuente: { type: string, enum: [MANUAL, CSV, OCR, FDW] }
+      - $ref: '#/components/schemas/PesajeNuevo'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          estado:
+            type: string
+            enum:
+            - PROPUESTA
+            - APROBADO
+            - CORREGIDO
+          motivo_correccion:
+            type: [string, 'null']
+            maxLength: 200
+          corrige_a_id:
+            type: [string, 'null']
+            format: uuid
+          fuente:
+            type: string
+            enum:
+            - MANUAL
+            - CSV
+            - OCR
+            - FDW
     Reserva:
       type: object
       properties:
-        id: { type: string, format: uuid }
-        posicion_id: { type: string, format: uuid }
-        estado: { type: string, enum: [ACTIVA, CONSUMIDA, LIBERADA, EXPIRADA] }
-        vence_en: { type: string, format: date-time }
+        id:
+          type: string
+          format: uuid
+        posicion_id:
+          type: string
+          format: uuid
+        estado:
+          type: string
+          enum:
+          - ACTIVA
+          - CONSUMIDA
+          - LIBERADA
+          - EXPIRADA
+        vence_en:
+          type: string
+          format: date-time
     Posicion:
       type: object
       properties:
-        id: { type: string, format: uuid }
-        animal_id: { type: string, format: uuid }
-        numero_ciclo: { type: integer }
-        estado: { $ref: '#/components/schemas/EstadoPosicion' }
-        reservada: { type: boolean, description: Derivado de una reserva ACTIVA }
-        costo_vigente: { $ref: '#/components/schemas/Dinero' }
+        id:
+          type: string
+          format: uuid
+        animal_id:
+          type: string
+          format: uuid
+        numero_ciclo:
+          type: integer
+        estado:
+          $ref: '#/components/schemas/EstadoPosicion'
+        reservada:
+          type: boolean
+          description: Derivado de una reserva ACTIVA
+        costo_vigente:
+          $ref: '#/components/schemas/Dinero'
     Liquidacion:
       type: object
       properties:
-        id: { type: string, format: uuid }
-        operacion_id: { type: string, format: uuid }
-        direccion: { type: string, enum: [POR_PAGAR, POR_COBRAR] }
-        total: { $ref: '#/components/schemas/Dinero' }
-        ajustes_cargo: { $ref: '#/components/schemas/Dinero' }
-        ajustes_abono: { $ref: '#/components/schemas/Dinero' }
-        aplicaciones_netas: { $ref: '#/components/schemas/Dinero' }
-        saldo: { $ref: '#/components/schemas/Dinero' }
-        vence_el: { type: string, format: date }
+        id:
+          type: string
+          format: uuid
+        operacion_id:
+          type: string
+          format: uuid
+        direccion:
+          type: string
+          enum:
+          - POR_PAGAR
+          - POR_COBRAR
+        total:
+          $ref: '#/components/schemas/Dinero'
+        ajustes_cargo:
+          $ref: '#/components/schemas/Dinero'
+        ajustes_abono:
+          $ref: '#/components/schemas/Dinero'
+        aplicaciones_netas:
+          $ref: '#/components/schemas/Dinero'
+        saldo:
+          $ref: '#/components/schemas/Dinero'
+        vence_el:
+          type: string
+          format: date
         conceptos:
           type: array
           items:
             type: object
             properties:
-              numero: { type: integer }
-              tipo: { type: string, enum: [BASE, CARGO, BONIFICACION, DEDUCCION] }
-              cantidad: { type: string }
-              unidad: { type: string, enum: [KG, CABEZA, MXN] }
-              precio_unitario: { $ref: '#/components/schemas/Decimal4' }
-              importe: { $ref: '#/components/schemas/Dinero' }
+              numero:
+                type: integer
+              tipo:
+                type: string
+                enum:
+                - BASE
+                - CARGO
+                - BONIFICACION
+                - DEDUCCION
+              cantidad:
+                type: string
+              unidad:
+                type: string
+                enum:
+                - KG
+                - CABEZA
+                - MXN
+              precio_unitario:
+                $ref: '#/components/schemas/Decimal4'
+              importe:
+                $ref: '#/components/schemas/Dinero'
     GastoNuevo:
       type: object
-      required: [operacion_id, naturaleza, clasificacion, importe, concepto, fecha_economica]
+      required:
+      - operacion_id
+      - naturaleza
+      - clasificacion
+      - importe
+      - concepto
+      - fecha_economica
+      - periodo_id
+      - fecha_reconocimiento
       properties:
-        operacion_id: { type: string, format: uuid }
-        naturaleza: { type: string, enum: [COSTO, BONIFICACION] }
-        clasificacion: { type: string, enum: [CAPITALIZABLE, DIRECTO_VENTA, OTRO] }
-        importe: { $ref: '#/components/schemas/Dinero' }
-        concepto: { type: string, maxLength: 160 }
-        proveedor_parte_id: { type: string, format: uuid }
-        referencia_origen: { type: string, maxLength: 60 }
-        bonifica_gasto_id: { type: string, format: uuid }
-        fecha_economica: { type: string, format: date }
+        operacion_id:
+          type: string
+          format: uuid
+        naturaleza:
+          type: string
+          enum:
+          - COSTO
+          - BONIFICACION
+        clasificacion:
+          type: string
+          enum:
+          - CAPITALIZABLE
+          - DIRECTO_VENTA
+          - OTRO
+        importe:
+          $ref: '#/components/schemas/Dinero'
+        concepto:
+          type: string
+          maxLength: 160
+        proveedor_parte_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        referencia_origen:
+          type:
+          - string
+          - 'null'
+          maxLength: 60
+        bonifica_gasto_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        fecha_economica:
+          type: string
+          format: date
+        periodo_id: *id001
+        fecha_reconocimiento: *id002
+        snapshot_id: *id006
     Asignacion:
       type: object
       properties:
-        posicion_id: { type: string, format: uuid }
-        base_valor: { type: string }
-        importe: { $ref: '#/components/schemas/Dinero' }
-        destino: { type: string, enum: [INVENTARIO, COSTO_VENTA, PERDIDA] }
+        posicion_id:
+          type: string
+          format: uuid
+        base_valor:
+          type: string
+        importe:
+          $ref: '#/components/schemas/Dinero'
+        destino:
+          type: string
+          enum:
+          - INVENTARIO
+          - COSTO_VENTA
+          - PERDIDA
     PagoNuevo:
       type: object
-      required: [parte_id, tipo, importe, metodo, recibido_el]
+      required:
+      - parte_id
+      - tipo
+      - importe
+      - metodo
+      - recibido_el
       properties:
-        parte_id: { type: string, format: uuid }
-        tipo: { type: string, enum: [COBRO, PAGO] }
-        importe: { $ref: '#/components/schemas/Dinero' }
-        metodo: { type: string, enum: [TRANSFERENCIA, EFECTIVO, CHEQUE, OTRO] }
-        referencia: { type: string, maxLength: 60 }
-        recibido_el: { type: string, format: date }
+        parte_id:
+          type: string
+          format: uuid
+        tipo:
+          type: string
+          enum:
+          - COBRO
+          - PAGO
+        importe:
+          $ref: '#/components/schemas/Dinero'
+        metodo:
+          type: string
+          enum:
+          - TRANSFERENCIA
+          - EFECTIVO
+          - CHEQUE
+          - OTRO
+        referencia:
+          type:
+          - string
+          - 'null'
+          maxLength: 60
+        recibido_el:
+          type: string
+          format: date
     Pago:
       allOf:
-        - $ref: '#/components/schemas/PagoNuevo'
-        - type: object
-          properties:
-            id: { type: string, format: uuid }
-            estado: { type: string, enum: [REGISTRADO, VALIDADO, REVERTIDO] }
-            aplicado: { $ref: '#/components/schemas/Dinero' }
-            reembolsado: { $ref: '#/components/schemas/Dinero' }
-            disponible: { $ref: '#/components/schemas/Dinero' }
+      - $ref: '#/components/schemas/PagoNuevo'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          estado:
+            type: string
+            enum:
+            - REGISTRADO
+            - VALIDADO
+            - REVERTIDO
+          aplicado:
+            $ref: '#/components/schemas/Dinero'
+          reembolsado:
+            $ref: '#/components/schemas/Dinero'
+          disponible:
+            $ref: '#/components/schemas/Dinero'
+          naturaleza:
+            type: string
+            enum:
+            - NORMAL
+            - REEMBOLSO
+          periodo_id:
+            type:
+            - string
+            - 'null'
+            format: uuid
+          fecha_reconocimiento:
+            type:
+            - string
+            - 'null'
+            format: date
     Documento:
       type: object
       properties:
-        id: { type: string, format: uuid }
-        tipo_documental: { type: string }
-        sha256: { type: string, pattern: '^[0-9a-f]{64}$' }
-        tamano_bytes: { type: integer }
-        mime: { type: string }
-        version: { type: integer }
+        id:
+          type: string
+          format: uuid
+        tipo_documental:
+          type: string
+        sha256:
+          type: string
+          pattern: ^[0-9a-f]{64}$
+        tamano_bytes:
+          type: integer
+        mime:
+          type: string
+        version:
+          type: integer
     ReporteCartera:
       type: object
+      required: [corte_en, etiqueta, fuente_consulta, antiguedad_replica_segundos, filas, pagina, tamano, total]
       properties:
-        corte_en: { type: string, format: date-time }
-        antiguedad_replica_segundos: { type: integer, description: 'null si los datos son del nodo dueño' }
+        corte_en:
+          type: string
+          format: date-time
+        etiqueta:
+          type: string
+          enum: [ACTUALIZADO]
+        fuente_consulta:
+          type: string
+          enum: [PROPIETARIO, REPLICA]
+        antiguedad_replica_segundos:
+          type: [integer, 'null']
+          description: 0 para lectura propietaria; null si la medida de réplica es desconocida.
+        pagina:
+          type: integer
+          minimum: 1
+        tamano:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+          minimum: 0
         filas:
           type: array
           items:
             type: object
+            required: [liquidacion_id, contraparte, saldo, vence_el, dias_vencida]
             properties:
-              liquidacion_id: { type: string, format: uuid }
-              contraparte: { type: string }
-              saldo: { $ref: '#/components/schemas/Dinero' }
-              vence_el: { type: string, format: date }
-              dias_vencida: { type: integer }
+              liquidacion_id:
+                type: string
+                format: uuid
+              contraparte:
+                type: string
+              saldo:
+                $ref: '#/components/schemas/Dinero'
+              vence_el:
+                type: [string, 'null']
+                format: date
+              dias_vencida:
+                type: [integer, 'null']
     ReporteMargen:
       type: object
+      required: [corte_en, etiqueta, fuente_consulta, antiguedad_replica_segundos, venta_neta, costo_vendido, gastos_directos, margen, perdidas, faltantes]
       properties:
-        corte_en: { type: string, format: date-time }
-        etiqueta: { type: string, enum: [PROVISIONAL, ACTUALIZADO, CERRADO] }
-        venta_neta: { $ref: '#/components/schemas/Dinero' }
-        costo_vendido: { $ref: '#/components/schemas/Dinero' }
-        gastos_directos: { $ref: '#/components/schemas/Dinero' }
-        margen: { $ref: '#/components/schemas/Dinero' }
-        perdidas: { $ref: '#/components/schemas/Dinero' }
-        faltantes: { type: array, items: { type: string } }
+        corte_en:
+          type: string
+          format: date-time
+        etiqueta:
+          type: string
+          enum: [PROVISIONAL, ACTUALIZADO, CERRADO]
+        fuente_consulta:
+          type: string
+          enum: [PROPIETARIO, REPLICA]
+        antiguedad_replica_segundos:
+          type: [integer, 'null']
+          description: 0 para lectura propietaria; null si la medida de réplica es desconocida.
+        venta_neta:
+          $ref: '#/components/schemas/Dinero'
+        costo_vendido:
+          $ref: '#/components/schemas/Dinero'
+        gastos_directos:
+          $ref: '#/components/schemas/Dinero'
+        margen:
+          $ref: '#/components/schemas/Dinero'
+        perdidas:
+          $ref: '#/components/schemas/Dinero'
+        faltantes:
+          type: array
+          items:
+            type: string
     TarifaExterna:
       type: object
       properties:
-        fuente: { type: string, examples: ['Proveedor Simulado (sintético)'] }
-        ruta: { type: string }
-        precio: { $ref: '#/components/schemas/Decimal4' }
-        unidad: { type: string }
-        vigente_desde: { type: string, format: date }
-        version: { type: integer }
+        fuente:
+          type: string
+          examples:
+          - Proveedor Simulado (sintético)
+        ruta:
+          type: string
+        precio:
+          $ref: '#/components/schemas/Decimal4'
+        unidad:
+          type: string
+        vigente_desde:
+          type: string
+          format: date
+        version:
+          type: integer
+    Csrf:
+      type: object
+      required:
+      - token
+      - headerName
+      properties:
+        token:
+          type: string
+        headerName:
+          type: string
+    Reconocimiento:
+      type: object
+      required:
+      - periodo_id
+      - fecha_reconocimiento
+      properties:
+        periodo_id: *id001
+        fecha_reconocimiento: *id002
+    LoteCompraInput:
+      type: object
+      required:
+      - numero_lote
+      - animales
+      - unidad_precio
+      - precio_unitario
+      properties:
+        numero_lote: &id007
+          type: integer
+          minimum: 1
+        descripcion: &id008
+          type: string
+          maxLength: 120
+        animales:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: *id001
+        unidad_precio: &id009
+          type: string
+          enum:
+          - KG
+          - CABEZA
+        precio_unitario: &id010
+          $ref: '#/components/schemas/Decimal4'
+        pesaje_base_id: *id001
+        deduccion_pct: &id011
+          type: string
+          pattern: ^\d{1,2}\.\d{1,6}$
+        cargos_pactados: &id012
+          $ref: '#/components/schemas/Decimal2'
+        bonificaciones_pactadas: &id013
+          $ref: '#/components/schemas/Decimal2'
+    LoteVentaInput:
+      type: object
+      required:
+      - numero_lote
+      - posiciones
+      - unidad_precio
+      - precio_unitario
+      properties:
+        numero_lote: *id007
+        descripcion: *id008
+        unidad_precio: *id009
+        precio_unitario: *id010
+        pesaje_base_id: *id001
+        deduccion_pct: *id011
+        cargos_pactados: *id012
+        bonificaciones_pactadas: *id013
+        posiciones:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: *id001
+    DistribucionInput:
+      type: object
+      required:
+      - metodo
+      - periodo_id
+      - fecha_reconocimiento
+      properties:
+        metodo:
+          type: string
+          enum:
+          - POR_CABEZA
+          - POR_PESO_MEDIDO
+          - IMPORTE_INDIVIDUAL
+        periodo_id: *id001
+        fecha_reconocimiento:
+          type: string
+          format: date
+        asignaciones:
+          type: array
+          items:
+            type: object
+            required:
+            - posicion_id
+            - importe
+            properties:
+              posicion_id: *id001
+              importe:
+                $ref: '#/components/schemas/Decimal2'
+    Gasto:
+      allOf:
+      - $ref: '#/components/schemas/GastoNuevo'
+      - type: object
+        required: []
+        properties:
+          gasto_id: *id001
+          estado:
+            type: string
+            enum:
+            - BORRADOR
+            - APROBADO
+    ResultadoComando:
+      type: object
+      properties:
+        id: *id004
+        version_lock:
+          type: integer
+          minimum: 0
+    OperacionNueva:
+      type: object
+      required:
+      - tipo
+      - parte_id
+      - fecha_operacion
+      properties:
+        tipo:
+          type: string
+          enum:
+          - COMPRA
+          - VENTA
+        parte_id:
+          type: string
+          format: uuid
+        fecha_operacion:
+          type: string
+          format: date
+        requiere_recepcion:
+          type: boolean
+          default: false
+          description: 'En compra: conserva la posición pendiente de recepción física cuando es true.'
+        lotes:
+          type: array
+          minItems: 1
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/LoteCompraInput'
+            - $ref: '#/components/schemas/LoteVentaInput'
+    Usuario:
+      type: object
+      required:
+      - id
+      - nombre
+      - login
+      - estado
+      properties:
+        id: *id004
+        nombre: *id005
+        login: *id005
+        estado:
+          type: string
+          enum:
+          - ACTIVO
+          - BLOQUEADO
+        roles:
+          type: array
+          items:
+            type: string
+            enum:
+            - ADMIN
+            - OPERADOR
+            - CAJA
+            - AUDITOR
+    UsuarioNuevo:
+      type: object
+      required:
+      - login
+      - nombre
+      - contrasena
+      properties:
+        login:
+          type: string
+          minLength: 1
+          maxLength: 100
+        nombre:
+          type: string
+          minLength: 1
+          maxLength: 200
+        contrasena:
+          type: string
+          minLength: 1
+          maxLength: 72
+          writeOnly: true
+          description: Máximo 72 bytes UTF-8 para bcrypt; no se devuelve.
+    Periodo:
+      type: object
+      required:
+      - id
+      - desde
+      - hasta
+      - estado
+      properties:
+        id: *id004
+        fecha_inicio: *id003
+        fecha_fin: *id003
+        estado:
+          type: string
+          enum:
+          - ABIERTO
+          - CERRADO
+        desde:
+          type: string
+          format: date
+        hasta:
+          type: string
+          format: date
+    Predio:
+      type: object
+      required:
+      - id
+      - nombre
+      properties:
+        id: *id004
+        nombre: *id005
+        municipio: *id005
+        entidad_federativa: *id005
+        parte_responsable_id: *id004
+    PredioNuevo:
+      type: object
+      required:
+      - nombre
+      properties:
+        nombre: *id005
+        municipio: *id005
+        entidad_federativa: *id005
+        parte_responsable_id: *id004
+        clave_upp_declarada: *id005
+    CierreVersion:
+      type: object
+      required:
+      - numero_version
+      - periodo_id
+      properties:
+        numero_version:
+          type: integer
+        periodo_id: *id004
+        totales:
+          type: object
+          additionalProperties: true
+        corte_en:
+          type: string
+          format: date-time
+        tipo:
+          type: string
+          enum:
+          - CIERRE
+          - REAPERTURA
+    CalculoLote:
+      type: object
+      properties:
+        numero_lote:
+          type: integer
+        cantidad:
+          type: string
+        unidad:
+          type: string
+          enum:
+          - KG
+          - CABEZA
+        precio:
+          $ref: '#/components/schemas/Decimal4'
+        base:
+          $ref: '#/components/schemas/Dinero'
+        total:
+          $ref: '#/components/schemas/Dinero'
+    TarifaCapturada:
+      allOf:
+      - $ref: '#/components/schemas/TarifaExterna'
+      - type: object
+        required:
+        - snapshot_id
+        - hash_sha256
+        - fuente
+        - ruta
+        - precio
+        - unidad
+        - capturado_en
+        properties:
+          snapshot_id: *id006
+          hash_sha256:
+            type: string
+            pattern: ^[0-9a-f]{64}$
+          fuente:
+            type: string
+            enum:
+            - DEMO_PROVEEDOR_SIMULADO
+          ruta:
+            type: string
+          precio:
+            $ref: '#/components/schemas/Dinero'
+          unidad:
+            type: string
+          version:
+            type: integer
+          capturado_en:
+            type: string
+            format: date-time
+    DiagnosticoProceso:
+      type: object
+      required:
+      - proceso
+      - comandos
+      - consultas
+      - pools
+      - sincronizacion
+      - capturado_en
+      properties:
+        proceso:
+          type: object
+          required:
+          - iniciado_en
+          - contadores_se_reinician
+          properties:
+            iniciado_en:
+              type: string
+              format: date-time
+            contadores_se_reinician:
+              type: boolean
+              const: true
+        comandos:
+          type: object
+          required:
+          - completados
+          - errores
+          - duracion_total_ms
+          properties:
+            completados: &id014
+              type: integer
+              minimum: 0
+            errores: *id014
+            duracion_total_ms: *id014
+        consultas:
+          type: object
+          required:
+          - total
+          - errores
+          - lentas
+          - umbral_lenta_ms
+          - duracion_total_ms
+          properties:
+            total: *id014
+            errores: *id014
+            lentas: *id014
+            umbral_lenta_ms: *id014
+            duracion_total_ms: *id014
+        pools:
+          type: object
+          additionalProperties:
+            type: object
+            required:
+            - activos
+            - inactivos
+            - esperando
+            - maximo
+            properties:
+              activos: *id014
+              inactivos: *id014
+              esperando: *id014
+              maximo: *id014
+        sincronizacion:
+          type: object
+          description: 'Estado SQL observado; antigüedad desconocida se mantiene null. Si falla dependencia:
+            estadoNO_DISPONIBLE y código público.'
+        capturado_en:
+          type: string
+          format: date-time

@@ -1,5 +1,7 @@
 # Plan de ejecución (aprobado 2026-10-10)
 
+Documento histórico del 10-10-2026. El encargo activo y cola actual están en [execution-plan](../implementation/execution-plan.md). El estado inicial vacío y la antigua propuesta de exención de hooks no describen el entorno actual ni autorizan bypass.
+
 Copia del plan aprobado en la sesión de Claude Code. El estado vivo está en `docs/status.md` y `docs/project/backlog.md`.
 
 

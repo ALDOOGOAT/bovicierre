@@ -1,0 +1,13 @@
+{
+  "dataset": "DEMO-2026-10-V1",
+  "compra_id": "01a12c92-d7c0-7d48-8bf2-7e7d9ec4549a",
+  "venta_id": "01a12c92-d7eb-7281-8334-3c3e294c704e",
+  "pago_id": "01a12c92-d7fa-712e-9ae3-2bd22650bea3",
+  "sql_verificado": {
+    "inventario": "2200.00",
+    "costo_venta": "1100.00",
+    "margen": "500.00",
+    "saldo_venta": "1200.00",
+    "anticipo": "200.00"
+  }
+}

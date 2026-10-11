@@ -1,21 +1,19 @@
-# POO, SOLID y patrones
+# POO, responsabilidades y patrones ejecutados
 
-Estado: **diseño**. No existe código aún; la columna "Archivo" indica la ubicación prevista y se reemplazará por la ruta real con línea al implementar (TASK-A-008 en adelante). No se atribuye SOLID por usar Spring.
+Estado: implementación local en Java21. Las rutas de esta tabla existen; no se atribuyen clases o estrategias de Java que sólo figuraban en el diseño. El cálculo confirmado es SQL canónico y se prueba con PostgreSQL real.
 
-| Principio / patrón | Uso concreto previsto | Archivo previsto | Cómo se verifica |
-|---|---|---|---|
-| Encapsulación | `PosicionInventario` y `Liquidacion` exponen métodos de transición (`reservar`, `venderPendienteEntrega`, `darDeBaja`), sin setters públicos de estado | `backend/src/main/java/.../inventario/domain/PosicionInventario.java` | Prueba unitaria: transición inválida lanza excepción de dominio |
-| Value Object | `Money` (BigDecimal escala 2, HALF_UP, moneda), `PesoKg` (escala 3, > 0), `IdentificadorAnimal` (sistema + código normalizado), `Periodo` | `.../shared/domain/` | Pruebas: escala, igualdad por valor, rechazo de negativos/NaN |
-| SRP | Cálculo (SQL canónico), persistencia (adaptador JDBC), autorización (application), PDF (adaptador) separados | módulos `liquidaciones/*` | Revisión de dependencias entre paquetes |
-| OCP | `EstrategiaBaseLiquidable` (POR_KG, POR_CABEZA) y `EstrategiaReparto` (POR_CABEZA, POR_PESO_MEDIDO, IMPORTE_INDIVIDUAL) seleccionadas por condición | `.../liquidaciones/domain/estrategias/` | Agregar estrategia sin tocar el controlador |
-| LSP | `DocumentStorage` local y privado cumplen el mismo contrato de errores | `.../evidencia/adapters/out/` | Prueba de contrato compartida |
-| ISP | Puertos pequeños: `ConsultaInventario`, `ComandosVenta`, `DocumentStorage` | `.../application/port/` | Sin repositorio genérico gigante |
-| DIP | Casos de uso dependen de puertos; JDBC inyectado | `.../application/` | Pruebas de caso de uso con dobles |
-| Repository / Query Object | SQL parametrizado explícito por agregado/consulta (JdbcTemplate) | `.../adapters/out/jdbc/` | Pruebas Testcontainers |
-| Strategy | Ver OCP | — | Pruebas por estrategia con vectores GOLD |
-| State | Enum de estados + tabla de transiciones permitidas para Operación/Reserva/Periodo | `.../operaciones/domain/EstadoOperacion.java` | Prueba de matriz de transiciones |
-| Adapter | Almacenamiento de archivos, FDW (vía SQL), OCR opcional | `.../adapters/out/` | Formato externo no entra al dominio |
-| Transactional Outbox | Insert en `evento_outbox` dentro del comando SQL; despachador separado; inbox deduplica | `db/migrations/`, `.../integraciones/` | TEST-24 |
+| Concepto | Código real | Comportamiento y evidencia |
+|---|---|---|
+| Encapsulación/composición | `backend/src/main/java/mx/bovicierre/shared/CommandService.java` | Campos privados de autorización, JDBC y transacciones; selecciona un único propietario. Compone servicios y no expone pools al HTTP. `ApiPostgresTest` recorre compra/venta/aplicación. |
+| Responsabilidad de entrada | `operaciones/CoreController.java`, `shared/JsonSupport.java` | HTTP/ETag/Idempotency-Key y validación decimal separados de los cálculos SQL. Dinero llega como cadena, se valida con BigDecimal; no se recalculan importes mediante double. `ContractTest`. |
+| Puerto y adaptador, DIP | `evidencia/application/DocumentStorage.java`, `evidencia/PrivateDocuments.java` | Controller depende del puerto. El adaptador local valida contenido real, hace staging y conserva un bloqueo hasta commit; `PrivateDocumentsTest` comprueba edad, referencias y limpieza segura. No se inventa un segundo almacenamiento para demostrar polimorfismo. |
+| Transacción por propietario | `shared/CommandService.java`, `db/migrations/V2__comandos.sql` y evoluciones | Una TransactionTemplate del dueño, parámetros SQL y hasta tres intentos ante 40001/40P01. Autorización en A ocurre antes y no pertenece a la transacción B. Testcontainers prueba replay/conflicto/rollback en BD nueva. |
+| Outbox/inbox | `integraciones/OutboxWorker.java`, `db/migrations/` | Hecho/outbox juntos, entrega con lease local y llamada A fuera de lock financiero B; inbox deduplica. Academic prueba muerte B y acuse repetido sin duplicar pérdida. |
+| Adaptador de presentación | `evidencia/SettlementPdf.java`, `reportes/CsvController.java`, `evidencia/AnimalQrController.java` | PDF controlado, CSV protege fórmulas y QR apunta a ruta autenticada. Pruebas `SettlementPdfTest`, `ExportTest`; recorrido UI real descarga/QR/refresh. |
+| Autorización y sesión | `acceso/AccessService.java`, `SecurityConfiguration.java` | Roles vigentes consultados en A, CSRF y sesión JDBC central. Prueba HTTP sesión/scope y auditor UI con mutación403. No se presenta como RLS por usuario de BD. |
 
-## Regla de cálculo único
-Los importes que se confirman los calcula la función SQL canónica (`fn_calcular_liquidacion`); la previsualización llama la misma función sin persistir. Java valida y presenta resultados con `Money`; si alguna fórmula se replica en Java, comparte los vectores GOLD como prueba de equivalencia.
+## Límites deliberados
+
+Los módulos pequeños mantienen paquetes por responsabilidad, con controllers HTTP y un servicio JDBC compartido; no hay una interfaz por tabla ni setters de estados económicos. Las transiciones y las estrategias kg/cabeza/reparto viven en SQL para mantener una única autoridad. `Money`, `PesoKg` y repositorios separados previstos originalmente no existen como clases: el contrato decimal y PostgreSQL protegen precisión y estados. No se afirma OCP/LSP de todo el programa por usar Spring ni se simula herencia de animales.
+
+La revisión académica humana del estilo y la interpretación exacta del temario siguen pendientes. [Evidencia de ejecución](../testing/evidence.md) y [guion](../testing/demo-script.md).

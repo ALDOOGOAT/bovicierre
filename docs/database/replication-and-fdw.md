@@ -48,7 +48,7 @@ Cada nodo publica la **lista explícita** (no `FOR ALL TABLES`). Como cada fila 
 |---|---|
 | Sólo se corta la replicación | Cada sede opera sus recursos ya registrados con sesión válida; consolidados muestran antigüedad; slots retienen WAL hasta `max_slot_wal_keep_size` |
 | Cae B | Comandos de sede B → 503 (BV501); A sigue |
-| Cae A | Sin login nuevo ni maestros nuevos (identidades pendientes); B opera sus recursos con sesiones existentes; **no** se promueve B |
+| Cae A | Nuevas solicitudes autenticadas A/B503 por sesiones/autorización centralesA (ADR-013); una transacción B ya autorizada puede terminar. Sin promociónB |
 | Slot invalidado (`wal_status = lost`) | Resincronización controlada (`docs/runbooks/replication-recovery.md`) |
 Pruebas: TEST-21, TEST-22, TEST-23, TEST-24.
 

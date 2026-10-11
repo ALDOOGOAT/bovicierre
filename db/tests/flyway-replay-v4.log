@@ -1,0 +1,71 @@
+Oct 11, 2026 2:01:01 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 2:01:01 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 5 migrations (execution time 00:00.026s)
+Oct 11, 2026 2:01:01 PM org.flywaydb.core.internal.command.DbMigrate migrateGroup
+INFO: Current version of schema "infra": 3
+Oct 11, 2026 2:01:01 PM org.flywaydb.core.internal.command.DbMigrate doMigrateGroup
+INFO: Migrating schema "infra" to version "4 - capturas proveedor dto"
+Oct 11, 2026 2:01:01 PM org.flywaydb.core.internal.command.DbMigrate applyMigrations
+SEVERE: Migration of schema "infra" to version "4 - capturas proveedor dto" failed! Changes successfully rolled back.
+Exception in thread "main" org.flywaydb.core.internal.exception.FlywayMigrateException: Failed to execute script V4__capturas_proveedor_dto.sql
+-------------------------------------------------------
+SQL State  : 42501
+Error Code : 0
+Message    : ERROR: must be owner of function cmd_ejecutar
+Location   : /home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/db/migrations/V4__capturas_proveedor_dto.sql (/home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/db/migrations/V4__capturas_proveedor_dto.sql)
+Line       : 27
+Statement  : Run Flyway with -X option to see the actual statement causing the problem
+
+	at org.flywaydb.core.internal.command.DbMigrate.doMigrateGroup(DbMigrate.java:461)
+	at org.flywaydb.core.internal.command.DbMigrate.lambda$applyMigrations$1(DbMigrate.java:325)
+	at org.flywaydb.core.internal.jdbc.TransactionalExecutionTemplate.execute(TransactionalExecutionTemplate.java:60)
+	at org.flywaydb.core.internal.command.DbMigrate.applyMigrations(DbMigrate.java:324)
+	at org.flywaydb.core.internal.command.DbMigrate.migrateGroup(DbMigrate.java:287)
+	at org.flywaydb.core.internal.command.DbMigrate.lambda$migrateAll$0(DbMigrate.java:158)
+	at org.flywaydb.database.postgresql.PostgreSQLAdvisoryLockTemplate.execute(PostgreSQLAdvisoryLockTemplate.java:80)
+	at org.flywaydb.database.postgresql.PostgreSQLAdvisoryLockTemplate.lambda$execute$0(PostgreSQLAdvisoryLockTemplate.java:63)
+	at org.flywaydb.core.internal.jdbc.TransactionalExecutionTemplate.execute(TransactionalExecutionTemplate.java:60)
+	at org.flywaydb.database.postgresql.PostgreSQLAdvisoryLockTemplate.execute(PostgreSQLAdvisoryLockTemplate.java:63)
+	at org.flywaydb.database.postgresql.PostgreSQLConnection.lock(PostgreSQLConnection.java:108)
+	at org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory.lock(JdbcTableSchemaHistory.java:177)
+	at org.flywaydb.core.internal.command.DbMigrate.migrateAll(DbMigrate.java:158)
+	at org.flywaydb.core.internal.command.DbMigrate.migrate(DbMigrate.java:110)
+	at org.flywaydb.core.Flyway.lambda$migrate$2(Flyway.java:244)
+	at org.flywaydb.core.FlywayExecutor.execute(FlywayExecutor.java:241)
+	at org.flywaydb.core.FlywayExecutor.execute(FlywayExecutor.java:124)
+	at org.flywaydb.core.Flyway.migrate(Flyway.java:178)
+	at mx.bovicierre.Migrate.main(Migrate.java:15)
+Caused by: org.flywaydb.core.internal.sqlscript.FlywaySqlScriptException: Failed to execute script V4__capturas_proveedor_dto.sql
+-------------------------------------------------------
+SQL State  : 42501
+Error Code : 0
+Message    : ERROR: must be owner of function cmd_ejecutar
+Location   : /home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/db/migrations/V4__capturas_proveedor_dto.sql (/home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/db/migrations/V4__capturas_proveedor_dto.sql)
+Line       : 27
+Statement  : Run Flyway with -X option to see the actual statement causing the problem
+
+	at org.flywaydb.core.internal.proprietaryStubs.ErrorOverridesSupportStub.handleException(ErrorOverridesSupportStub.java:42)
+	at org.flywaydb.core.internal.sqlscript.DefaultSqlScriptExecutor.handleException(DefaultSqlScriptExecutor.java:296)
+	at org.flywaydb.core.internal.sqlscript.DefaultSqlScriptExecutor.executeStatement(DefaultSqlScriptExecutor.java:257)
+	at org.flywaydb.core.internal.sqlscript.DefaultSqlScriptExecutor.execute(DefaultSqlScriptExecutor.java:148)
+	at org.flywaydb.core.internal.resolver.sql.SqlMigrationExecutor.executeOnce(SqlMigrationExecutor.java:76)
+	at org.flywaydb.core.internal.resolver.sql.SqlMigrationExecutor.lambda$execute$0(SqlMigrationExecutor.java:64)
+	at org.flywaydb.core.internal.database.DefaultExecutionStrategy.execute(DefaultExecutionStrategy.java:31)
+	at org.flywaydb.core.internal.resolver.sql.SqlMigrationExecutor.execute(SqlMigrationExecutor.java:63)
+	at org.flywaydb.core.internal.command.DbMigrate.doMigrateGroup(DbMigrate.java:450)
+	... 18 more
+Caused by: org.postgresql.util.PSQLException: ERROR: must be owner of function cmd_ejecutar
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2875)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2560)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:429)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:526)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:436)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:358)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:343)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:319)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:314)
+	at org.flywaydb.core.internal.jdbc.JdbcTemplate.executeStatement(JdbcTemplate.java:229)
+	at org.flywaydb.core.internal.sqlscript.ParsedSqlStatement.execute(ParsedSqlStatement.java:93)
+	at org.flywaydb.core.internal.sqlscript.DefaultSqlScriptExecutor.executeStatement(DefaultSqlScriptExecutor.java:248)
+	... 24 more

@@ -1,0 +1,11 @@
+{
+  "physical_outage_control": "root",
+  "down_status": 503,
+  "recovered_status": 200,
+  "provider_rows": 1,
+  "form_preserved": true,
+  "no_external_price_accepted_during_outage": true,
+  "synchronization_label": "ASINCRONA",
+  "business_writes_from_this_test": 0,
+  "authentication_post": true
+}

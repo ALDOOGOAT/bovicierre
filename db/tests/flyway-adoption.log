@@ -1,0 +1,39 @@
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory create
+INFO: Creating Schema History table "infra"."flyway_schema_history" with baseline ...
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbBaseline baseline
+INFO: Successfully baselined schema with version: 3
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 4 migrations (execution time 00:00.019s)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbMigrate migrateGroup
+INFO: Current version of schema "infra": 3
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbMigrate logSummary
+INFO: Schema "infra" is up to date. No migration necessary.
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 4 migrations (execution time 00:00.008s)
+Flyway: migraciones=0; versión=null
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory create
+INFO: Creating Schema History table "infra"."flyway_schema_history" with baseline ...
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbBaseline baseline
+INFO: Successfully baselined schema with version: 3
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 4 migrations (execution time 00:00.020s)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbMigrate migrateGroup
+INFO: Current version of schema "infra": 3
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbMigrate logSummary
+INFO: Schema "infra" is up to date. No migration necessary.
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 1:58:59 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 4 migrations (execution time 00:00.006s)
+Flyway: migraciones=0; versión=null
+PASS comparación completa A/B; baseline3 adoptado

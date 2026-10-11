@@ -1,0 +1,10 @@
+PASS TEST-10 barrier race: exactly one reservation/confirmation
+PASS TEST-11 barrier race: 600 payment, one400, available200
+PASS TEST-21/23 bidirectional full-table counts and no duplicated audit/outbox
+PASS TEST-21 partition/reconnect original owner converges
+PASS death B/outbox/lease/A-inbox with lost acknowledgement deduplicated; loss1100
+PASS TEST33 deadidentity cannotrebuy; TEST23 explicit owner reconciliation0orphans/0imbalances
+PASS TEST-25 actual FDW12000 through Pgpool, UPDATE denied42501
+PASS runtime DML/DDL/replica-role denied
+PASS GOLD-10 barrier closure/cost=CERRADO documentaryfuture ignored; immutableclosure preserved
+PASS academic evidence {"database": "bovicierre_release_replay", "seconds": 1.121, "command_calls": 25, "tests": ["TEST-10", "TEST-11", "TEST-21", "TEST-23", "TEST-24", "TEST-25", "TEST-33", "TEST-09", "roles"], "dataset": {"animal": 12, "operacion": 18, "posicion_inventario": 7, "liquidacion": 10, "aplicacion_pago": 3, "evento_outbox": 76}}

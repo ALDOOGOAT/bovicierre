@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-11T21:51:03.516446+00:00",
+  "baseline": "af223fbbe6520dd123b37f9984e806ae10afcf9e",
+  "dirty": true,
+  "backend_final_tests": 24,
+  "frontend_unit_tests": 13,
+  "frontend_e2e": 16,
+  "gold_commands": 157,
+  "version_guard_commands": 22,
+  "logical_tables": 42,
+  "logical_fk": 83,
+  "catalog_a_b_errors": 0,
+  "openapi_warnings": 2,
+  "contract_exchanges": 17,
+  "compose_real_login": true,
+  "restore_migration": "V13",
+  "restore_seconds": 28.616,
+  "source_pause_seconds": 8.038,
+  "human_review": "pendiente",
+  "remote_push": false,
+  "limitations": [
+    "Sin cobertura universal ni certificación WCAG/lector de pantalla/teléfono físico",
+    "Benchmark QA moderado/cache caliente/sinHTTP/carga escritora; no SLO comercial",
+    "Mismo host sin PITR/backup externo/pérdida física",
+    "Históricos sin cambios conservan extracción semántica anterior",
+    "Profesor/rúbrica original, revisión humana, entrevistas y piloto pendientes"
+  ],
+  "weighing_report_commands": 66,
+  "benchmark_commands": 1901,
+  "benchmark_replay_commands": 1901,
+  "benchmark_reads": 800,
+  "benchmark_warmups": 100,
+  "benchmark_concurrency": [
+    1,
+    4
+  ],
+  "graph_status": "53documentos canónicos reinterpretados, caché y rutas verificadas",
+  "graph_nodes": 2507,
+  "graph_edges": 4877,
+  "graph_communities": 248,
+  "technical_task_states": {
+    "verificado_local": 52,
+    "pendiente_externo": 1,
+    "diferido": 2
+  },
+  "human_review_pending_tasks": 55
+}

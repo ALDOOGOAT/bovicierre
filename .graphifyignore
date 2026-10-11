@@ -12,3 +12,6 @@ node_modules/
 target/
 dist/
 docs/diagrams/exports/
+
+# Dependencias de skills ajenas al producto
+.agents/skills/

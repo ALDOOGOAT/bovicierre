@@ -1,0 +1,1 @@
+PASS TEST27 {"seconds": 1.744, "container_recreated": true, "old_container_id": "21bb7e65e045", "new_container_id": "866f97ecd863", "same_named_volume": "bovicierre-academic_pg-a", "equal": true, "source_data_preserved": true, "excluded_only_ephemeral_auth_sessions": true}

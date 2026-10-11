@@ -1,0 +1,1 @@
+PASS {"database": "bovicierre_release_replay", "seconds": 0.274, "command_calls": 12, "FDW_reader": "A", "capture_owner": "B", "B_provider_server_absent": true, "capture_hash_scope_checked": true, "snapshot_gasto_local_B": true, "fecha_patch_preserves_absent_and_updates_explicit": true, "vendibles_disponible_reserved_expired_pending_sale": true}

@@ -1,0 +1,54 @@
+server:
+  shutdown: graceful
+  address: ${BOVI_BIND_ADDRESS:127.0.0.1}
+  port: ${BOVI_API_PORT:18080}
+  servlet:
+    session:
+      cookie:
+        name: BOVI_SESSION
+        http-only: true
+        same-site: lax
+        secure: false
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+  task:
+    scheduling:
+      shutdown:
+        await-termination: true
+        await-termination-period: 30s
+  application:
+    name: bovicierre
+  session:
+    timeout: 30m
+    jdbc:
+      initialize-schema: never
+      table-name: infra.spring_session
+  servlet:
+    multipart:
+      max-file-size: 20971520B
+      max-request-size: 22020096B
+bovi:
+  database:
+    a:
+      url: ${BOVI_DB_A_URL:jdbc:postgresql://127.0.0.1:19999/bovicierre}
+      username: ${BOVI_DB_A_USER:bovi_app_a}
+      password: ${BOVI_DB_A_PASSWORD:}
+    b:
+      url: ${BOVI_DB_B_URL:jdbc:postgresql://127.0.0.1:19998/bovicierre}
+      username: ${BOVI_DB_B_USER:bovi_app_b}
+      password: ${BOVI_DB_B_PASSWORD:}
+    auth:
+      url: ${BOVI_AUTH_URL:jdbc:postgresql://127.0.0.1:15432/bovicierre}
+      username: ${BOVI_AUTH_USER:bovi_auth}
+      password: ${BOVI_AUTH_PASSWORD:}
+    worker-a:
+      url: ${BOVI_DB_A_URL:jdbc:postgresql://127.0.0.1:19999/bovicierre}
+      username: bovi_worker
+      password: ${BOVI_WORKER_PASSWORD:}
+    worker-b:
+      url: ${BOVI_DB_B_URL:jdbc:postgresql://127.0.0.1:19998/bovicierre}
+      username: bovi_worker
+      password: ${BOVI_WORKER_PASSWORD:}
+  documents: ${BOVI_DOCUMENTS_DIR:./var/private-documents}
+  outbox-enabled: ${BOVI_OUTBOX_ENABLED:true}

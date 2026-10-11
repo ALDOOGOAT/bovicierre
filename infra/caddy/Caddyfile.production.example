@@ -1,0 +1,20 @@
+# Preparación: requiere dominio/servidor/autorización; no se ejecuta en local.
+{
+	email {$TLS_CONTACT_EMAIL}
+	admin off
+}
+{$BOVI_DOMAIN} {
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+	handle /api/* {
+		reverse_proxy backend:18080
+	}
+	handle {
+		encode gzip
+		reverse_proxy frontend:8080
+	}
+}

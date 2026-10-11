@@ -1,0 +1,7 @@
+node_modules
+dist
+*.tsbuildinfo
+.env*
+tests
+tests_e2e
+playwright.config.ts

@@ -190,6 +190,7 @@ def l5_liquidaciones():
     p.une("liq", "recibe", "(0,N)")
     p.une("aju", "recibe", "(1,1)", total=True)
     p.atributos("aju", [("id", "k"), ("naturaleza", ""), ("monto", ""), ("motivo", "")], "right", dist=50)
+    p.recursiva("revierte_ajuste", "revierte", "aju", "original (0,1)", "reverso (0,1)", lado="bottom", dist=70)
 
     p.entidad("apl", "AplicacionPago", 1000, 160, dom="liq")
     p.relacion("abona", "abona a", 790, 150)

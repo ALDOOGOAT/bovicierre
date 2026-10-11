@@ -1,6 +1,6 @@
 # Modelo relacional (lógico)
 
-Estado: diseñado · 2026-10-10. Detalle de columnas por tabla en `data-dictionary.md`. Fuente única ejecutable del esquema: `tools/esquema/esquema.py` (42 tablas, 80 FK verificadas); diagrama completo: `docs/diagrams/exports/relacional-completo.pdf`. Abreviaturas sólo en este documento: **E** = `empresa_id`, **S** = `sucursal_id`. Claves subrayadas = PK; `UK` = clave candidata alterna; `→` = FK.
+Línea base de diseño: 2026-10-10; implementación y comparación local documentadas al 2026-10-11. Detalle de columnas por tabla en `data-dictionary.md`. Autoridad física: `db/migrations/`; representación lógica documental: `tools/esquema/esquema.py` (42 tablas, 83 FK declaradas; el resultado de comparación con A/B se registra en [evidencia](../testing/evidence.md)). El recuento no sustituye pruebas de CHECK, índices parciales, triggers y permisos. Diagrama completo: `docs/diagrams/exports/relacional-completo.pdf`. Abreviaturas sólo en este documento: **E** = `empresa_id`, **S** = `sucursal_id`. Claves subrayadas = PK; `UK` = restricción única; sólo es clave candidata si es mínima; `→` = FK.
 
 ## 1. Reglas de transformación MER → relacional
 | Construcción MER | Transformación aplicada | Ejemplo |
@@ -86,6 +86,6 @@ Identificadores técnicos: `uuid` generados con `uuidv7()` (PostgreSQL 18), orde
 | `folio_contador` añadida (soporte) | Folio interno por E/S/tipo/año bajo lock; puede tener huecos, no es fiscal |
 | `posicion_inventario.estado` sin RESERVADA; con PENDIENTE_RECEPCION, CERRADA_VENTA, BAJA | DEC-01..03 |
 | `animal.situacion` | DEC-04 |
-| `pago.tipo` incluye REEMBOLSO con `pago_origen_id` | Reembolso como dinero real (§8.3) |
+| `pago.naturaleza` separa NORMAL/REEMBOLSO de `tipo` COBRO/PAGO, con `pago_origen_id` | Reembolso como dinero real (§8.3) |
 | `asiento_valoracion` con deltas generados | Signo derivado de la clase |
 | `gasto_operacion.snapshot_fuente_externa` (jsonb) | RN-042: tarifa FDW aceptada |

@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'./tests_e2e',workers:1,fullyParallel:false,retries:0,timeout:240000,expect:{timeout:15000},reporter:'list',outputDir:'/tmp/bovicierre-playwright',use:{baseURL:process.env.BOVI_UI_TEST_URL||'http://127.0.0.1:15173',headless:false,viewport:{width:1440,height:1000},launchOptions:{executablePath:process.env.CHROME_BIN||'/usr/bin/google-chrome'},actionTimeout:15000,trace:'off',screenshot:'only-on-failure'}});

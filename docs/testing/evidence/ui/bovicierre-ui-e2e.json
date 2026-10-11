@@ -1,0 +1,23 @@
+{
+  "run": "mv4cq3oy",
+  "purchase": "01a12ced-2515-7d7e-9457-8fb326742d83",
+  "sale": "01a12ced-29f7-7d84-85ea-c2d9b22fd5e0",
+  "settlement": "01a12ced-2c57-70b7-90ce-9ec5e96ab19c",
+  "payment": "01a12ced-2dab-7741-bd71-ba23044f6fe9",
+  "atomic_adjustment": {
+    "saldo": "0.00",
+    "aplicaciones_netas": "900.00"
+  },
+  "document": "01a12ced-31a0-743a-a763-8c070c1adf59",
+  "document_download": true,
+  "document_review": true,
+  "keyboard_focus": {
+    "tag": "DIV",
+    "outline": "solid"
+  },
+  "real_filters": true,
+  "network_errors": [],
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ]
+}

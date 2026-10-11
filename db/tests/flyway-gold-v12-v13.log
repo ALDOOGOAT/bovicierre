@@ -1,0 +1,34 @@
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 14 migrations (execution time 00:00.039s)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate migrateGroup
+INFO: Current version of schema "infra": 11
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate doMigrateGroup
+INFO: Migrating schema "infra" to version "12 - pesajes reportes canonicos"
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate doMigrateGroup
+INFO: Migrating schema "infra" to version "13 - correccion composicion exacta"
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate logSummary
+INFO: Successfully applied 2 migrations to schema "infra", now at version v13 (execution time 00:00.041s)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 14 migrations (execution time 00:00.017s)
+Flyway: migraciones=2; versión=13
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 14 migrations (execution time 00:00.033s)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate migrateGroup
+INFO: Current version of schema "infra": 11
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate doMigrateGroup
+INFO: Migrating schema "infra" to version "12 - pesajes reportes canonicos"
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate doMigrateGroup
+INFO: Migrating schema "infra" to version "13 - correccion composicion exacta"
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbMigrate logSummary
+INFO: Successfully applied 2 migrations to schema "infra", now at version v13 (execution time 00:00.039s)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 3:28:56 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 14 migrations (execution time 00:00.018s)
+Flyway: migraciones=2; versión=13

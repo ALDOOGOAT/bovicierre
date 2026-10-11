@@ -1,0 +1,357 @@
+{
+  "fecha": "2026-10-11",
+  "base_url": "http://127.0.0.1:15180",
+  "database_version": "V13",
+  "frontend_bundle": "index-Cq_KCJmS.js",
+  "browser": "Chrome instalado, visible, perfil temporal separado",
+  "headless": false,
+  "renderer": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2)",
+  "traces": false,
+  "synthetic_data": true,
+  "passed": 16,
+  "failed": 0,
+  "skipped": 0,
+  "retries": 0,
+  "batches": [
+    {
+      "passed": 15,
+      "failed": 0,
+      "duration_cli": "1.3m",
+      "duration_note": "Duración global redondeada por el reportero list; las duraciones individuales son exactas del runner.",
+      "cases_duration_sum_ms": 73520,
+      "command": "BOVI_UI_TEST_URL=http://127.0.0.1:15180 npm --prefix frontend run test:e2e -- closure.spec.ts additional.spec.ts keyboard.spec.ts"
+    },
+    {
+      "passed": 1,
+      "failed": 0,
+      "duration_ms": 47431.536,
+      "case_duration_ms": 46406,
+      "physical_outage_controller": "root",
+      "command": "BOVI_PROVIDER_OUTAGE=true BOVI_UI_TEST_URL=http://127.0.0.1:15180 npm --prefix frontend run test:e2e -- provider.spec.ts --reporter=list,json"
+    }
+  ],
+  "cases": [
+    {
+      "title": "predios: validación, alta, búsqueda, paginación y persistencia real",
+      "status": "passed",
+      "duration_ms": 2146,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "historia animal: entrega física y recompra conservan los dos ciclos",
+      "status": "passed",
+      "duration_ms": 2423,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "pesajes: corrección de versión aprobada, original conservado y comparación incompatible",
+      "status": "passed",
+      "duration_ms": 1668,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 400,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/pesajes/01a12cec-7f08-7e9f-9b14-83df31a6f681/correcciones"
+        }
+      ]
+    },
+    {
+      "title": "reportes reales: cartera y margen muestran corte y cifras canónicas disponibles",
+      "status": "passed",
+      "duration_ms": 1629,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "reservas: dos usuarios compiten y una reserva UI futura vence realmente",
+      "status": "passed",
+      "duration_ms": 38628,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 409 (Conflict)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 409,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/operaciones/01a12cec-8ea2-75c4-930c-071888a88181/confirmar"
+        }
+      ]
+    },
+    {
+      "title": "formularios reales: compra, inventario, venta, cobro, ajuste atómico, reembolso, documentos y QR",
+      "status": "passed",
+      "duration_ms": 5485,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "respuesta perdida: conserva intento tras recarga y consulta resultado sin duplicar",
+      "status": "passed",
+      "duration_ms": 1165,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: net::ERR_FAILED"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "usuario auditor real: lectura, permisos vigentes y ausencia de credenciales persistidas",
+      "status": "passed",
+      "duration_ms": 1673,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 403,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/contrapartes"
+        }
+      ]
+    },
+    {
+      "title": "gastos: tarifa consultada y aceptada, pesos medidos y tres métodos canónicos",
+      "status": "passed",
+      "duration_ms": 3144,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 422,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/operaciones/01a12ced-45c0-7dd6-8826-8daf877d2b65/acordar"
+        }
+      ]
+    },
+    {
+      "title": "acuerdos versionados: aceptar, reabrir, editar y conservar el original",
+      "status": "passed",
+      "duration_ms": 1698,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "periodo actual: cierre y reapertura con versiones inmutables, sin desplazar el calendario DEMO",
+      "status": "passed",
+      "duration_ms": 803,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "regresión integrada: dos lotes conservan identidad y venta KG conserva composición medida",
+      "status": "passed",
+      "duration_ms": 3757,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "regresión HTTP502: respuesta de POST comprometido conserva clave y se recupera por lookup",
+      "status": "passed",
+      "duration_ms": 1019,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 502,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/contrapartes"
+        }
+      ]
+    },
+    {
+      "title": "cambiar sede B a A cancela GET pendiente y no presenta expediente ni animales de B",
+      "status": "passed",
+      "duration_ms": 722,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "390px sólo teclado: acceso, compra, recepción, reserva, venta, cobro y aplicación",
+      "status": "passed",
+      "duration_ms": 7560,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "incidencia física del proveedor: consulta503, captura conservada y recuperación real",
+      "status": "passed",
+      "duration_ms": 46350,
+      "base_url": "http://127.0.0.1:15180",
+      "console_errors": [
+        "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ],
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 503,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/integraciones/proveedor/tarifas"
+        }
+      ]
+    }
+  ],
+  "http_response_counts_main_context": {
+    "401": 17,
+    "400": 1,
+    "409": 1,
+    "403": 1,
+    "422": 1,
+    "502": 1,
+    "503": 1
+  },
+  "console_error_entries_main_context": 24,
+  "javascript_page_errors": 0,
+  "expected_responses": [
+    "401 sesión anónima antes de login; dos accesos en caso AUDITOR",
+    "400 motivo de corrección de 201 caracteres",
+    "409 conflicto entre operadores y reserva realmente vencida",
+    "403 escritura directa AUDITOR",
+    "422 acuerdo KG sin ticket aprobado",
+    "502 simulado sólo en entrega de POST real201",
+    "503 proveedor detenido físicamente por root",
+    "net::ERR_FAILED entrega abortada de POST real confirmado",
+    "net::ERR_ABORTED GET de B cancelado al seleccionar A"
+  ],
+  "secondary_browser_context": "Reservas usa otro operador real; su consola esperada401/409 figura en bovicierre-ui-reservas.json.",
+  "unexpected_http_or_javascript_errors": [],
+  "historical_result": "bovicierre-ui-final-run-v11.json",
+  "limitations": [
+    "Sin teléfono físico ni lector de pantalla; sin certificación WCAG global.",
+    "Se registra GPU real; esta suite no es benchmark de FPS.",
+    "La incidencia física de proveedor usa DEMO local y no acredita SLA ni producción."
+  ]
+}

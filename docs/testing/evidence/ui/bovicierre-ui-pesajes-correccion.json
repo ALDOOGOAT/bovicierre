@@ -1,0 +1,11 @@
+{
+  "original": "01a12cec-7f08-7e9f-9b14-83df31a6f681",
+  "corrected": "01a12cec-8069-7223-b7c8-65582427662f",
+  "original_kg": "100.000",
+  "corrected_kg": "110.000",
+  "original_preserved": true,
+  "motivo_persisted": true,
+  "invalid_reason_201_status": 400,
+  "comparison": "NO_COMPARABLE",
+  "refresh": true
+}

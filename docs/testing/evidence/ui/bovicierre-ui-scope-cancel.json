@@ -1,0 +1,10 @@
+{
+  "from": "B",
+  "to": "A",
+  "pending_get_cancelled": true,
+  "request_failures": [
+    "net::ERR_ABORTED"
+  ],
+  "old_operation_visible": false,
+  "old_animal_capture_visible": false
+}

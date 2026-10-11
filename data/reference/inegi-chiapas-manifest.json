@@ -1,0 +1,16 @@
+{
+  "source_id": "REF-INEGI-07-20261011",
+  "title": "Municipios de Chiapas, catálogo geográfico INEGI",
+  "url": "https://gaia.inegi.org.mx/wscatgeo/v2/mgem/07",
+  "queried_at_utc": "2026-10-11T19:21:18.673101+00:00",
+  "data_period": "Nombres/claves: fecha de vigencia no incluida en respuesta; estadísticas: Censo de Población y Vivienda 2020",
+  "geography": "Chiapas 07",
+  "category": "Catálogo municipal",
+  "unit": "Clave y nombre; estadísticas de personas/viviendas sin uso comercial",
+  "currency": null,
+  "transformation": "Ninguna; bytes originales JSON preservados",
+  "sha256": "8bf119b5cc25a0421ee7c86f5d52948aae50377a8c4820b2e2bfec9b8ea43145",
+  "download_status": "DESCARGADO_VALIDADO_124_REGISTROS",
+  "usage_conditions_url": "https://www.inegi.org.mx/inegi/terminos.html",
+  "usage_conditions": "Información pública INEGI; conservar atribución y fuente, no atribuir interpretación propia al Instituto."
+}

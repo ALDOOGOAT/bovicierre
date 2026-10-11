@@ -1,0 +1,14 @@
+{
+  "operaciones": "Script ran on page and returned:\n```json\n{\"route\":\"#operaciones\",\"headings\":[\"Bandeja\",\"Operaciones de la sede\"],\"alerts\":[],\"overflow\":false}\n```",
+  "inventario": "Script ran on page and returned:\n```json\n{\"route\":\"#inventario\",\"headings\":[\"Posiciones\",\"Posiciones de inventario\"],\"alerts\":[],\"overflow\":false}\n```",
+  "liquidaciones": "Script ran on page and returned:\n```json\n{\"route\":\"#liquidaciones\",\"headings\":[\"Liquidaciones\",\"Obligaciones económicas\"],\"alerts\":[],\"overflow\":false}\n```",
+  "pagos": "Script ran on page and returned:\n```json\n{\"route\":\"#pagos\",\"headings\":[\"Cobros y pagos\",\"Dinero registrado\",\"Registrar cobro o pago\"],\"alerts\":[],\"overflow\":false}\n```",
+  "periodos": "Script ran on page and returned:\n```json\n{\"route\":\"#periodos\",\"headings\":[\"Periodos\",\"Periodos económicos\",\"Abrir un nuevo periodo\"],\"alerts\":[],\"overflow\":false}\n```",
+  "margen": "Script ran on page and returned:\n```json\n{\"route\":\"#margen\",\"headings\":[\"Margen\",\"Resultado económico\"],\"alerts\":[],\"overflow\":false}\n```",
+  "sincronizacion": "Script ran on page and returned:\n```json\n{\"route\":\"#sincronizacion\",\"headings\":[\"Sincronización\",\"Estado de sincronización\"],\"alerts\":[],\"overflow\":false}\n```",
+  "1440": "Script ran on page and returned:\n```json\n{\"html\":1425,\"body\":1425,\"width\":1440,\"overflow\":false,\"active\":\"BODY\",\"wide\":[]}\n```",
+  "768": "Script ran on page and returned:\n```json\n{\"html\":753,\"body\":753,\"width\":768,\"overflow\":false,\"active\":\"BODY\",\"wide\":[]}\n```",
+  "390": "Script ran on page and returned:\n```json\n{\"html\":587,\"body\":375,\"width\":390,\"overflow\":true,\"active\":\"BODY\",\"wide\":[]}\n```",
+  "keyboard": "Script ran on page and returned:\n```json\n{\"tag\":\"A\",\"text\":\"Ir al contenido\",\"outline\":\"solid\"}\n```",
+  "console": "Emulating viewport: {\"deviceScaleFactor\":1,\"isMobile\":false,\"hasTouch\":false,\"isLandscape\":false,\"width\":390,\"height\":1000}\n## Console messages\nShowing 1-3 of 3 (Page 1 of 1).\nmsgid=27 [debug] [vite] connecting... (1 args)\nmsgid=28 [info] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold (2 args)\nmsgid=29 [debug] [vite] connected. (1 args)"
+}

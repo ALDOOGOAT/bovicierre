@@ -1,0 +1,30 @@
+Oct 11, 2026 2:39:25 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 2:39:25 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 12 migrations (execution time 00:00.033s)
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbMigrate migrateGroup
+INFO: Current version of schema "infra": 10
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbMigrate doMigrateGroup
+INFO: Migrating schema "infra" to version "11 - cancelacion anulacion version"
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbMigrate logSummary
+INFO: Successfully applied 1 migration to schema "infra", now at version v11 (execution time 00:00.015s)
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 12 migrations (execution time 00:00.012s)
+Flyway: migraciones=1; versión=11
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 12 migrations (execution time 00:00.038s)
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbMigrate migrateGroup
+INFO: Current version of schema "infra": 10
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbMigrate doMigrateGroup
+INFO: Migrating schema "infra" to version "11 - cancelacion anulacion version"
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbMigrate logSummary
+INFO: Successfully applied 1 migration to schema "infra", now at version v11 (execution time 00:00.023s)
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.FlywayExecutor init
+INFO: Database: jdbc:postgresql:******** (PostgreSQL 18.6)
+Oct 11, 2026 2:39:26 PM org.flywaydb.core.internal.command.DbValidate validate
+INFO: Successfully validated 12 migrations (execution time 00:00.013s)
+Flyway: migraciones=1; versión=11

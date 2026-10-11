@@ -1,0 +1,7 @@
+Stopped own source a
+Resumed own source a
+Stopped own source b
+Resumed own source b
+Stopped own source prov
+Resumed own source prov
+PASS {"A_down_HTTP": {"A": 503, "B": 503}, "persistent_retry_A_down": {"error": "Destino no disponible; reintento pendiente", "intentos": 1, "lease_clear": true, "future_retry": true}, "preauthorized_B_committed_during_A_down": true, "expired_lease_reclaimed_old_ack_denied_inbox_dedup": true, "B_down_HTTP": {"A": 200, "B": 503}, "provider_down_HTTP": 503, "accepted_snapshot_gasto_survives_provider_down": true, "database": "bovicierre_release_replay", "command_calls": 9, "seconds": 52.177, "tests": ["TEST-22", "TEST-24", "TEST-25"], "labels_verified": "bovicierre-academic pg-a/pg-b/pg-prov", "financial_source_transactions_closed_except_explicit_B_preauthorized": true, "main_business_facts_not_written_by_SQL_harness": true}

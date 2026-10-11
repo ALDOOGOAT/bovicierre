@@ -1,0 +1,349 @@
+{
+  "alcance": "Evidencia del ejecutor DB; PASS_SQL nunca implica PASS_API/UI o35/35completos",
+  "migraciones_main": "baseline3 + V4..V11 Flyway real",
+  "tests": [
+    {
+      "test_id": "TEST-01",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "GOLD01 costo252000, margen34000, saldo244000; variación100kg/2% sin descuento automático",
+      "pendiente_o_limite": "HTTP/UI se certifican con evidencia de sus ejecutores."
+    },
+    {
+      "test_id": "TEST-02",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "GOLD02 costo4400, margen1800, inventario6600.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-03",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "GOLD03 reparto exacto0.34/0.33/0.33; NUMERIC real.",
+      "pendiente_o_limite": "No sustituye prueba de unidad Java del transporte decimal."
+    },
+    {
+      "test_id": "TEST-04",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "GOLD04A deuda1000/pago600/aplicaciones400+200 y replayexacto; GOLD04B deuda1000/pago1200/aplicado1000/anticipo200.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-05",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "Entrega cierra primer ciclo; recompra crea ciclo2; costo histórico1200 conservado.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-06",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "GOLD06 tardío4600/6900/1600; bonificación4520/6780/1680; deuda inicial inmutable.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-07",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "GOLD07 ajuste atómico: reverso1000/reaplicación900/abono100; disponible100, reembolso100→0.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-08",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "GOLD08 baja1100 y costo tardío50 producen pérdida1150/inventario0.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-09",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/academic.log",
+        "db/tests/closure-order-result.json",
+        "db/tests/closure-order.log"
+      ],
+      "observado": "Ambos órdenes: carrera cierre primero y coste primero forzado con barrera/espera Lock observada. Inventario200→207/cierre207 con documental2027-02-01/reconocimiento2026-10-11; versión anterior intacta trasreabrir.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-10",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/academic.log"
+      ],
+      "observado": "Dos conexiones/barrera: una reserva/venta gana; otra23505; sin segunda liquidación.",
+      "pendiente_o_limite": "Mapeo HTTP409 pertenece a API."
+    },
+    {
+      "test_id": "TEST-11",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/academic.log"
+      ],
+      "observado": "Dos conexiones/barrera compiten por pago600: sólo aplica400, otraBV020, disponible200.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-12",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "db/tests/version-guards-result.json"
+      ],
+      "observado": "Misma clave/hash replayexacto; payload distintoBV405 y ETag/version obsoletaBV412. Cancelar/anular/acordar/reabrir: stale412sinidem/audit; replayexacto trascommit antesguardversionactual.",
+      "pendiente_o_limite": "SQL no certifica por sí solo HTTP409/412."
+    },
+    {
+      "test_id": "TEST-13",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/negatives-result.json",
+        "db/tests/negatives.log"
+      ],
+      "observado": "Dos conexiones/barrera, scopes de sedesA/B hacia escritor canónicoA: un identificador normalizado único; otro23505.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-14",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/negatives-result.json",
+        "db/tests/negatives.log"
+      ],
+      "observado": "FK otra sede23503; empresa ajena42501; ningún hecho cruzado.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-15",
+      "estado": "PARCIAL_SQL",
+      "evidencia": [
+        "db/tests/negatives-result.json",
+        "db/tests/negatives.log",
+        "db/tests/owner-capture-result.json"
+      ],
+      "observado": "Scope empresa ajena42501 y token de otro actor/sede404; control canónico.",
+      "pendiente_o_limite": "Usuario autenticado y manipulación de rutas HTTP requieren evidencia API/UI de otros agentes."
+    },
+    {
+      "test_id": "TEST-16",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/negatives-result.json",
+        "db/tests/negatives.log",
+        "db/tests/security.sql",
+        "db/tests/security-final.log"
+      ],
+      "observado": "Rol app sinDML/DDL/SETsession_replication_role; intento desactivar trigger42501; PUBLIC EXECUTE revocado. DML real como rolbovi_auditor también42501.",
+      "pendiente_o_limite": "La prueba usa roles técnicos; políticas de auditor humano se verifican en API/UI."
+    },
+    {
+      "test_id": "TEST-17",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/negatives-result.json",
+        "db/tests/negatives.log"
+      ],
+      "observado": "Como rol dueño de funciones, UPDATE a liquidación/contrato aceptado/condición/pesaje aprobado produceBV016: protección independiente del ACL app.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-18",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "Pesaje grupal no fabrica pesos individuales; reparto por peso ausenteBV018.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-19",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "DobleEXCEPT de composiciones distintas produceNO_COMPARABLE; variación comparable exacta enGOLD01.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-20",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/expiry-result.json",
+        "db/tests/expiry.log"
+      ],
+      "observado": "Dos conexiones/barrera, esperaLock observada, tx empezó antes de vencimiento y desbloqueó después:BV403, sin liquidación/idempotencia parcial.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-21",
+      "estado": "PASS_INFRA_QA",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/academic.log"
+      ],
+      "observado": "Publicaciones bidireccionales reales; DISABLE/ENABLE de suscripción QA y convergencia; conteos audit/outbox sin duplicación.",
+      "pendiente_o_limite": "Partición se simuló en stream apply QA; no se interrumpió red física."
+    },
+    {
+      "test_id": "TEST-22",
+      "estado": "PASS_SQL_INFRA_HTTP",
+      "evidencia": [
+        "db/tests/outages-result.json",
+        "db/tests/outages.log"
+      ],
+      "observado": "A source parado real: HTTP autenticado nuevas solicitudesA503/B503; B transacción autorizada antes de caída confirma hechos propios; A reanudado enfinally.",
+      "pendiente_o_limite": "SQL financiero de prueba usa namespaceQA; solicitudesHTTPmain fueron consultas/auth. No promoción."
+    },
+    {
+      "test_id": "TEST-23",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/academic.log"
+      ],
+      "observado": "Conciliación explícita en ambos dueños:0 huérfanos y0 liquidaciones desbalanceadas sobreFK comerciales.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-24",
+      "estado": "PASS_SQL_INFRA",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/outages-result.json",
+        "db/tests/outages.log"
+      ],
+      "observado": "A caída real: fallo entrega guarda intento/backoff y limpia lease; lease abandonada30s recuperada por worker nuevo; ACKantiguaBV402. ConsumeA dos veces/inbox1, acuseB; perdida1100 +costetardío1.",
+      "pendiente_o_limite": "Worker abandonado simulado dejando lease vencer; no se mata un procesoJava. ACKperdido simulado omitiendo primer acuse."
+    },
+    {
+      "test_id": "TEST-25",
+      "estado": "PASS_SQL_INFRA_HTTP",
+      "evidencia": [
+        "db/tests/academic.log",
+        "db/tests/provider.log",
+        "db/tests/owner-capture-result.json",
+        "db/tests/provider-precision-result.json",
+        "db/tests/outages-result.json"
+      ],
+      "observado": "FDW realA viaPgpool SELECT12000/UPDATE42501; B sin servidor proveedor. Proveedor source parado devuelveHTTP503 y gastoB usa captura aceptada local sin red. Frontera12000.0050→Money12000.01 aceptada, raw4/hash preservados.",
+      "pendiente_o_limite": "FuenteQA modificada para fronteras y restauradafinally; stop real afecta sólo container propio proveedor."
+    },
+    {
+      "test_id": "TEST-26",
+      "estado": "FUERA_DE_SQL",
+      "evidencia": [
+        "docs/testing/evidence/recovery/restore-v6.json"
+      ],
+      "observado": "Root realizó backup/restore aisladoV6 y APIreplay/documenthash; no ejecutado por agenteDB.",
+      "pendiente_o_limite": "SnapshotV6 es punto temporal anterior aV7..10; parent debe citar su artefacto exacto."
+    },
+    {
+      "test_id": "TEST-27",
+      "estado": "PASS_INFRA",
+      "evidencia": [
+        "db/tests/persistence-result.json",
+        "db/tests/persistence.log"
+      ],
+      "observado": "Recreación real sólo servicio pg-a, IDnuevo, mismo volumen; firmas completas datos main+QA antes/después idénticas, incluyehistory/localcapturas/dedup/inbox/leases.",
+      "pendiente_o_limite": "Se recrea nodoA; se excluyen sesiones auth efímeras de firma. Tiempo1.744s, sin pérdida de datos."
+    },
+    {
+      "test_id": "TEST-28",
+      "estado": "PARCIAL_RENDIMIENTO",
+      "evidencia": [
+        "db/tests/performance-result.json",
+        "db/tests/performance.log"
+      ],
+      "observado": "4EXPLAINANALYZEBUFFERS y100muestras/consulta tras5warmups: inventario/cartera/liquidación/expediente, dataset declarado.",
+      "pendiente_o_limite": "Microconsultas con conexión reutilizada/cache caliente; no carga concurrente ni certificaciónSLO/capacidad."
+    },
+    {
+      "test_id": "TEST-29",
+      "estado": "FUERA_DE_SQL",
+      "evidencia": [
+        "docs/testing/evidence.md"
+      ],
+      "observado": "Frontend notificó6/6 recorridos browser reales; SQL no los certifica.",
+      "pendiente_o_limite": "Parent debe enlazar artefactos UI exactos y limitaciones de accesibilidad."
+    },
+    {
+      "test_id": "TEST-30",
+      "estado": "FUERA_DE_SQL",
+      "evidencia": [
+        "db/tests/flyway-adoption.json"
+      ],
+      "observado": "Baseline3 comparado con replay limpio antes de adopción; migraciones posteriores reales.",
+      "pendiente_o_limite": "MER/metadatos83FK y revisiones diagramas corresponden a root; no equivale a cerrar toda trazabilidad."
+    },
+    {
+      "test_id": "TEST-31",
+      "estado": "FUERA_DE_SQL",
+      "evidencia": [
+        "docs/knowledge/graph-status.md"
+      ],
+      "observado": "Root conserva generación/trazabilidad de grafo.",
+      "pendiente_o_limite": "No ejecutado ni certificado por agenteDB."
+    },
+    {
+      "test_id": "TEST-32",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "Snapshot de conteo/liquidaciones/obligaciones/conceptos/asientos/inventario/costo sin cambio tras registrar/validar/aplicar pago, documento y entrega.",
+      "pendiente_o_limite": "Documento SQL usa metadatos sintéticos; descarga/generaciónPDF real se certifica aparte en API/UI."
+    },
+    {
+      "test_id": "TEST-33",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/academic.log"
+      ],
+      "observado": "Muerte centralA converge aB; recompra del animal muertoBV011 sin liquidación.",
+      "pendiente_o_limite": ""
+    },
+    {
+      "test_id": "TEST-34",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "Documento v2 no altera v1/hash ni revisión anterior; revisiones vinculadas a versión exacta.",
+      "pendiente_o_limite": "SQL metadata only; bytes privados/versionado archivo probados por API/UI."
+    },
+    {
+      "test_id": "TEST-35",
+      "estado": "PASS_SQL",
+      "evidencia": [
+        "db/tests/gold-final-all.log"
+      ],
+      "observado": "Anulación antes entrega con tardío restaura1200 a inventario; costo venta neto0; ciclo histórico conservado.",
+      "pendiente_o_limite": ""
+    }
+  ],
+  "gold_command_calls": 157
+}

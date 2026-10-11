@@ -1,0 +1,11 @@
+{
+  "id": "01a12cec-6d0c-719c-80b6-1584719152fd",
+  "required_validation_blocks_post": true,
+  "synthetic_pager_fixtures": 21,
+  "ui_pagination": [
+    20,
+    1
+  ],
+  "search": true,
+  "refresh": true
+}

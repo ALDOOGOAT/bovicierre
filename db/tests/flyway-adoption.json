@@ -1,0 +1,32 @@
+{
+  "replay": "bovicierre_release_replay",
+  "declaracion": "Baseline3 adopta cat\u00e1logo existente; V1/V2/V3 no se afirman ejecutadas originalmente por Flyway.",
+  "normalizacion": "CHECK compara expresi\u00f3n/tipo sin nombre autogenerado; vistas normalizan orden f\u00edsico de columnas simples de SELECT *. Tipos, nulabilidad, defaults, \u00edndices, FK, funciones, ACL, triggers y expresiones se comparan.",
+  "nodos": {
+    "A": {
+      "conteos": {
+        "columnas": 494,
+        "restricciones": 659,
+        "indices": 71,
+        "funciones": 25,
+        "triggers": 57,
+        "vistas": 3,
+        "permisos": 47
+      },
+      "diferencias": {}
+    },
+    "B": {
+      "conteos": {
+        "columnas": 494,
+        "restricciones": 659,
+        "indices": 71,
+        "funciones": 25,
+        "triggers": 57,
+        "vistas": 3,
+        "permisos": 47
+      },
+      "diferencias": {}
+    }
+  },
+  "aprobado": true
+}

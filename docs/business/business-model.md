@@ -30,7 +30,7 @@ EngordaMax [F01] anuncia compras, pesajes, merma, costos y utilidad; Agryxo/Agro
 ## Oferta comercial a probar
 | Concepto | Propuesta | Nota |
 |---|---|---|
-| Suscripción | MXN 2,000–4,000/sede/mes (referencia de ejemplos: 2,000) | Rango de investigación |
+| Suscripción | HIP-PRICE-01: MXN 3,000/sede/mes, hasta 5 usuarios, 5GB y 2h de soporte mensual | Propuesta a validar; tratamiento fiscal/contrato antes de cotizar |
 | Configuración y migración inicial | Cotización por horas, complejidad y calidad de datos | Inventario histórico requiere módulo de apertura (aún no existe) |
 | Integraciones especiales | Alcance y presupuesto aparte | — |
 | Comisión sobre ganado | No | — |
@@ -45,3 +45,5 @@ La suscripción debe declarar: sedes, usuarios, almacenamiento, exportación, ho
 
 ## Contribución social (hipótesis de impacto)
 Transparencia de pagos a productores, conservación de evidencia comercial y trazabilidad administrativa. Se medirá en el piloto; el software no sustituye a la autoridad sanitaria, la acreditación de propiedad ni la revisión profesional.
+
+Enfoque inicial decidido: comercializador/acopiador por cuenta propia con una o dos sedes accesible desde Tapachula/Chiapas. Compra dueño/administrador, operación diaria encargado/caja/supervisión. Piloto posterior de 30 días; implantación aparte. No hay cliente contratado, precio validado ni billing automático.

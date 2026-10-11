@@ -1,0 +1,13 @@
+{
+  "dataset": "DEMO-2026-10-V1",
+  "fecha": "2026-10-11",
+  "declaracion": "Datos sintéticos; importes verificados por comandos SQL, no resultados insertados.",
+  "animales": 3,
+  "precio_compra_por_cabeza": "1000.00",
+  "gasto_capitalizable": "300.00",
+  "animales_venta": 1,
+  "precio_venta_por_cabeza": "1600.00",
+  "cobro": "600.00",
+  "aplicacion": "400.00",
+  "esperados": {"inventario": "2200.00", "costo_venta": "1100.00", "margen": "500.00", "saldo_venta": "1200.00", "anticipo": "200.00"}
+}

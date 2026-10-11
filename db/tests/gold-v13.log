@@ -1,0 +1,18 @@
+PASS GOLD-02 fixed: sale6400 cost4400 margin1800 inventory6600
+PASS GOLD-06 fixed: cost4520 inventory6780 margin1680; original debt unchanged
+PASS GOLD-03 .34/.33/.33
+PASS GOLD-04B advance200 and overapplication rejected
+PASS reverso/reaplicacion/reembolso with original immutable
+PASS idempotent same-result and stale version
+PASS GOLD-07 exact atomic reverse1000/reapply900/adjust100/refund100
+PASS POR_PESO_MEDIDO .25/.75 and IMPORTE_INDIVIDUAL .40/.60
+PASS GOLD-01 cost252000 margin34000 saldo244000 shrink100kg/2% withoutautomaticdiscount
+PASS TEST18 no fabricated individualweight/repartition denied and TEST19 differentsets NO_COMPARABLE
+PASS GOLD-08 loss1100+50=1150 no receivable
+PASS TEST34 newdocumentv2 preserves immutable reviewedv1 metadata/reference; SQLmetadataonly
+PASS ANUL-01 restore1200/cost0 and GOLD-05/09 newcycle2 keepsold1200
+PASS GOLD-04A obligation1000/pay600/apps400+200/replayexact/saldo400/disponible0/centrejected
+PASS GOLD-04B exact obligation1000/pay1200/applied1000/advance200; TEST32 payment/doc/delivery preserve economic snapshot
+PASS agreement v1 preserved/v2 confirmed with same weighing; receipt flag retained; permanent idempotency
+PASS period lock, one-open, immutable closure+reopening
+PASS PostgreSQL18 runtime-role GOLD transaction rolled back; calls=157

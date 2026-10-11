@@ -78,7 +78,7 @@ Propósito: códigos oficiales/internos con historia (RN-003). PK(E,id); UK(E,si
 | animal_id | uuid | no | FK (E,·) → animal |
 | sistema | varchar(10) | no | SINIIGA, SINIDA, INTERNO, OTRO |
 | codigo_declarado | varchar(40) | no | tal como se capturó |
-| codigo_normalizado | varchar(40) | no | `upper(regexp_replace(codigo,'[^A-Z0-9]','','g'))` |
+| codigo_normalizado | varchar(40) | no | `regexp_replace(upper(codigo),'[ -]','','g'); INTERNO admite ASCII alfanumérico, espacio/guion; rechaza vacío o caracteres fuera de política` |
 | estado | varchar(12) | no | VIGENTE, INACTIVA, EN_REVISION |
 | vigente_desde / vigente_hasta | date | no / sí | CHECK hasta ≥ desde |
 | evidencia_sucursal_id, evidencia_documento_id | uuid | sí | FK documento (ambas o ninguna) |
@@ -130,7 +130,7 @@ Hecho físico inmutable (RN-020). Columnas: posicion_id NOT NULL; operacion_id N
 Columnas: operacion_id, numero_lote, posicion_id (→ seleccion_venta); estado varchar(10) (ACTIVA, CONSUMIDA, LIBERADA, EXPIRADA); creada_en; vence_en timestamptz NOT NULL CHECK > creada_en; cerrada_en NULL. Índice UNIQUE parcial `(E,S,posicion_id) WHERE estado='ACTIVA'` (RN-018); `(E,S,vence_en) WHERE estado='ACTIVA'` para el expirador. L↔.
 
 ## ENT-16 contrato_version
-PK(E,S,operacion_id,numero_version smallint > 0). estado (PROPUESTA, ACEPTADA, SUPERADA); politica_redondeo varchar(12) DEFAULT 'HALF_UP_2'; requiere_recepcion boolean DEFAULT false; documento_id NULL; aceptada_por/aceptada_en NULL. Inmutable una vez ACEPTADA (RN-011). Índice UNIQUE parcial `(E,S,operacion_id) WHERE estado='ACEPTADA'`.
+PK(E,S,operacion_id,numero_version smallint > 0). estado (PROPUESTA, ACEPTADA, SUPERADA); politica_redondeo varchar(12) DEFAULT 'HALF_UP_2'; requiere_recepcion boolean DEFAULT false; documento_id NULL; aceptada_por/aceptada_en NULL. Inmutable una vez ACEPTADA (RN-011). Pueden conservarse varias versiones ACEPTADAS históricas: `operacion.numero_version_aceptada` identifica la que referencia la operación. La restricción parcial propuesta inicialmente para permitir sólo una ACEPTADA no existe en el DDL vigente de `V1__esquema.sql`; la PK distingue cada versión sin modificar las aceptadas anteriores.
 
 ## ENT-17 condicion_lote
 | Columna | Tipo | Nulo | Default | Nota |
@@ -197,24 +197,27 @@ Inmutable (trigger BV016). Índice `(E,S,direccion,vence_el)` cartera.
 PK(E,S,liquidacion_id,numero_concepto smallint). tipo (BASE, CARGO, BONIFICACION, DEDUCCION); descripcion; numero_lote NULL; cantidad numeric(14,3); unidad (KG, CABEZA, MXN); precio_unitario numeric(14,4) NULL; importe numeric(18,2) firmado (negativo para BONIFICACION/DEDUCCION, CHECK por tipo); pesaje_id NULL. Inmutable.
 
 ## ENT-24 ajuste_liquidacion
-naturaleza (CARGO, ABONO); monto numeric(18,2) > 0; motivo varchar(200) NOT NULL; fuente (PRECIO_GANADO, BONIFICACION_COMERCIAL, ANULACION, OTRO); documento_id NULL; revierte_ajuste_id UNIQUE NULL; periodo_id; registrado_por/en.
+naturaleza (CARGO, ABONO); monto numeric(18,2) > 0; motivo varchar(200) NOT NULL; fuente (PRECIO_GANADO, BONIFICACION_COMERCIAL, ANULACION, OTRO); documento_id NULL; revierte_ajuste_id UNIQUE NULL; periodo_id NOT NULL; fecha_reconocimiento date NOT NULL dentro del periodo abierto; registrado_por/en.
 
 ## ENT-25 pago
 | Columna | Tipo | Nulo | Nota |
 |---|---|---|---|
 | parte_id | uuid | no | |
-| tipo | varchar(10) | no | COBRO (entra), PAGO (sale), REEMBOLSO |
+| tipo | varchar(10) | no | COBRO (entra), PAGO (sale); naturaleza separada NORMAL/REEMBOLSO |
 | moneda | char(3) | no | MXN |
 | importe | numeric(18,2) | no | > 0 |
 | metodo | varchar(14) | no | TRANSFERENCIA, EFECTIVO, CHEQUE, OTRO |
 | referencia | varchar(60) | sí | |
 | recibido_el | date | no | |
 | estado | varchar(10) | no | REGISTRADO, VALIDADO, REVERTIDO |
-| pago_origen_id | uuid | sí | NOT NULL ⇔ REEMBOLSO |
+| naturaleza | varchar(10) | no | NORMAL / REEMBOLSO; no sustituye dirección COBRO/PAGO |
+| periodo_id | uuid | sí | NULL en registro; obligatorio al validar y para reembolso |
+| fecha_reconocimiento | date | sí | NULL en registro; dentro del periodo al validar |
+| pago_origen_id | uuid | sí | NOT NULL ⇔ naturaleza REEMBOLSO |
 Rechazado: importe 0; REEMBOLSO sin origen.
 
 ## ENT-26 aplicacion_pago
-pago_id, liquidacion_id NOT NULL; importe numeric(18,2) > 0; naturaleza (APLICACION, REVERSO); reverso_de_id UNIQUE NULL; aplicada_en; registrado_por. Índices `(E,S,liquidacion_id)`, `(E,S,pago_id)`.
+pago_id, liquidacion_id NOT NULL; importe numeric(18,2) > 0; naturaleza (APLICACION, REVERSO); reverso_de_id UNIQUE NULL; aplicada_en; registrado_por; periodo_id uuid y fecha_reconocimiento date NOT NULL. El registro de pago no cambia cartera; validación/aplicación/reverso/reembolso identifican reconocimiento explícito. Índices `(E,S,liquidacion_id)`, `(E,S,pago_id)`.
 
 ## ENT-27 documento
 | Columna | Tipo | Nulo | Nota |
@@ -243,7 +246,7 @@ tipo_evento varchar(60); version_payload smallint; payload jsonb; propietario_de
 PK(consumidor varchar(40), fuente_id varchar(40), event_id uuid); empresa_id, sucursal_id NULL; recibido_en; resultado varchar(10).
 
 ## ENT-32 clave_idempotencia (local)
-PK(E,S,principal_id,comando,clave varchar(80)); hash_peticion char(64); estado (EN_CURSO, COMPLETADA); resultado jsonb; creada_en; expira_en (≥ 30 días; no se purga antes).
+PK(E,S,principal_id,comando,clave varchar(80)); hash_peticion char(64); estado (EN_CURSO, COMPLETADA); resultado jsonb; creada_en; deduplicación conservada mientras existan los hechos financieros; no expira a los 30 días.
 
 ## ENT-33 infra.nodo_config (local)
 nodo char(1) PK CHECK IN ('A','B'); empresa_id; descripcion. Una fila. App sólo SELECT.
@@ -271,3 +274,9 @@ PK(E,S,revision_id,documento_id); resultado; observacion varchar(500).
 
 ## Soporte: folio_contador (local del dueño, L↔)
 PK(E,S,tipo,anio); ultimo integer. Bloqueado FOR UPDATE al asignar folio.
+
+## Concordancia física durante implementación
+
+Autoridad ejecutable: `db/migrations/`. Se incorporaron `periodo_id`/`fecha_reconocimiento` en gasto, pago y aplicación, y fecha de reconocimiento en ajuste (ADR-015). Pago admite ambos nulos mientras está REGISTRADO; validación exige ambos y comprueba periodo abierto. Gasto y aplicación los conservan no nulos. Son tres FK de periodo adicionales: metadata 42 tablas/83 FK. Sesiones JDBC son dos tablas técnicas locales, fuera del MER de negocio y de réplica.
+
+`python3 tools/esquema/comparar_catalogo.py` contrasta tipos, columnas, nullabilidad, PK, UK declaradas y FK contra PostgreSQL. No sustituye pruebas de CHECK, índices parciales, triggers, permisos ni revisión conceptual.

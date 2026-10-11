@@ -1,0 +1,10 @@
+{
+  "animal": "01a12cec-74de-75bb-aaee-9a15f8bab796",
+  "delivery_ui": true,
+  "repurchase_ui": true,
+  "cycles": 2,
+  "old_terminal": "CERRADA_VENTA",
+  "new_state": "DISPONIBLE",
+  "new_cost": "250.00",
+  "refresh": true
+}

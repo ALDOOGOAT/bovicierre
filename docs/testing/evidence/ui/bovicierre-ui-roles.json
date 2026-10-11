@@ -1,0 +1,6 @@
+{
+  "read_role": "AUDITOR",
+  "writes_hidden": true,
+  "direct_write_status": 403,
+  "secrets_persisted": false
+}

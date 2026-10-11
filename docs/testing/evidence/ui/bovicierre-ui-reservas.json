@@ -1,0 +1,15 @@
+{
+  "different_principals": true,
+  "first": "01a12cec-8d76-78e7-a2cb-db7c2b599fda",
+  "second": "01a12cec-8e17-70e4-9f08-2291b10621fe",
+  "conflict_status": 409,
+  "expiring": "01a12cec-8ea2-75c4-930c-071888a88181",
+  "expiry": "2026-10-11T21:45:00.000Z",
+  "actual_after": "2026-10-11T21:45:00.255Z",
+  "expired_status": 409,
+  "unconfirmed_state": "ACORDADA",
+  "second_principal_console_errors": [
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 409 (Conflict)"
+  ]
+}

@@ -1,0 +1,45 @@
+# Ejemplo para revisión de una VM; no ejecutar bootstrap/semilla DEMO.
+# Orden: compose.academic.yml + application.yml + este archivo.
+name: bovicierre-production
+services:
+  pg-a:
+    ports: !reset []
+  pg-b:
+    ports: !reset []
+  pg-prov:
+    ports: !reset []
+  pgpool-a:
+    ports: !reset []
+  pgpool-b:
+    ports: !reset []
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      BOVI_ENV: production
+  caddy:
+    environment:
+      BOVI_DOMAIN: '${BOVI_DOMAIN:?Define dominio autorizado para la VM}'
+      TLS_CONTACT_EMAIL: '${TLS_CONTACT_EMAIL:?Define contacto TLS autorizado}'
+    ports: !override ['80:80', '443:443', '443:443/udp']
+    volumes:
+      - ../caddy/Caddyfile.production.example:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    # /data y /config deben persistir; sólo /tmp sigue siendo temporal.
+    tmpfs: !override ['/tmp:uid=${BOVI_UID:-1000},gid=${BOVI_GID:-1000},mode=0700']
+    # Permite los puertos internos 80/443 al UID sin privilegios del contenedor.
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: '0'
+volumes:
+  caddy-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: '${BOVI_PRIVATE_DIR:?Define almacenamiento privado de la VM}/caddy-data'
+  caddy-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: '${BOVI_PRIVATE_DIR:?Define almacenamiento privado de la VM}/caddy-config'

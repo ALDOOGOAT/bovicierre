@@ -1,0 +1,33 @@
+{
+  "purchase": "01a12ced-45c0-7dd6-8826-8daf877d2b65",
+  "measured_weights": [
+    "100.000",
+    "200.000"
+  ],
+  "methods": [
+    "POR_CABEZA",
+    "POR_PESO_MEDIDO",
+    "IMPORTE_INDIVIDUAL"
+  ],
+  "fdw_acceptance": {
+    "ruta": "DEMO-RUTA-01",
+    "fuente": "DEMO_PROVEEDOR_SIMULADO",
+    "origen": "DEMO origen",
+    "precio": {
+      "moneda": "MXN",
+      "importe": "12000.00"
+    },
+    "unidad": "VIAJE",
+    "destino": "DEMO destino",
+    "version": 1,
+    "aceptada_en": "2026-10-11T21:45:11.80637+00:00",
+    "snapshot_id": "01a12ced-4d43-7eb0-b1c5-bceb2d4fa750",
+    "capturado_en": "2026-10-11T21:45:11.741312+00:00",
+    "vigente_desde": "2026-10-11",
+    "politica_redondeo": "HALF_UP_2",
+    "precio_unitario_fuente": "12000.0000"
+  },
+  "fdw_expense": "01a12ced-4dc3-7b86-9706-6e0cd0249447",
+  "incomplete_kg_agreement_status": 422,
+  "error_focus": "DIV"
+}

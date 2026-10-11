@@ -1,0 +1,1 @@
+PASS {"database": "bovicierre_release_replay", "command_calls": 22, "seconds": 0.201, "stale_412_no_idem_or_audit_effect": ["cancelar_operacion", "anular_venta", "acordar_operacion", "reabrir_operacion"], "exact_replay_after_commit_before_current_version_check": ["cancelar_operacion", "anular_venta", "acordar_operacion", "reabrir_operacion"]}

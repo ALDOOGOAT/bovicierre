@@ -1,0 +1,3 @@
+# Herramientas locales de pruebas/semilla/adopción y respaldo; no son dependencias producto.
+psycopg[binary]==3.3.2
+PyYAML==6.0.1

@@ -84,7 +84,7 @@ Redondeo HALF_UP a 2 decimales al materializar cada importe persistido (concepto
 | GOLD-07 | Liquidación 1,000; pago 1,000 aplicado; bonificación 100 | Reverso aplicación 1,000 + aplicación 900 + ajuste ABONO 100: obligación 900, aplicaciones netas 900, saldo 0, disponible 100; reembolso 100 → disponible 0 |
 | GOLD-08 | Posición sin venta, costo 1,100, baja por pérdida; luego costo 50 | Inventario −1,100 → 0; pérdida 1,100 → 1,150; sin venta ni cuenta por cobrar |
 | GOLD-09 | Recompra del mismo animal | Ciclo anterior conserva costo; ciclo nuevo con su propio costo |
-| GOLD-10 | Costo concurrente con cierre de periodo | Ambos bloquean la fila del periodo; el costo entra antes del corte o va a periodo abierto; nunca retroactivo |
+| GOLD-10 | Costo concurrente con cierre de periodo | Ambos bloquean la fila del periodo; el costo entra antes del corte o falla BV025 sin efecto; nueva intención reconoce explícitamente en periodo abierto; nunca retroactivo |
 | ANUL-01 (TEST-35) | Costo de venta 1,100 + ajuste tardío 100; anulación antes de entrega | Restituye 1,200 a inventario; costo neto de la venta anulada 0 |
 
 Nota GOLD-06: el megaprompt da "80 de costo vendido y 120 de inventario" para la bonificación de 200; el margen 1,680 = 1,600 + 80 es consistente con eso.

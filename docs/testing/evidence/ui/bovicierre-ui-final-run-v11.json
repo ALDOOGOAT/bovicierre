@@ -1,0 +1,34 @@
+{
+  "fecha": "2026-10-11",
+  "comando": "npm run test:e2e",
+  "cwd": "frontend",
+  "passed": 9,
+  "failed": 0,
+  "duration_seconds": 23.8,
+  "database_version": "V11",
+  "api_port": 18080,
+  "api_pid": 573660,
+  "browser": "Chrome headful, perfil temporal",
+  "renderer": "ANGLE Intel Mesa OpenGL real",
+  "traces": false,
+  "authenticated_command_errors": [],
+  "known_expected_responses": [
+    "401 sesión anónima inicial",
+    "422 acuerdo KG incompleto",
+    "403 escritura AUDITOR",
+    "502 entrega simulada de POST real201",
+    "net::ERR_ABORTED consultaB cancelada al cambiarA"
+  ],
+  "previous_runs": [
+    {
+      "passed": 8,
+      "failed": 1,
+      "cause": "harness buscó documento nuevo fuera de primera página20; se añadió búsqueda UUID"
+    },
+    {
+      "passed": 7,
+      "failed": 1,
+      "cause": "lookup venta se borraba durante refetch; corregido y verificado"
+    }
+  ]
+}

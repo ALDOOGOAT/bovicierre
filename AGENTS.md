@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-BoviCierre is currently a design repository for a cattle trading and settlement application. Read `README.md`, `CLAUDE.md`, and `docs/status.md` before contributing.
+BoviCierre is a cattle trading and settlement application with canonical design and local implementation verified within the documented scope. Read `README.md`, `CLAUDE.md`, and `docs/status.md` before contributing.
 
 - `docs/domain/` contains business rules, states, calculations, and use cases.
 - `docs/database/`, `docs/architecture/adr/`, and `docs/api/openapi.yaml` define the data model, decisions, and API contract.
@@ -9,7 +9,7 @@ BoviCierre is currently a design repository for a cattle trading and settlement 
 - `tools/esquema/esquema.py` defines the logical schema; `tools/diagramas/` generates diagrams.
 - `docs/diagrams/sources/` holds editable `.drawio` assets; `exports/` holds SVG/PDF outputs.
 
-Backend, frontend, migrations, and application test suites are not implemented yet.
+Check `docs/status.md` and `docs/testing/evidence.md` for what is implemented and actually verified. The active local mandate and ownership are in `docs/implementation/execution-plan.md` and `docs/development/agent-assignments.md`. Physical schema authority is `db/migrations/` (ADR-016).
 
 ## Build, Test, and Development Commands
 Run available checks from the repository root:
@@ -22,13 +22,13 @@ npx -y @redocly/cli@1.34.5 lint docs/api/openapi.yaml
 
 These check specification ID/document coverage, foreign-key references, and OpenAPI validity, respectively. Diagram generation example: `python3 tools/diagramas/gen_relacional_completo.py`. Preserve manual diagram edits before regenerating.
 
-The README's Maven, npm development, and Docker Compose commands are planned; their target directories do not exist yet.
+Do not assume a README command was executed: use the evidence register. `make doctor` diagnoses the local environment; `make verify-docs` checks documentation only. Preserve other projects' Docker containers and volumes.
 
 ## Coding Style & Naming Conventions
 Follow existing Python style: four-space indentation and `snake_case` functions and variables. Keep documentation in Spanish, using concise Markdown headings, relative links, and UTF-8 text. Preserve identifiers such as `RN-001`, `TEST-01`, and `TASK-A-001`; never reuse retired IDs. No repository-wide formatter configuration currently exists.
 
 ## Testing Guidelines
-Use the scenarios in `docs/testing/test-plan.md`. Planned tooling is JUnit 5, Testcontainers with real PostgreSQL, and Playwright. Compare financial results with fixed GOLD expectations; never substitute H2. No numeric coverage threshold is currently defined. Document actual commands, outcomes, and limitations in `docs/testing/evidence.md`.
+Use the scenarios in `docs/testing/test-plan.md`. Implemented tooling is JUnit 5, Testcontainers with real PostgreSQL, and Playwright. Compare financial results with fixed GOLD expectations; never substitute H2. No numeric coverage threshold is currently defined. Document actual commands, outcomes, and limitations in `docs/testing/evidence.md`.
 
 ## Commit & Pull Request Guidelines
 History uses descriptive Spanish Conventional Commits, including `docs(diagramas): ...` and `docs(grafo): ...`. Keep commits focused. PRs should explain the change, reference TASK/RN/TEST identifiers, include validation evidence, and attach reviewed diagram exports when relevant. Update affected documentation and traceability; mark backlog tasks complete only with evidence.

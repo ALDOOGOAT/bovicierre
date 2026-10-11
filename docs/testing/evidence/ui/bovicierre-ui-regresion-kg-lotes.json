@@ -1,0 +1,16 @@
+{
+  "purchase": "01a12ced-5cbe-7c3c-93e3-01c7cdb7f1df",
+  "sale": "01a12ced-647b-75fd-b4b5-4ef15304b4b1",
+  "lot_identity_preserved": true,
+  "edit_after_approved_ticket": true,
+  "animal_composition": [
+    "01a12ced-5b77-7982-a931-813725308210",
+    "01a12ced-5bb7-7ed2-9f95-b6e88e361eb9"
+  ],
+  "peso_kg": "300.000",
+  "total": {
+    "moneda": "MXN",
+    "importe": "3000.00"
+  },
+  "refresh": true
+}

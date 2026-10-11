@@ -1,0 +1,19 @@
+{
+  "counts": {
+    "contrapartes": 1,
+    "animales": 3,
+    "operaciones": 2,
+    "inventario_posiciones": 3,
+    "pagos": 1,
+    "liquidaciones": 2,
+    "gastos": 1,
+    "documentos": 0,
+    "usuarios": 0,
+    "periodos": 0,
+    "reportes_cartera": 2,
+    "reportes_margen": 1
+  },
+  "pagination_total3": true,
+  "literal_search": true,
+  "typed_filter_rejection": true
+}

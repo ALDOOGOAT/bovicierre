@@ -27,9 +27,9 @@ Las puntas centrales y etiquetas tienen posición fija para la exportación: des
 | Archivo | Contenido | Notación | Generador |
 |---|---|---|---|
 | `mer-completo.drawio` → `exports/mer-completo.pdf/.svg` | **MER conceptual completo**: 31 entidades, atributos (clave, parcial, derivado), 37 relaciones con verbo, cardinalidad (mín,máx) junto a la entidad, participación total (línea doble), débiles e identificantes (doble rectángulo / doble rombo), recursivas con roles | Chen/EER | `tools/diagramas/gen_mer_completo.py` |
-| `relacional-completo.drawio` → `exports/relacional-completo.pdf/.svg` | **Modelo lógico relacional completo**: 42 tablas con todas sus columnas, tipo, PK/FK/UK/NN; 80 FK conectadas columna a columna | Pata de gallo (IE): extremo padre ‖ (1) u o\| (0..1) según NOT NULL; extremo hijo o< (0..N) u o\| (FK única); continua = identificante, discontinua = no identificante | `tools/diagramas/gen_relacional_completo.py` desde `tools/esquema/esquema.py` |
+| `relacional-completo.drawio` → `exports/relacional-completo.pdf/.svg` | **Modelo lógico relacional completo**: 42 tablas con todas sus columnas, tipo, PK/FK/UK/NN; 83 FK conectadas columna a columna | Pata de gallo (IE): extremo padre ‖ (1) u o\| (0..1) según NOT NULL; extremo hijo o< (0..N) u o\| (FK única); continua = identificante, discontinua = no identificante | `tools/diagramas/gen_relacional_completo.py` desde `tools/esquema/esquema.py` |
 
-Decisiones: el MER completo omite las tablas técnicas (outbox, inbox, idempotencia, infra.*) porque no son conceptos de negocio; el relacional completo sí las incluye en el carril "Soporte técnico". `tools/esquema/esquema.py` es la fuente única del esquema lógico: alimenta el diagrama y alimentará el DDL (TASK-A-009); `python3 tools/esquema/esquema.py` verifica que toda FK apunte a columnas existentes con la misma aridad.
+Decisiones: el MER completo omite las tablas técnicas (outbox, inbox, idempotencia, infra.*) porque no son conceptos de negocio; el relacional completo sí las incluye en el carril "Soporte técnico". `tools/esquema/esquema.py` es representación del esquema lógico y alimenta el diagrama; `db/migrations/` es la autoridad del DDL físico (ADR-016), no se genera ciegamente desde metadata; `python3 tools/esquema/esquema.py` verifica que toda FK apunte a columnas existentes con la misma aridad.
 
 ## Láminas por dominio (detalle, A3)
 | Lámina | Fuente | Contenido | Estado |
@@ -61,3 +61,7 @@ docker run --rm -u $(id -u):$(id -g) -e HOME=/tmp -w /data -v "$PWD/docs/diagram
 | SVG | rótulos HTML: algunos visores sin soporte de `foreignObject` muestran texto de respaldo |
 
 Pendiente: revisión humana de la semántica por Aldo antes de marcar TASK-A-003 como hecha.
+
+## Sincronización final V11
+
+Relacional completo42tablas/83FK y cinco módulos incorporan periodo/fecha de reconocimiento, naturaleza de pago, leases locales y origen/destino documental. PDF/SVG A0/A3 regenerados, texto/vector conservados, combinado11p; inspección visual del coordinador y cinco pruebas de herramientas. La comparación catálogo A/B cubre columnas/tipos/NN/PK/UK/FK declaradas; no todas las restricciones de negocio. Revisión humana/impresión pendiente.

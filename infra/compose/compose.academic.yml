@@ -1,0 +1,54 @@
+name: bovicierre-academic
+x-pg: &pg
+  image: postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+  restart: unless-stopped
+  environment:
+    POSTGRES_DB: bovicierre
+    POSTGRES_PASSWORD_FILE: /run/secrets/admin_password
+  secrets: [admin_password]
+  command: [postgres, -c, wal_level=logical, -c, max_replication_slots=12, -c, max_wal_senders=12, -c, max_connections=50, -c, shared_buffers=128MB, -c, work_mem=4MB, -c, maintenance_work_mem=64MB, -c, max_slot_wal_keep_size=2GB]
+  healthcheck:
+    test: [CMD-SHELL, 'pg_isready -U postgres -d bovicierre']
+    interval: 2s
+    timeout: 3s
+    retries: 30
+services:
+  pg-a:
+    <<: *pg
+    mem_limit: 1g
+    ports: ['127.0.0.1:15432:5432']
+    volumes: [pg-a:/var/lib/postgresql]
+  pg-b:
+    <<: *pg
+    mem_limit: 1g
+    ports: ['127.0.0.1:15433:5432']
+    volumes: [pg-b:/var/lib/postgresql]
+  pg-prov:
+    <<: *pg
+    mem_limit: 512m
+    ports: ['127.0.0.1:15434:5432']
+    volumes: [pg-prov:/var/lib/postgresql]
+  pgpool-a:
+    build: ../pgpool
+    ports: ['127.0.0.1:19999:9999']
+    volumes: ['../pgpool/pgpool-a.conf:/etc/pgpool2/pgpool.conf:ro', '../pgpool/pool_hba.conf:/etc/pgpool2/pool_hba.conf:ro']
+    secrets: [app_a_password, app_b_password, repl_password, worker_password]
+    depends_on:
+      pg-a: {condition: service_healthy}
+  pgpool-b:
+    build: ../pgpool
+    ports: ['127.0.0.1:19998:9999']
+    volumes: ['../pgpool/pgpool-b.conf:/etc/pgpool2/pgpool.conf:ro', '../pgpool/pool_hba.conf:/etc/pgpool2/pool_hba.conf:ro']
+    secrets: [app_a_password, app_b_password, repl_password, worker_password]
+    depends_on:
+      pg-b: {condition: service_healthy}
+volumes:
+  pg-a:
+  pg-b:
+  pg-prov:
+secrets:
+  admin_password: {file: '${BOVI_SECRET_DIR:?Run db/bootstrap/setup-secrets.sh}/admin_password'}
+  app_a_password: {file: '${BOVI_SECRET_DIR}/app_a_password'}
+  app_b_password: {file: '${BOVI_SECRET_DIR}/app_b_password'}
+  repl_password: {file: '${BOVI_SECRET_DIR}/repl_password'}
+  worker_password: {file: '${BOVI_SECRET_DIR}/worker_password'}

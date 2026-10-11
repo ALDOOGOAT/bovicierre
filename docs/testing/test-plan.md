@@ -1,6 +1,6 @@
 # Plan de pruebas
 
-Estado: diseñado; ninguna prueba ejecutada. Herramientas: JUnit 5 + Testcontainers (PostgreSQL 18 real, nunca H2) [F47]; dos clusters reales para replicación; Playwright para E2E. Las pruebas comparan contra **cifras fijas** de GOLD (no recalculan con el mismo código).
+La tabla inicial conserva el plan diseñado. Las ejecuciones reales están en [evidencia](evidence.md), resultados `db/tests/` y [UI](evidence/ui/frontend-ui-tests.md); no confundir presencia de IDs con cumplimiento. Herramientas: JUnit 5 + Testcontainers (PostgreSQL 18 real, nunca H2) [F47]; dos clusters reales para replicación; Playwright para E2E. Las pruebas comparan contra **cifras fijas** de GOLD (no recalculan con el mismo código).
 
 | ID | Escenario | Resultado exigido | Nivel | Entorno | Tarea |
 |---|---|---|---|---|---|
@@ -25,7 +25,7 @@ Estado: diseñado; ninguna prueba ejecutada. Herramientas: JUnit 5 + Testcontain
 | TEST-19 | Pesajes con composición distinta | NO_COMPARABLE | SQL | Testcontainers | A-016 |
 | TEST-20 | Reserva vence durante confirmación | Revalida; no vende con reserva vencida | SQL | Testcontainers | A-019 |
 | TEST-21 | Partición y escrituras de dueños distintos | Converge sin loops ni duplicados | Infra | academic | A-026 |
-| TEST-22 | Caída de A | No cambia dueño; B sólo sus recursos | Infra + API | academic | A-026 |
+| TEST-22 | Caída de A | No cambia dueño; nuevas solicitudes autenticadas A/B503; transacciónB ya autorizada puede concluir | Infra + API | academic | A-026 |
 | TEST-23 | Huérfanos tras sincronizar | Conciliación explícita | SQL | academic | A-026 |
 | TEST-24 | Outbox enviado y caída antes del acuse | Inbox deduplica | Integración | Testcontainers | A-023 |
 | TEST-25 | FDW real, DML y fuente caída | SELECT ok; DML rechazado; error controlado | SQL | academic | A-012 |

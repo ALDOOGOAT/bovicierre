@@ -40,3 +40,5 @@ artifacts/private/
 *.har
 **/__pycache__/
 .codex/config.toml
+
+**/var/private-documents/

@@ -1,0 +1,159 @@
+{
+  "capturado_en": "2026-10-11T20:44:23.432362+00:00",
+  "comando": "BOVI_API_IT=true BOVI_TC_IT=true BOVI_TEST_PASSWORD_FILE=<archivo externo> ./backend/mvnw -q -f backend/pom.xml verify",
+  "resultado": "PASS",
+  "pruebas": [
+    {
+      "name": "mx.bovicierre.ApiPostgresTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.119"
+    },
+    {
+      "name": "mx.bovicierre.ContractTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.186"
+    },
+    {
+      "name": "mx.bovicierre.ExportTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.02"
+    },
+    {
+      "name": "mx.bovicierre.PostgresContainerTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.745"
+    },
+    {
+      "name": "mx.bovicierre.PrivateDocumentsTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.162"
+    },
+    {
+      "name": "mx.bovicierre.SettlementPdfTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.004"
+    }
+  ],
+  "total_ejecutadas": 21,
+  "migraciones_postgresql_fresco": [
+    "V1__esquema.sql",
+    "V2__comandos.sql",
+    "V3__consultas_sesiones_grants.sql",
+    "V4__capturas_proveedor_dto.sql",
+    "V5__corte_por_periodo_reconocimiento.sql",
+    "V6__tarifa_money_paginacion.sql",
+    "V7__filtros_consultas.sql",
+    "V8__borrador_kg_y_expiracion.sql",
+    "V9__lector_a_captura_owner_fecha.sql",
+    "V10__filtro_posiciones_vendibles.sql",
+    "V11__cancelacion_anulacion_version.sql"
+  ],
+  "runtime_pid": 573660,
+  "docker_local_manifest": "sha256:2366445e7ecca89d14d3585a4b9b07ced1e9214ab2b88fe95978efe14cc9f776",
+  "diagnostico_admin_real": {
+    "consultas": {
+      "total": 157,
+      "errores": 0,
+      "duracion_total_ms": 875,
+      "lentas": 0,
+      "umbral_lenta_ms": 1000
+    },
+    "proceso": {
+      "iniciado_en": "2026-10-11T20:42:26.913794724Z",
+      "contadores_se_reinician": true
+    },
+    "comandos": {
+      "duracion_total_ms": 629,
+      "errores": 13,
+      "completados": 62
+    },
+    "pools": {
+      "A": {
+        "activos": 0,
+        "inactivos": 4,
+        "esperando": 0,
+        "maximo": 4
+      },
+      "B": {
+        "activos": 0,
+        "inactivos": 1,
+        "esperando": 0,
+        "maximo": 4
+      },
+      "AUTORIZACION_A": {
+        "activos": 0,
+        "inactivos": 4,
+        "esperando": 0,
+        "maximo": 4
+      },
+      "WORKER_A": {
+        "activos": 0,
+        "inactivos": 1,
+        "esperando": 0,
+        "maximo": 2
+      },
+      "WORKER_B": {
+        "activos": 0,
+        "inactivos": 1,
+        "esperando": 0,
+        "maximo": 2
+      }
+    },
+    "sincronizacion": {
+      "nodo": "A",
+      "corte": "2026-10-11T14:44:23.39401-06:00",
+      "avisos": "Replicación asíncrona; la antigüedad por stream no garantiza disponibilidad del propietario",
+      "estado": "ASINCRONA",
+      "pendientes": 0,
+      "fallos_apply": 3,
+      "ultima_sincronizacion": "2026-10-11T14:44:22.835089-06:00"
+    },
+    "capturado_en": "2026-10-11T20:44:23.401369286Z"
+  },
+  "incremento_error_por_comando_rechazado_verificado": true,
+  "logs_json": {
+    "eventos": 75,
+    "completados": 62,
+    "errores": 13,
+    "ejemplo_correcto": {
+      "evento": "COMANDO_TERMINADO",
+      "comando": "crear_usuario",
+      "correlation_id": "3ed79fda-5c22-4dc0-84ec-8c93dd07343f",
+      "nodo_dueno": "A",
+      "duracion_ms": 15,
+      "resultado": "COMPLETADA"
+    },
+    "ejemplo_rechazado": {
+      "evento": "COMANDO_TERMINADO",
+      "comando": "crear_contraparte",
+      "correlation_id": "8720925e-0d83-45fd-8103-b9fbf92da28c",
+      "nodo_dueno": "NO_RESUELTO",
+      "duracion_ms": 1,
+      "resultado": "RECHAZADA",
+      "codigo": "AUTH403"
+    }
+  },
+  "limites": [
+    "No se indujo una consulta lenta artificialmente; umbral implementado de 1000 ms.",
+    "Contadores de proceso reinician al arrancar; no sustituyen auditoría SQL.",
+    "No se inició ni publicó un servidor Docker backend en esta verificación."
+  ]
+}

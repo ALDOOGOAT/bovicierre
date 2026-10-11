@@ -8,6 +8,21 @@ from rutas import buscar, simplificar
 
 
 class DiagramasTest(unittest.TestCase):
+    def test_mer_conserva_autorrelaciones_documento_y_ajuste(self):
+        from gen_mer_completo import construir
+        import xml.etree.ElementTree as ET
+        graph = construir()
+        cells = ET.fromstring('<root>' + ''.join(graph.celdas) + '</root>')
+        values = ' '.join(cell.get('value', '') for cell in cells.iter('mxCell'))
+        self.assertIn('reemplaza', values)
+        self.assertIn('sustituto (0,1)', values)
+        by_id = {cell.get('id'): cell for cell in cells.iter('mxCell')}
+        self.assertEqual(by_id['revierte_aju'].get('value'), 'revierte')
+        edges = list(cells.iter('mxCell'))
+        for entity, relation in [('doc', 'reemplaza_doc'), ('aju', 'revierte_aju')]:
+            links = [cell for cell in edges if cell.get('source') == entity and cell.get('target') == relation]
+            self.assertEqual(len(links), 2, (entity, relation))
+
     def test_rodea_obstaculo(self):
         blocked = {(4, y) for y in range(2, 9)}
         path = buscar({(1, 5)}, {(8, 5)}, blocked, (0, 0, 10, 10), {})

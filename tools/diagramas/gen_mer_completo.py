@@ -81,6 +81,7 @@ def construir():
     D("recibe_aju", "recibe", 2010, 2540); U("liq", "recibe_aju", "(0,N)"); U("aju", "recibe_aju", "(1,1)", total=True)
     E("apl", "AplicacionPago", 950, 2550, dom="liq"); A("apl", [("id", "k"), ("importe", ""), ("naturaleza", "")], "top", sep=112, dist=64)
     D("abona", "abona a", 1310, 2540); U("apl", "abona", "(1,1)", total=True); U("liq", "abona", "(0,N)")
+    p.recursiva("revierte_aju", "revierte", "aju", "original (0,1)", "reverso (0,1)", lado="bottom", dist=70, w=110)
     p.recursiva("revierte_apl", "revierte", "apl", "original (0,1)", "reverso (0,1)", lado="bottom", dist=60, w=110)
     E("pago", "Pago", 250, 2550, dom="liq", w=140); A("pago", [("id", "k"), ("tipo", ""), ("importe", ""), ("estado", "")], "top", sep=96, dist=64)
     D("usa", "proviene de", 610, 2540); U("apl", "usa", "(1,1)", total=True); U("pago", "usa", "(0,N)")
@@ -100,6 +101,7 @@ def construir():
     # ---------- Evidencia y periodos
     E("doc", "Documento", 1000, 1000, dom="evi"); A("doc", [("id", "k"), ("tipo documental", ""), ("sha256", ""), ("versión", "")], "left", dist=40)
     D("incorpora", "incorpora", 1520, 1170); U("op", "incorpora", "(0,N)"); U("doc", "incorpora", "(0,N)")
+    p.recursiva("reemplaza_doc", "reemplaza", "doc", "original (0,1)", "sustituto (0,1)", lado="bottom", dist=110, w=110)
     p.atributo("incorpora", "rol", 1560, 1265, w=70)
     E("rev", "RevisionAdministrativa", 990, 560, dom="evi", w=180); A("rev", [("id", "k"), ("criterio", ""), ("resultado", "")], "left", dist=40)
     D("examina", "examina", 1010, 785, h=60); U("rev", "examina", "(1,N)", total=True); U("doc", "examina", "(0,N)")

@@ -12,7 +12,7 @@ Especificación maestra: `docs/spec/megaprompt.md` (no resumirla; las reglas can
 - Pruebas de BD con PostgreSQL real (Testcontainers), nunca H2. Las pruebas comparan contra cifras GOLD fijas.
 - No inventar entrevistas, clientes, resultados, firmas ni URLs. No atribuir trabajo a Aldo/Jared que no hicieron.
 - Datos de ejemplo sintéticos (prefijo DEMO); sin secretos en repo, logs ni grafo.
-- Casillas del backlog `[x]` sólo con evidencia en `docs/testing/evidence.md`; README y `docs/project/backlog.md` deben coincidir.
+- Casillas del backlog `[x]` sólo con revisión humana y evidencia en `docs/testing/evidence.md`; README y `docs/project/backlog.md` deben coincidir.
 
 ## Mapa de lectura por tarea
 | Si la tarea toca… | Lee primero |
@@ -29,7 +29,7 @@ Especificación maestra: `docs/spec/megaprompt.md` (no resumirla; las reglas can
 ```bash
 npx -y @redocly/cli@1.34.5 lint docs/api/openapi.yaml   # válido al 2026-10-10
 ```
-(backend/frontend/compose aún no existen; agregar aquí sólo comandos ya ejecutados con éxito)
+Implementación disponible: `make academic`, `make demo`, `make verify-docs`, `make verify-api` (Caddy15180), `make backup` y `make restore-check` con BACKUP_DIR privado. Evidencia/alcance actual en `docs/status.md`; no confundir estas comprobaciones con aceptación humana.
 
 ## Al terminar cada tarea
 1. Actualizar `docs/status.md`, la documentación afectada y `docs/traceability.md`.

@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-11T22:11:42.970574+00:00",
+  "baseline": "af223fbbe6520dd123b37f9984e806ae10afcf9e",
+  "dirty": true,
+  "graph_sha256": "865931ce8012e14a8814993ebcdf61aa931269f17db5b71c377aa2fa0fcaed82",
+  "nodes": 2509,
+  "edges": 4881,
+  "communities": 248,
+  "canonical_documents_reinterpreted": 53,
+  "read_sources": 102,
+  "cached_sources": 82,
+  "mode": "ASTlocal + agentes anfitriones semánticos + cluster-only --no-label",
+  "external_llm_api": false,
+  "host_tokens": "no medido",
+  "critical_edges": [
+    {
+      "source": "docs_ui_flows_and_screens_screen_08",
+      "target": "docs_api_openapi_detalleliquidacion",
+      "relation": "references",
+      "verified": true
+    },
+    {
+      "source": "docs_domain_business_rules_rn_029",
+      "target": "db_migrations_v13__correccion_composicion_exacta_comando_aplicar_pago",
+      "relation": "guards",
+      "verified": true
+    },
+    {
+      "source": "db_migrations_v13__correccion_composicion_exacta_comando_aplicar_pago",
+      "target": "docs_testing_test_plan_test_11",
+      "relation": "tested_by",
+      "verified": true
+    }
+  ],
+  "table_fk_mer_path": [
+    "tools_esquema_esquema_tabla_aplicacion_pago",
+    "tools_esquema_esquema_fk_aplicacion_pago_empresa_id_sucursal_id_liquidacion_id_a_liquidacion_empresa_id_sucursal_id_id",
+    "tools_esquema_esquema_tabla_liquidacion",
+    "docs_database_relational_model_tabla_liquidacion",
+    "docs_database_data_dictionary_ent_22",
+    "docs_database_relationship_matrix_rel_20"
+  ],
+  "limitations": [
+    "Documentos históricos sin cambios conservan extracción anterior",
+    "Aristas conceptuales no prueban SQL ni FK; catálogo/funciones/pruebas verifican comportamiento",
+    "Corte final tras refrescar documentos operacionales; este registro generado no realimenta su propia extracción"
+  ]
+}

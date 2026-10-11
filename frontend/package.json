@@ -1,0 +1,33 @@
+{
+  "name": "bovicierre-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 15173",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
+    "test": "tsx --test tests/*.test.ts",
+    "preview": "vite preview --host 127.0.0.1 --port 15173",
+    "generate:api": "openapi-typescript ../docs/api/openapi.yaml -o src/generated/api-schema.ts",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "openapi-typescript": "7.10.1",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3",
+    "vite": "8.0.3"
+  }
+}

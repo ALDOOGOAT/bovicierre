@@ -1,0 +1,24 @@
+{
+  "purchase": "01a12ced-7356-7b2c-856e-016debdbc9ae",
+  "sale": "01a12ced-7ea4-75fc-b7d6-b3887e51d8be",
+  "payment": "01a12ced-8812-748f-b84e-f4cf1ae81b2b",
+  "settlement": "01a12ced-8617-7900-aa6b-bda50d181262",
+  "canonical_total": "500.00",
+  "final_balance": "0.00",
+  "keyboard_events": 534,
+  "tab_events": 364,
+  "mouse_actions": 0,
+  "locator_focus_actions": 0,
+  "fixture_api_only": [
+    "identity",
+    "counterparty"
+  ],
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ],
+  "viewport": {
+    "width": 390,
+    "scrollWidth": 375
+  },
+  "refresh": true
+}

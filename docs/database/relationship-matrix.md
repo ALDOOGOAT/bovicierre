@@ -37,9 +37,9 @@ Lectura de "Rango A→B": para **una** instancia de A, cuántas de B. "Mín. otr
 | REL-31 | Pesaje *corrige* Pesaje (recursiva) | (0,1) | (0,1) | P/P | Original pasa a CORREGIDO | No | — | Editar ticket aprobado |
 | REL-32 | Pago *reembolsa* Pago (recursiva) | (0,N) | (0,1) | P/P | Σ reembolsos ≤ disponible del origen | No | Reembolso 100 (GOLD-07) | Reembolsar más que el disponible |
 | REL-33 | GastoOperacion *bonifica* GastoOperacion (recursiva) | (0,N) | (0,1) | P/P | Σ bonificaciones ≤ gasto original | No | Bonificación 200 sobre flete 500 | Bonificación de 600 |
-| REL-34 | AjusteLiquidacion *revierte* AjusteLiquidacion | (0,1) | (0,1) | P/P | — | No | — | — |
+| REL-34 | AjusteLiquidacion *revierte* AjusteLiquidacion (original/reverso) | original (0,1) | reverso (0,1) | P/P | Reverso único vinculado; original inmutable, nunca se edita por corregir | No | Ajuste nuevo refiere al original | Dos reversos del mismo ajuste |
 | REL-35 | RevisionAdministrativa *revisa* Operacion **xor** Identificacion | (1,1) | (0,N) | T/P | Exactamente una referencia | No | Revisión de expediente de C-0001 | Revisión sin objeto |
-| REL-36 | AsientoValoracion / AjusteLiquidacion *se imputa a* PeriodoCierre | (1,1) | (0,N) | T/P | Periodo ABIERTO al registrar | No | Ajuste de nov. con referencia a venta de oct. | Asiento en periodo CERRADO |
+| REL-36 | Hecho económico (AsientoValoracion / AjusteLiquidacion / Gasto / pago validado / AplicacionPago) *se imputa a* PeriodoCierre | (1,1) | (0,N) | T/P | Periodo ABIERTO al registrar | No | Ajuste de nov. con referencia a venta de oct. | Asiento en periodo CERRADO |
 | REL-37 | Usuario *origina* AuditoriaEvento | (0,N) | (0,1) (SIS sin usuario) | P/P | Sólo en el nodo origen | No | — | Duplicado en apply |
 
 ## Contraste con casos difíciles

@@ -1,0 +1,772 @@
+{
+  "tipo": "Propuesta técnica; no modifica backlog ni casillas humanas",
+  "fuente": "docs/project/backlog.md y matriz TEST final leídos el2026-10-11",
+  "total": 55,
+  "conteos": {
+    "verificado_local": 52,
+    "pendiente_externo": 1,
+    "diferido": 2
+  },
+  "limitaciones": "Resultados SQL propios; API/UI/recuperación acreditados mediante artefactos de sus ejecutores, no reejecutados por este agente. Grafo53docs cambiados integrado y rutas contrastadas; históricos sin cambios conservan extracción anterior.52verificado_local no equivale a Hecho ni aceptación humana. Sin commit/publicación atribuida por este agente.",
+  "tareas": [
+    {
+      "id": "TASK-A-001",
+      "titulo": "Inventario del repo/herramientas y matriz AC",
+      "criterio": "Requisitos de imagen separados de supuestos; archivos existentes respetados",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/architecture/versions.md",
+        "docs/academic/requirements-matrix.md"
+      ],
+      "verificado": "Inventario y requisitos separados de supuestos, con ausencia de rúbrica/imagen original explícita.",
+      "limite_y_proxima_accion": "Revisión humana de la matriz; no afirmar cumplimiento de una rúbrica no suministrada."
+    },
+    {
+      "id": "TASK-A-002",
+      "titulo": "Negocio, glosario, reglas y GOLD",
+      "criterio": "RN completas, reconocimiento único, costos/pagos distinguibles",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/domain/",
+        "db/tests/gold-final-all.log",
+        "docs/testing/evidence/sql-test-matrix.md"
+      ],
+      "verificado": "RN y GOLD documentados; reconocimiento, costo y pago diferenciados y casos financieros reales.",
+      "limite_y_proxima_accion": "La revisión semántica humana completa sigue pendiente; los tests no prueban cada frase de todas las RN."
+    },
+    {
+      "id": "TASK-A-003",
+      "titulo": "MER Chen y matriz de relaciones",
+      "criterio": "Fuertes/débiles, rombos, óvalos, verbos, mínimos/máximos y exportaciones revisadas",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/database/conceptual-model.md",
+        "docs/database/relationship-matrix.md",
+        "docs/diagrams/README.md"
+      ],
+      "verificado": "MER Chen, matrices y exportaciones revisadas; cinco pruebas de diagramas registradas por coordinador.",
+      "limite_y_proxima_accion": "Aprobación semántica humana de cardinalidades y láminas."
+    },
+    {
+      "id": "TASK-A-004",
+      "titulo": "Modelo relacional, diccionario y normalización",
+      "criterio": "Todas las relaciones con claves, FKs, tipos, restricciones y justificación",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/database/relational-model.md",
+        "docs/database/data-dictionary.md",
+        "docs/database/normalization.md",
+        "docs/testing/evidence/sql-test-matrix.md"
+      ],
+      "verificado": "Metadatos42tablas83FK conciliados con catálogo A/B, claves/tipos/restricciones y normalización.",
+      "limite_y_proxima_accion": "Aprobación humana del modelo; tablas técnicas infra separadas del MER."
+    },
+    {
+      "id": "TASK-A-005",
+      "titulo": "Arquitectura, ADR y plan de despliegue",
+      "criterio": "Dueños, transacciones, límites M–M y recuperación explícitos",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/architecture/",
+        "docs/testing/evidence/review-recovery.md"
+      ],
+      "verificado": "Dueños, límites M–M, transacciones y recuperación explícitos con ejecución local.",
+      "limite_y_proxima_accion": "Plan externo preparado; no se acredita despliegue comercial ni alta disponibilidad."
+    },
+    {
+      "id": "TASK-A-006",
+      "titulo": "Contexto Markdown, README y grafo inicial",
+      "criterio": "Archivos sustantivos y grafo real verificado; si Graphify está bloqueado, sólo el avance documental se registra y la subtarea de grafo sigue pendiente",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "README.md",
+        "CLAUDE.md",
+        "docs/knowledge/graph-status.md"
+      ],
+      "verificado": "Contexto sustantivo y grafo real; IDs exactos/enlaces críticos comprobados, alcance selectivo declarado.",
+      "limite_y_proxima_accion": "La extracción semántica final de todo el corpus pertenece a A-033 y no se declara terminada aquí."
+    },
+    {
+      "id": "TASK-A-007",
+      "titulo": "OpenAPI, errores y ejemplos para Jared",
+      "criterio": "Contrato validado con decimales exactos, scope e idempotencia",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/api/openapi.yaml",
+        "docs/testing/evidence/contract-read-v13.json",
+        "backend/verification-result-v13.json"
+      ],
+      "verificado": "Contrato0.2 validado y17intercambios reales por CaddyV13 con propiedades requeridas; no todas las respuestas de todos los endpoints.",
+      "limite_y_proxima_accion": "Revisión humana;17intercambios no equivalen a cada respuesta de todos los endpoints."
+    },
+    {
+      "id": "TASK-A-008",
+      "titulo": "Backend modular y build reproducible",
+      "criterio": "Maven Wrapper, configuración por entorno y arranque verificable",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "backend/verification-result-v13.json",
+        "backend/mvnw",
+        "backend/Dockerfile"
+      ],
+      "verificado": "Build Java21 reproducible,24pruebas(15unitarias8HTTPCaddy1TestcontainersPG18.6 limpioV1–13).",
+      "limite_y_proxima_accion": "Aceptación humana; sólo despliegue local."
+    },
+    {
+      "id": "TASK-A-009",
+      "titulo": "DDL/Flyway, claves, índices y seed sintético",
+      "criterio": "Base limpia construida; restricciones fallan ante datos inválidos",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "backend/verification-result-v13.json",
+        "db/tests/flyway-adoption.json",
+        "db/tests/negatives-result.json",
+        "db/tests/seed-demo-replay.json"
+      ],
+      "verificado": "Migraciones frescasV1–13 y restricciones negativas; seed por comandos reproducible, baseline3main adoptado de modo transparente.",
+      "limite_y_proxima_accion": "No atribuir retrospectivamente V1–V3 originales a Flyway; no usar semilla DEMO en producción."
+    },
+    {
+      "id": "TASK-A-010",
+      "titulo": "Roles PostgreSQL, grants y guardas de dueño",
+      "criterio": "App sin privilegios administrativos; DML indebido rechazado",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/security-final.log",
+        "db/tests/negatives-result.json"
+      ],
+      "verificado": "DML/DDL/replica_mode rechazados; SECURITY DEFINER, search_path, ACL y triggers inmutables comprobados.",
+      "limite_y_proxima_accion": "Permisos comerciales/operación pública no aprovisionados."
+    },
+    {
+      "id": "TASK-A-011",
+      "titulo": "Compose A/B + Pgpool y experimento M–M mínimo",
+      "criterio": "Dos clusters escriben dueños distintos y convergen; prueba inicial no sustituye dominio definitivo",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "infra/compose/compose.academic.yml"
+      ],
+      "verificado": "A/B escriben dueños distintos con Pgpool real y replicación bidireccional convergente.",
+      "limite_y_proxima_accion": "Replicación asíncrona; Pgpool no promueve ni redirige dueños."
+    },
+    {
+      "id": "TASK-A-012",
+      "titulo": "Tercero simulado y FDW sólo lectura",
+      "criterio": "Consulta real externa; escrituras rechazadas; procedencia visible",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/academic.log",
+        "db/tests/provider-precision-result.json",
+        "db/tests/outages-result.json"
+      ],
+      "verificado": "FDW real sólo lector A, DML42501, fuente DEMO y precisión visibles; fuente caída comprobada.",
+      "limite_y_proxima_accion": "Proveedor simulado local, no integración comercial."
+    },
+    {
+      "id": "TASK-A-013",
+      "titulo": "Autenticación y permisos por sede",
+      "criterio": "Sesión/CSRF; pruebas 401/403 y autorización de recursos",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "backend/verification-result-v13.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Sesión/CSRF,401/403, membresías/ADMIN/AUDITOR y recursos de sede reales.",
+      "limite_y_proxima_accion": "No prueba física de HTTPS público; cookie segura preparada para perfil production."
+    },
+    {
+      "id": "TASK-A-014",
+      "titulo": "Maestros, animal e identificaciones centrales",
+      "criterio": "Colisión de identificador resuelta en A; B espera visibilidad",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/negatives-result.json",
+        "db/tests/academic-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Identidad normalizada canónica A con carrera real y visibilidad en B; maestro/animal reales.",
+      "limite_y_proxima_accion": "No promoción del maestro si A cae."
+    },
+    {
+      "id": "TASK-A-015",
+      "titulo": "Operaciones, lotes y versiones contractuales",
+      "criterio": "Borradores, selecciones únicas y condiciones versionadas",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "db/tests/negatives-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Borradores, conjuntos únicos, acuerdos v1/v2 y aceptación inmutable; reapertura conserva historia.",
+      "limite_y_proxima_accion": "Aceptación humana de los flujos documentados."
+    },
+    {
+      "id": "TASK-A-016",
+      "titulo": "Documentos, revisión y pesajes",
+      "criterio": "Archivos privados; neto/grupo reales; revisión de versión exacta",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "backend/verification-result-v13.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Bytes privados, hash/descarga, revisión de versión exacta y pesos grupales/individuales reales.",
+      "limite_y_proxima_accion": "SQL metadata sintética no se presenta como bytes reales; prueba de bytes corresponde a API/UI."
+    },
+    {
+      "id": "TASK-A-017",
+      "titulo": "ConfirmarCompra y asignar costo inicial",
+      "criterio": "Posiciones, obligación y costo inicial atómicos; componentes de compra de GOLD-01/02 y GOLD-03 completo",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Compra y costo inicial atómicos; GOLD01/02/03 con resultados fijos y UI real.",
+      "limite_y_proxima_accion": "Ninguna aritmética monetaria Java/UI."
+    },
+    {
+      "id": "TASK-A-018",
+      "titulo": "Movimientos, recepción, entrega y baja",
+      "criterio": "Ejes físicos separados; baja conserva historia y costo",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "db/tests/academic-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Recepción, entrega, baja, pérdida y recompra conservan ciclos/costos históricos; recepción UI real.",
+      "limite_y_proxima_accion": "El abandono de worker se simula con lease, no matando Java."
+    },
+    {
+      "id": "TASK-A-019",
+      "titulo": "Reservas, expiración y ConfirmarVenta",
+      "criterio": "Una venta ganadora en carrera; costo parcial correcto",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "db/tests/academic-result.json",
+        "db/tests/expiry-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Reserva con un ganador, expiración tras espera de lock y venta parcial/porKG exactas.",
+      "limite_y_proxima_accion": "Carreras son SQL de dos conexiones; no se atribuyen a dos navegadores simultáneos."
+    },
+    {
+      "id": "TASK-A-020",
+      "titulo": "Pagos, anticipos y aplicaciones",
+      "criterio": "Sumatorias bajo lock, mismo scope, idempotencia y GOLD-04",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "db/tests/academic-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "GOLD04A/B, anticipo, aplicaciones concurrentes y replay exacto bajo lock.",
+      "limite_y_proxima_accion": "Aceptación humana de criterios."
+    },
+    {
+      "id": "TASK-A-021",
+      "titulo": "Ajustes, reversos y reembolsos",
+      "criterio": "GOLD-07; ninguna sobreaplicación o borrado de originales",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "GOLD07 atómico reverso1000/reaplica900/abono100 y reembolso100; originales intactos.",
+      "limite_y_proxima_accion": "Sin estados intermedios confirmados; prueba se acota a los escenarios fijos."
+    },
+    {
+      "id": "TASK-A-022",
+      "titulo": "Costo tardío, valoración y periodos",
+      "criterio": "GOLD-06/08/10; cierre conserva versiones y concilia",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "db/tests/closure-order-result.json",
+        "db/tests/academic-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "GOLD06/08/10, reconocimiento distinto de documental y ambos órdenes de carrera cierre/costo; versiones inmutables.",
+      "limite_y_proxima_accion": "Datos sintéticos locales, sin cierre contable de una empresa real."
+    },
+    {
+      "id": "TASK-A-023",
+      "titulo": "Auditoría, outbox/inbox y reintentos",
+      "criterio": "Hecho y evento atómicos; consumidor no duplica al reintentar",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/outages-result.json",
+        "backend/verification-result-v13.json"
+      ],
+      "verificado": "Hecho/outbox atómicos, lease persistente/expira, retry/backoff y inbox1 bajo consumo repetido.",
+      "limite_y_proxima_accion": "ACK perdido se simula omitiendo llamada; proceso worker Java no se mata."
+    },
+    {
+      "id": "TASK-A-024",
+      "titulo": "Consultas de cartera, margen e inventario",
+      "criterio": "Totales reconciliados, corte visible y EXPLAIN documentado",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "db/tests/performance-result.json",
+        "docs/testing/evidence/contract-read-v13.json"
+      ],
+      "verificado": "Inventario/cartera/margen reconciliados; cortes y4EXPLAIN reales con dataset declarado.",
+      "limite_y_proxima_accion": "Microconsultas de fixture pequeño; no SLO ni capacidad bajo carga concurrente."
+    },
+    {
+      "id": "TASK-A-025",
+      "titulo": "Integrar aceptación de fuente FDW y QR",
+      "criterio": "Snapshot local de tarifa/ticket; QR con acceso autorizado",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/owner-capture-result.json",
+        "db/tests/provider-precision-result.json",
+        "backend/verification-result-v13.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Tarifa FDW leída en A/capturada y aceptada en dueño B; gasto snapshot inmutable y QR autorizado.",
+      "limite_y_proxima_accion": "Integración probada de tarifa DEMO; no fuente externa de tickets comerciales."
+    },
+    {
+      "id": "TASK-A-026",
+      "titulo": "Pruebas M–M completas, fallas y conciliación",
+      "criterio": "Partición/reconexión del esquema definitivo, sin loops ni auditoría duplicada, sin redirigir dueño",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/outages-result.json",
+        "docs/testing/evidence/recovery/restore-v11.json"
+      ],
+      "verificado": "Esquema final reconecta/concilia; caída real A/B/proveedor sin promoción; sin loops/audit duplicada.",
+      "limite_y_proxima_accion": "Partición de stream simulada deshabilitando suscripción QA; no corte de red física."
+    },
+    {
+      "id": "TASK-A-027",
+      "titulo": "Pruebas acumulativas de dominio/SQL/API y concurrencia",
+      "criterio": "Escenarios TEST, GOLD integrales y PostgreSQL real; no posponer pruebas hasta el final",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-v13.log",
+        "db/tests/weighing-reports-result.json",
+        "db/tests/version-guards-result.json",
+        "docs/testing/evidence/sql-test-matrix.md",
+        "backend/verification-result-v13.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "docs/testing/evidence/graph-final.json"
+      ],
+      "verificado": "Matriz TEST por nivel cerrada: GOLD157/QA66/guardas22, backend24/UI16 y grafo53docs contrastado; carreras y límites por caso conservados.",
+      "limite_y_proxima_accion": "Matriz TEST con evidencia SQL/API/UI, concurrencia y límites por caso cerrada; no afirmar cobertura universal ni revisión humana."
+    },
+    {
+      "id": "TASK-A-028",
+      "titulo": "Pipeline, staging, TLS y configuración",
+      "criterio": "Checkout limpio desplegable y smoke test; secretos externos",
+      "estado_tecnico_propuesto": "pendiente_externo",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        ".github/workflows/",
+        "infra/compose/production.example.yml",
+        "db/tests/production-compose-result.json"
+      ],
+      "verificado": "Pipeline y configuración de producción preparados; puertos mínimos/config validada sin arranque.",
+      "limite_y_proxima_accion": "Autorizar VM/dominio/TLS/secretos comerciales y ejecutar CI remota/checkout limpio/smoke real."
+    },
+    {
+      "id": "TASK-A-029",
+      "titulo": "Respaldo, restauración y runbooks",
+      "criterio": "Restauración aislada cronometrada con cifras y archivos conciliados",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/recovery/backup-v13.json",
+        "docs/testing/evidence/recovery/restore-v13.json",
+        "docs/testing/evidence/review-recovery.md"
+      ],
+      "verificado": "Ensayo final V13 coordinador:pausa8,038s/restauración28,616s aislada, datos/archivos/dedup/inbox/sesiones0, compra1000/replay/lookup/descarga HTTP.",
+      "limite_y_proxima_accion": "Mismo host; no PITR, respaldo externo ni pérdida del equipo; ramas de error sólo revisadas en código."
+    },
+    {
+      "id": "TASK-A-030",
+      "titulo": "Rendimiento, conexiones y observabilidad",
+      "criterio": "Carga/dataset declarados; límites y resultados auténticos",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/benchmark-result.json",
+        "db/tests/benchmark-idempotency-result.json",
+        "db/tests/benchmark-report.md",
+        "infra/compose/compose.academic.yml",
+        "docs/testing/evidence/doctor-final.json"
+      ],
+      "verificado": "Dataset propio200 animales/300 operaciones por1901 comandos repetidos sin duplicar;800 consultas canónicas por Pgpool,100 warmups,4 planes,1vs4 conexiones,p50/p95 reales en i7-13620H/RAM15.36GiB.",
+      "limite_y_proxima_accion": "Verificado sólo benchmark sintético moderado local/cache caliente sin HTTP/escritores; no SLO, carga mixta, escalabilidad ni capacidad comercial. Revisión humana y umbrales operativos externos pendientes."
+    },
+    {
+      "id": "TASK-A-031",
+      "titulo": "OCR supervisado si se aprueba el núcleo",
+      "criterio": "Propuesta revisable, sin confirmar importes automáticamente",
+      "estado_tecnico_propuesto": "diferido",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/project/backlog.md"
+      ],
+      "verificado": "OCR opcional explícitamente diferido.",
+      "limite_y_proxima_accion": "Reabrir sólo con autorización posterior al núcleo; sin propuesta automática confirmada."
+    },
+    {
+      "id": "TASK-A-032",
+      "titulo": "Dossier académico, manual SQL y exposición",
+      "criterio": "Cada AC enlaza artefacto y demo ejecutada",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/academic/dossier.md",
+        "docs/academic/requirements-matrix.md",
+        "docs/testing/evidence.md",
+        "docs/testing/evidence/recovery/restore-v13.json"
+      ],
+      "verificado": "Dossier/manual/guion y AC01–09 enlazan MER/schema42/83, ACL/PL/locks, M–M/FDW y Java reales; matriz académica registra backend24/UI16/restoreV13 y límites.",
+      "limite_y_proxima_accion": "Preparación y demostraciones locales verificadas; exposición humana y aceptación del profesor pendientes. Rúbrica/imagen original ausente e interpretación M–M provisional; no garantiza todos los requisitos de una rúbrica desconocida."
+    },
+    {
+      "id": "TASK-A-033",
+      "titulo": "Fuentes, README y Graphify final consolidado",
+      "criterio": "Trazabilidad de ambos, casillas con evidencia, grafo sobre revisión integrada y release verificable",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/knowledge/graph-status.md",
+        "docs/traceability.md",
+        "README.md",
+        "docs/testing/evidence/graph-final.json"
+      ],
+      "verificado": "Candidato local integrado y grafo53docs/102fuentes/80cacheadas;2507nodos4877aristas248comunidades y rutas Pantalla8/API,RN029/cmdV13/TEST11,tabla/FK/ENT22/REL20 comprobadas. No commit ni publicación por este agente.",
+      "limite_y_proxima_accion": "Candidato local integrado, artefactos/modelos/doc y grafo de53documentos verificados; commit local, revisión humana y publicación externa separados."
+    },
+    {
+      "id": "TASK-J-001",
+      "titulo": "Entender negocio, actores y términos",
+      "criterio": "Flujos y preguntas documentados; distingue operación/pago/entrega",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/ui/flows-and-screens.md",
+        "docs/domain/",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Actores/flujos distinguen operación, liquidación, pago y entrega; recorrido real.",
+      "limite_y_proxima_accion": "Revisión humana de vocabulario y preguntas."
+    },
+    {
+      "id": "TASK-J-002",
+      "titulo": "Wireframes y arquitectura de información",
+      "criterio": "Recorrido compra→venta→liquidación→pago y excepciones",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/ui/flows-and-screens.md",
+        "docs/ui/references.md",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Arquitectura de pantallas/recorrido y excepciones documentados y navegados con API real.",
+      "limite_y_proxima_accion": "No se presenta una maqueta como integración; aceptación del diseño por Jared pendiente."
+    },
+    {
+      "id": "TASK-J-003",
+      "titulo": "Tokens y componentes visuales accesibles",
+      "criterio": "Tablas, formularios, feedback y jerarquía consistentes",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/ui/design-system.md",
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "docs/testing/evidence/ui/bovicierre-ui-final-run.json"
+      ],
+      "verificado": "UI16 PASS: flujo comercial completo por teclado a390px,534 eventos/364Tab sin ratón ni locator.focus; foco/error y capturas390/768/1440 sin overflow; componentes/tokens consistentes.",
+      "limite_y_proxima_accion": "Alcance solicitado de teclado/foco/responsive comprobado localmente; no certificación WCAG global, lector de pantalla ni teléfono físico. Revisión humana pendiente sin imponer esos ensayos adicionales."
+    },
+    {
+      "id": "TASK-J-004",
+      "titulo": "React/TS/Vite, router y build",
+      "criterio": "Proyecto reproducible y separación por funciones",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "frontend/package-lock.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "React/TS/Vite/router, build y13unitarias comprobados por agente frontend.",
+      "limite_y_proxima_accion": "Revisión humana; no publicación remota."
+    },
+    {
+      "id": "TASK-J-005",
+      "titulo": "Cliente tipado, mocks y errores del contrato",
+      "criterio": "Mocks identificados; formato decimal y 401/403/409/422/503",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "docs/testing/evidence/review-frontend-integration.md"
+      ],
+      "verificado": "Cliente tipado, decimales exactos y errores; pérdida de respuesta502 conserva clave/hash/ETag;13unitarias.",
+      "limite_y_proxima_accion": "El502es fallo de entrega inducido después del commit real; no una caída500/504real del servidor."
+    },
+    {
+      "id": "TASK-J-006",
+      "titulo": "Sesión, navegación y sede autorizada",
+      "criterio": "Cookie/CSRF integrados; permiso denegado sin revelar datos",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "backend/verification-result-v13.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Cookies/CSRF, navegación/sedes y rechazo403 de auditor; solicitud B cancelada al cambiar a A sin fuga.",
+      "limite_y_proxima_accion": "HTTPS/cookie segura pública no ejecutados."
+    },
+    {
+      "id": "TASK-J-007",
+      "titulo": "Contrapartes y predios",
+      "criterio": "Captura/búsqueda/paginación con validación",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "db/tests/owner-capture-result.json",
+        "docs/api/openapi.yaml"
+      ],
+      "verificado": "Predios reales: captura, búsqueda y paginación20+1 con21precondiciones API, según E2E integrado V13.",
+      "limite_y_proxima_accion": "Predios: captura, búsqueda y paginación comprobadas; revisión humana pendiente."
+    },
+    {
+      "id": "TASK-J-008",
+      "titulo": "Ficha animal, ciclos e inventario",
+      "criterio": "Identidad permanente, posiciones históricas y disponibilidad claras",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Entrega y recompra/ciclo2 visibles; coste canónico250 e historia de ciclo anterior conservada, según E2E V13.",
+      "limite_y_proxima_accion": "Ciclos de compra/venta entregada/recompra visibles con costes canónicos; revisión humana pendiente."
+    },
+    {
+      "id": "TASK-J-009",
+      "titulo": "Captura de compra y condiciones por lote",
+      "criterio": "Borrador por pasos; precio por kg/cabeza y versión",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Compra por cabeza/KG multilot302 y acuerdos v1/v2 navegados; borrador KG incompleto sin precio falso.",
+      "limite_y_proxima_accion": "Revisión humana de la experiencia."
+    },
+    {
+      "id": "TASK-J-010",
+      "titulo": "Pesajes, archivos y revisión",
+      "criterio": "Conjunto, unidad, evidencia, incompatibilidad y corrección visibles",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/gold-final-all.log",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Corrección100→110 conserva conjunto original y motivo; pesos individuales ausentes no se inventan; comparación incompatible visible.",
+      "limite_y_proxima_accion": "Corrección con misma composición y motivo; incompatibilidad de conjuntos comprobada. Revisión humana pendiente."
+    },
+    {
+      "id": "TASK-J-011",
+      "titulo": "Selección de venta y reservas",
+      "criterio": "Expiración/conflicto real y recarga sin doble confirmación",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/academic-result.json",
+        "db/tests/expiry-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Dos usuarios reciben conflicto409 real; expiración real409 y recarga sin segunda confirmación, según casos UI integrados.",
+      "limite_y_proxima_accion": "Conflicto409 con dos usuarios y expiración real409; recarga sin doble confirmación."
+    },
+    {
+      "id": "TASK-J-012",
+      "titulo": "Simulador y detalle explicable de liquidación",
+      "criterio": "Fórmula, costos, ajustes, saldo y estado de entrega separados",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "db/tests/gold-final-all.log"
+      ],
+      "verificado": "Simulador y liquidación reales con precio/costo/saldo y ajuste atómico; estado físico separado.",
+      "limite_y_proxima_accion": "Resultados fijos, no certificación de todas las combinaciones posibles."
+    },
+    {
+      "id": "TASK-J-013",
+      "titulo": "Cobros/pagos y aplicación guiada",
+      "criterio": "Anticipo, disponible y saldos correctos; reintento seguro",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "db/tests/gold-final-all.log"
+      ],
+      "verificado": "Cobro/aplicación/reintento real y anticipos/disponibles correctos en GOLD04A/B.",
+      "limite_y_proxima_accion": "Revisión humana del guiado."
+    },
+    {
+      "id": "TASK-J-014",
+      "titulo": "Ajustes, devoluciones de dinero y periodos",
+      "criterio": "Motivo, autorización y versiones; muestra GOLD-07 sin ambigüedad",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "db/tests/gold-final-all.log"
+      ],
+      "verificado": "GOLD07 atómico, reembolso100 y cierre/reapertura con versiones inmutables en navegador.",
+      "limite_y_proxima_accion": "Periodos del fixture, sin cierre empresarial real."
+    },
+    {
+      "id": "TASK-J-015",
+      "titulo": "Recepciones, entregas y expediente temporal",
+      "criterio": "Eventos verificables, documentos privados y estados físicos claros",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "db/tests/gold-final-all.log"
+      ],
+      "verificado": "Recepción/entrega y cronología de ciclos se ejercitaron en formularios reales; expediente privado y revisión de versión exacta conservados.",
+      "limite_y_proxima_accion": "Entrega e historial de ciclos comprobados en la interfaz; revisión humana pendiente."
+    },
+    {
+      "id": "TASK-J-016",
+      "titulo": "Cartera, margen y QR interno",
+      "criterio": "Datos reales de API, corte/provisionalidad y navegación autorizada",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "docs/testing/evidence/contract-read-v13.json",
+        "db/tests/gold-final-all.log"
+      ],
+      "verificado": "Cartera/margen muestran cortes/fuente/filtros y CSV canónico de toda la sede; QR autorizado real y saldos del SQL.",
+      "limite_y_proxima_accion": "Cartera/margen reales con corte, fuente, filtros y CSV de toda la sede; revisión humana pendiente."
+    },
+    {
+      "id": "TASK-J-017",
+      "titulo": "Estados de fuente caída/sincronización/conflicto",
+      "criterio": "Mensajes accionables; nunca confirma una escritura fallida",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "db/tests/outages-result.json",
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "docs/testing/evidence/review-frontend-integration.md"
+      ],
+      "verificado": "Caída física del proveedor muestra503, recuperación200 y captura preservada;502/aborto de entrega postcommit conservan intención sin segundoPOST.",
+      "limite_y_proxima_accion": "Caída física proveedor503 y recuperación200 con captura preservada; núcleo sigue disponible. Revisión humana pendiente."
+    },
+    {
+      "id": "TASK-J-018",
+      "titulo": "Responsive, teclado y accesibilidad",
+      "criterio": "Flujo principal usable en móvil y teclado, sin cortes de información",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Flujo compra→venta→pago sólo teclado390px:534eventos364Tab,cero ratón/locator.focus; responsive390/768/1440 e Intel real.",
+      "limite_y_proxima_accion": "Flujo compra→venta→pago sólo teclado390px y responsive390/768/1440. Sin teléfono físico ni certificación WCAG."
+    },
+    {
+      "id": "TASK-J-019",
+      "titulo": "Pruebas E2E integradas con Aldo",
+      "criterio": "Compra/venta/pago, errores y permisos con backend real",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/testing/evidence/ui/frontend-ui-tests.md",
+        "docs/testing/evidence/ui/bovicierre-ui-final-run.json",
+        "backend/verification-result-v13.json"
+      ],
+      "verificado": "16casos E2E reales V13 por Caddy15180:15integrados+1caída física de proveedor, cero skips/retries;13unitarias/tipos/build.",
+      "limite_y_proxima_accion": "Dieciséis casos reales:15integrados+1caída física de proveedor; alcance y límites explícitos, sin cobertura universal."
+    },
+    {
+      "id": "TASK-J-020",
+      "titulo": "UI de OCR sólo si el extra está implementado",
+      "criterio": "Datos propuestos y revisión humana obligatoria",
+      "estado_tecnico_propuesto": "diferido",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/project/backlog.md"
+      ],
+      "verificado": "UI OCR opcional diferida junto al backend.",
+      "limite_y_proxima_accion": "Sin pantalla simulada presentada como OCR implementado."
+    },
+    {
+      "id": "TASK-J-021",
+      "titulo": "Manual, capturas auténticas y demo",
+      "criterio": "Recorrido reproducible, sin pantallas ficticias presentadas como integración",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "docs/ui/",
+        "docs/testing/evidence/ui/frontend-ui-tests.md"
+      ],
+      "verificado": "Manual, capturas y recorrido local reproducibles con evidencias reales del navegador.",
+      "limite_y_proxima_accion": "Revisión humana; no exposición pública o académica ejecutada."
+    },
+    {
+      "id": "TASK-J-022",
+      "titulo": "README, contexto frontend y actualización de grafo",
+      "criterio": "Pantallas→API→reglas enlazadas y evidencia lista; A-033 consolida después el grafo final",
+      "estado_tecnico_propuesto": "verificado_local",
+      "revision_humana": "pendiente_humano",
+      "evidencia": [
+        "frontend/README.md",
+        "docs/traceability.md",
+        "docs/knowledge/graph-status.md",
+        "docs/testing/evidence/graph-final.json"
+      ],
+      "verificado": "Contexto/README y53docs cambiados integrados en grafo; Pantalla8→API y RN029→cmdV13→TEST11 contrastados con procedencia real.",
+      "limite_y_proxima_accion": "Pantallas→API→RN enlazadas;53documentos reinterpretados y rutas críticas contrastadas. Revisión humana pendiente."
+    }
+  ]
+}

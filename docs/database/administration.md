@@ -1,6 +1,6 @@
 # Administración de BD: roles, constraints, PL/pgSQL, triggers, consultas
 
-Estado: diseñado. Scripts previstos: `db/bootstrap/01_roles.sql`, `db/migrations/V*__*.sql`.
+Estado: implementado y probado parcialmente en PostgreSQL18.6. Scripts ejecutables: `db/bootstrap/01_roles.sql`, `db/migrations/V*__*.sql`; resultados reales en `docs/testing/evidence.md`. Las funciones cmd_* de la tabla son nombres conceptuales: el despachador real es `bovi.cmd_ejecutar` con tipo de comando explícito.
 
 ## 1. Distribución de controles
 | Control | Mecanismo |
@@ -20,8 +20,8 @@ Estado: diseñado. Scripts previstos: `db/bootstrap/01_roles.sql`, `db/migration
 |---|---|---|---|
 | bovi_owner | NOLOGIN | Dueño de esquemas/tablas/funciones | Nadie se conecta como él |
 | bovi_migrator | LOGIN | Miembro de bovi_owner sólo durante migración | Usado por Flyway en tarea controlada |
-| bovi_command | NOLOGIN | Dueño de funciones `SECURITY DEFINER` de comandos | `SET search_path = bovi, pg_temp`; objetos calificados |
-| bovi_app_a / bovi_app_b | LOGIN | SELECT en tablas de negocio; INSERT/UPDATE sólo en tablas de borrador; EXECUTE en `cmd_*`; sin borrado en hechos; SELECT en `infra.nodo_config` | No superusuario, no BYPASSRLS, no dueño, no puede cambiar `session_replication_role` |
+| bovi_command | NOLOGIN | Dueño de funciones `SECURITY DEFINER` de comandos | `SET search_path = pg_catalog`; todos los objetos bovi/infra/public calificados |
+| bovi_app_a / bovi_app_b | LOGIN | SELECT acotado (sin hashes), EXECUTE explícito en consultar/cmd_ejecutar; sin DML directo, DDL ni comandos internos worker | No superusuario, no BYPASSRLS, no dueño, no puede cambiar `session_replication_role` |
 | bovi_auditor | LOGIN | SELECT en tablas y vistas de reporte | Sin mutaciones |
 | bovi_repl | LOGIN REPLICATION | SELECT en tablas publicadas; usado por la suscripción | `pg_hba` restringido a la IP del otro nodo |
 | bovi_fdw_read (en el servidor proveedor) | LOGIN | SELECT sobre `proveedor.tarifa_transporte`, `proveedor.ticket_bascula` | User mapping en A |
@@ -35,7 +35,7 @@ Piloto: una empresa por despliegue; no se vende aislamiento multiempresa compart
 ## 3. Comandos PL/pgSQL
 Todos: `LANGUAGE plpgsql SECURITY DEFINER`, sin COMMIT interno (la transacción la controla Spring), sin llamadas externas. Contexto común: `(p_empresa uuid, p_sucursal uuid, p_actor uuid, p_idem_clave text, p_idem_hash char(64), p_correlation uuid, …)`. Primer paso de cada comando con efecto: `fn_reclamar_idempotencia` (INSERT … ON CONFLICT; si existe COMPLETADA con mismo hash → devuelve resultado; hash distinto → BV405).
 
-Orden global de locks: **periodo → operación → posiciones (id asc) → pagos (id asc) → liquidaciones (id asc)**.
+Orden global de locks: **idempotencia → periodo → operaciones ordenadas → posiciones ordenadas → reservas ordenadas → pagos ordenados → liquidaciones ordenadas**. Las pruebas con dos conexiones y barreras comprueban los conflictos cubiertos; no se presume ausencia de deadlocks sólo por documentar un orden.
 
 | # | Comando | Entradas clave | Permiso | Locks | Efectos | Errores | RN | Prueba |
 |---|---|---|---|---|---|---|---|---|
@@ -78,3 +78,11 @@ Medición: `EXPLAIN (ANALYZE, BUFFERS)` sobre dataset sintético RNF-05 en entor
 
 ## 6. Mantenimiento
 Autovacuum con `autovacuum_vacuum_scale_factor = 0.05` en `auditoria_evento` y `evento_outbox`; `ANALYZE` tras seed; vigilar `pg_stat_user_tables`, `pg_replication_slots.wal_status`, `max_slot_wal_keep_size` (2GB inicial, a calibrar), `pg_stat_statements`. Alertas iniciales a calibrar: retraso de réplica > 60 s, disco > 80 %.
+
+## Ejecución local actual
+
+`bovi_auth` se limita a autorización central y tablas JDBC de sesión en A; `bovi_worker` ejecuta únicamente entrega/inbox y estado técnico. `bovi_command` NOLOGIN tiene grants efectivos a las tablas que usan sus funciones SECURITYDEFINER. La propiedad de funciones no sustituye esos grants. Runtime no pertenece a migrador/owner ni dispone de SUPERUSER/BYPASSRLS.
+
+Testcontainers prueba CREATE/DELETE/hash denegados como runtime y CHECK23514 como rol controlado separado. Academic prueba réplica, carreras y muerte/inbox, con evidencia propia. No se declara que un rechazo por privilegios ejerció un trigger; las pruebas negativas del trigger usan el rol controlado autorizado en BD desechable.
+
+La aplicación autentica al actor antes de llamar SQL; un actor_id enviado por navegador no modifica el scope. current_user dentro de SECURITYDEFINER es el dueño técnico, no el humano. No hay acceso directo DB por usuario final ni promesa de RLS multiempresa.

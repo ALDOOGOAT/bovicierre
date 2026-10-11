@@ -1,6 +1,6 @@
 # Registro de evidencia y decisiones
 
-Clasificación: **HECHO** (comprobado por Claude con comando o fuente leída, con fecha) · **HIP** (hipótesis de negocio a validar) · **PROP** (decisión propuesta de diseño) · **PEND** (pendiente de información externa).
+Clasificación vigente: **HECHO**, **DECISIÓN**, **HIPÓTESIS** y **PENDIENTE EXTERNO**. Las abreviaturas HIP/PROP/PEND y registros EV iniciales se conservan como historial del10-oct; cada ejecución identifica actor, fuente, fecha y alcance.
 
 ## Hechos comprobados
 
@@ -24,7 +24,7 @@ Clasificación: **HECHO** (comprobado por Claude con comando o fuente leída, co
 | HIP-03 | La diferenciación valiosa es la liquidación explicable con evidencia | Ranking de problemas en entrevistas | sin datos |
 | HIP-04 | Costo variable ≈ MXN 550/cliente/mes y fijos ≈ 6,000/mes | Cotizaciones reales | ilustrativo |
 
-No existen entrevistas, clientes, pilotos ni resultados de pruebas a la fecha.
+Al registro inicial del10-oct no existían entrevistas, clientes, pilotos ni pruebas funcionales. Las pruebas locales del11-oct están en [evidencia](../testing/evidence.md); entrevistas, clientes y piloto siguen pendientes.
 
 ## Contradicciones y huecos detectados en el megaprompt, con decisión
 
@@ -50,3 +50,14 @@ No existen entrevistas, clientes, pilotos ni resultados de pruebas a la fecha.
 | PEND-02 | Imagen original de la rúbrica en el repo | Aldo |
 | PEND-03 | Credenciales/servidor para staging | Aldo |
 | PEND-04 | Disponibilidad real de horas de Aldo y Jared | Equipo |
+
+## Ejecución local 2026-10-11
+
+| Categoría | Registro | Evidencia/límite |
+|---|---|---|
+| HECHO | Baseline af223fb, main limpio al iniciar; nueva rama feature/mvp-local | git status/rev-parse/switch; sin reset |
+| HECHO | Java21, Docker29.4.1/Compose5.1.3 y clientePG18.3 disponibles | scripts/doctor.py y tooling-inventory.md |
+| HECHO | INEGI mgem/07 descarga124municipios única clave textual | data/reference/inegi-chiapas-manifest.json, SHA256; estadísticasCenso2020, vigencia claves no informada |
+| DECISIÓN | SesionesA, muerteB→inboxA, reconocimiento mensual, SQLautoridad y desplieguelocal | ADR-013..017; resultados por criterio en docs/testing/evidence.md |
+| HIPÓTESIS | HIP-PRICE-01 3,000MXN/sede/mes5usuarios5GB2hsoporte | business-model/pilot-proposal; no precio validado |
+| PENDIENTE EXTERNO | Entrevistas, rúbricaoriginal/profesor, piloto, TLS/staging | Sin aprobación/revisión humana atribuida |

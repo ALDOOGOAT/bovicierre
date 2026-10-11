@@ -1,0 +1,180 @@
+{
+  "utc": "2026-10-11T21:32:01.041573+00:00",
+  "api_pool_caps": {
+    "owner_a": 4,
+    "owner_b": 4,
+    "auth_direct_a": 4,
+    "worker_a": 2,
+    "worker_b": 2
+  },
+  "minimum_idle": 0,
+  "pgpool_children_per_node": 16,
+  "max_pool": 1,
+  "postgres_max_connections": 50,
+  "max_wal_senders": 12,
+  "max_replication_slots": 12,
+  "observed": {
+    "a": [
+      {
+        "backend_type": "autovacuum launcher",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "background writer",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "checkpointer",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "client backend",
+        "role": "bovi_app_a",
+        "conexiones": 4
+      },
+      {
+        "backend_type": "client backend",
+        "role": "bovi_auth",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "client backend",
+        "role": "bovi_worker",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "client backend",
+        "role": "postgres",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "io worker",
+        "role": "",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "logical replication apply worker",
+        "role": "postgres",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "logical replication launcher",
+        "role": "postgres",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "walsender",
+        "role": "bovi_repl",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "walwriter",
+        "role": "",
+        "conexiones": 1
+      }
+    ],
+    "b": [
+      {
+        "backend_type": "autovacuum launcher",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "background writer",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "checkpointer",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "client backend",
+        "role": "bovi_app_b",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "client backend",
+        "role": "bovi_worker",
+        "conexiones": 2
+      },
+      {
+        "backend_type": "client backend",
+        "role": "postgres",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "io worker",
+        "role": "",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "logical replication apply worker",
+        "role": "postgres",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "logical replication launcher",
+        "role": "postgres",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "walsender",
+        "role": "bovi_repl",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "walwriter",
+        "role": "",
+        "conexiones": 1
+      }
+    ],
+    "prov": [
+      {
+        "backend_type": "autovacuum launcher",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "background writer",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "checkpointer",
+        "role": "",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "client backend",
+        "role": "bovi_fdw_read",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "client backend",
+        "role": "postgres",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "io worker",
+        "role": "",
+        "conexiones": 3
+      },
+      {
+        "backend_type": "logical replication launcher",
+        "role": "postgres",
+        "conexiones": 1
+      },
+      {
+        "backend_type": "walwriter",
+        "role": "",
+        "conexiones": 1
+      }
+    ]
+  },
+  "note": "Lectura puntual durante UI; incluye una conexi\u00f3n administrativa por nodo. App/worker comparten slots Pgpool: no sumar sus m\u00e1ximos otra vez a conexiones f\u00edsicas Pgpool. Suscripciones/FDW/background tienen l\u00edmites distintos; no prueba carga m\u00e1xima."
+}

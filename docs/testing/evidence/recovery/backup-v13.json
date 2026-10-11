@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-11T21:47:04Z",
+  "pause_seconds": 8.038,
+  "revision": "af223fbbe6520dd123b37f9984e806ae10afcf9e",
+  "dirty": true,
+  "format": 1,
+  "source_project": "bovicierre-academic",
+  "migration": "V13",
+  "api_mode": "Docker propio reanudado; salud comprobada antes del ensayo"
+}

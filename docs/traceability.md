@@ -1,6 +1,6 @@
 # Trazabilidad
 
-Cadena: AC → RN → UC → ENT/REL → comando/función → API → pantalla → TEST → tarea → evidencia. Estado: **diseñado** en todas las filas (no hay código). Se actualizará con rutas de archivo y línea al implementar.
+Cadena: AC → RN → UC → ENT/REL → comando/función → API → pantalla → TEST → tarea → evidencia. Estado actualizado por incremento: los comandos SQL reales se despachan mediante `bovi.cmd_ejecutar`; las filas históricas conservan los nombres conceptuales. La tabla de ejecución de abajo indica archivos y pruebas auténticas, sin atribuir revisión humana.
 
 | AC | RN | UC | ENT / REL | Comando / función | API | Pantalla | TEST | Tareas | Estado |
 |---|---|---|---|---|---|---|---|---|---|
@@ -22,4 +22,18 @@ Cadena: AC → RN → UC → ENT/REL → comando/función → API → pantalla �
 
 Cobertura de RN por TEST: ver columna "Prueba" en `docs/domain/business-rules.md`.
 
-Mejora UI/UX del 2026-10-11: RN-029/030/032 → UC-09/10 → pantallas 8/9 → GOLD-04A/B, GOLD-07, TEST-04/07/11/12 → TASK-J-002/J-012/J-013. Especificación y contrato pendiente en `docs/ui/flows-and-screens.md`; referencias en `docs/ui/references.md`; herramientas en `docs/development/web-tools.md`. Estado: **diseñado**, sin pruebas de aplicación ni tareas marcadas completas.
+Mejora UI/UX del 2026-10-11: RN-029/030/032 → UC-09/10 → pantallas 8/9 → GOLD-04A/B, GOLD-07, TEST-04/07/11/12 → TASK-J-002/J-012/J-013. Especificación y contrato implementados en `docs/ui/flows-and-screens.md`; referencias en `docs/ui/references.md`; herramientas en `docs/development/web-tools.md`. Estado: implementado y comprobado con SQL/API/UI; [matriz](testing/evidence/sql-test-matrix.md) y [nueve E2E](testing/evidence/ui/bovicierre-ui-final-run.json). Revisión humana pendiente, sin casillas Hecho.
+
+## Trazabilidad ejecutada · 2026-10-11
+
+| Regla / recorrido | Autoridad ejecutable | API / pantalla | Evidencia local | Límite |
+|---|---|---|---|---|
+| RN021/022 compra/venta | `db/migrations/V2__comandos.sql` y evoluciones, `fn_calcular_liquidacion` | confirmar; captura y pantalla8/liquidación | GOLD01/02, API y `evidence/ui/bovicierre-ui-e2e.json` según manifiesto frontend | Los nombres conceptuales cmd_confirmar_* no son funciones adicionales |
+| RN028..033 dinero | cmd_ejecutar aplicar/ajustar/revertir/reembolsar | pagos/aplicaciones, liquidación y pantalla9 | GOLD04/07 y UI bonificación atómica/reembolso | No hay pagos bancarios reales |
+| RN027/039 costo tardío y periodos | reparto/asiento/cierre inmutable SQL | gastos/reparto y periodos | GOLD06/08/ANUL; carrera cierre en ampliación | Corte por sede, no snapshot global A/B |
+| RN043/044 muerteB→A | outbox B, inbox A, OutboxWorker | movimiento BAJA y sincronización | academic muerte/acuse repetido | Nuevas peticiones autenticadas dependen de A |
+| RN001 permisos | AccessService/SecurityConfiguration y roles SQL | sesión/usuarios | HTTPCSRF, TestcontainersDDL/DELETE/hash y auditorUI403 | No RLS multiempresa |
+| RN037 evidencia | DocumentStorage/PrivateDocuments, documento/revisión SQL | expediente/documentos/QR | pruebas privadas y UI PNG/QR/refresh | Revisión administrativa, no certificado sanitario |
+| Pantalla8 → liquidación | `evidencia/SettlementController.java`, `CoreController` + consultaSQL | GETliquidaciones/id + comprobante | API compra/venta/saldoPDF y UI | Contrato OpenAPI no demuestra por sí solo ejecución |
+
+Los archivos y logs se enlazan desde `docs/testing/evidence.md`; diagramas desde `docs/diagrams/README.md`. Graphify debe reextraer estas relaciones semánticas después de cerrar el incremento.

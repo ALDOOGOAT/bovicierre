@@ -38,3 +38,18 @@ Fecha de corte: 2026-10-10 (America/Mexico_City). "Instalado" = comprobado en la
 1. Fijar versión exacta (BOM, lockfile o digest de imagen); nunca `latest`.
 2. Actualizar por PR con: motivo, notas de versión leídas, `./mvnw verify` y `npm run build` en verde.
 3. A y B siempre en la misma versión mayor de PostgreSQL; las migraciones se aplican coordinadas.
+
+## Versiones materializadas — 2026-10-11
+
+- Backend: Spring Boot 4.1.1, Java 21, wrapper Maven 3.9.12 (`backend/pom.xml`, `.mvn/wrapper/`). Pruebas HTTP reales por Pgpool ejecutadas.
+- Frontend: React 19.2.4, TypeScript 5.9.3, Vite 8.0.3, openapi-typescript 7.10.1; `frontend/package-lock.json`. Build comprobado con Node 20.20.2.
+- PostgreSQL A/B/proveedor: servidor 18.6, digest en `infra/compose/compose.academic.yml`; cliente host 18.3 es distinto del servidor.
+- Pgpool 4.7.3 compilado desde fuente con checksum en `infra/pgpool/Dockerfile`; modo raw, un backend propietario por instancia.
+- Migración separada Flyway 13.10.0 (`db/migrate/pom.xml`), fuera del arranque de API. Replay limpio y adopción del esquema de desarrollo se registran por separado.
+- Redocly 1.34.5: contrato 0.2.0 válido, dos advertencias (CSRF y salud públicos sin errores ficticios). Graphify continúa en 0.9.49.
+
+Esta sección describe el código actual; las filas objetivo anteriores conservan el contexto histórico. Caddy/publicación y CI remoto no se han ejecutado.
+
+- Caddy local:2.11.7-alpine fijado por digest en `infra/compose/application.yml`, configuraciónvalidada. Imagenesapp en build local; no TLS público emitido.
+- Testcontainers2.0.5 gestionado por BOM: prueba PG18.6 real ejecutada. Playwright1.58.2 runnerfrontend, Chrome visible; distingue runner de MCP.
+- Scripts Python recuperación requieren PyYAML6.0.1; herramientasBD psycopg fijado en su manifiesto. Dependencias auxiliares no entran al bundlefrontend.

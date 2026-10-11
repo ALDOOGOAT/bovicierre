@@ -1,7 +1,8 @@
 """Fuente única del esquema lógico de BoviCierre.
 
 Se usa para generar el diagrama relacional completo (tools/diagramas/gen_relacional_completo.py)
-y, en TASK-A-009, el DDL PostgreSQL. Debe coincidir con docs/database/data-dictionary.md.
+y debe contrastarse con el catálogo PostgreSQL físico (db/migrations/ autoridad),
+además de docs/database/data-dictionary.md. No genera DDL sin revisión semántica.
 
 Columna: (nombre, tipo, marcas)  marcas ⊂ {"PK", "UK", "NN", "FK"}; las FK se declaran aparte.
 FK: (columnas_locales, tabla_ref, columnas_ref)  — si alguna columna local admite NULL, la FK es opcional.
@@ -139,7 +140,7 @@ TABLAS = [
       (["empresa_id", "sucursal_id", "pesaje_id"], "pesaje", ["empresa_id", "sucursal_id", "id"])], []),
     ("liq", "ajuste_liquidacion", LOC + [ID, ("liquidacion_id", "uuid", {"NN"}), ("naturaleza", "varchar(6)", {"NN"}), ("monto", IMP, {"NN"}),
                                         ("motivo", "varchar(200)", {"NN"}), ("fuente", "varchar(24)", {"NN"}), ("documento_id", "uuid", set()),
-                                        ("revierte_ajuste_id", "uuid", {"UK"}), ("periodo_id", "uuid", {"NN"}), ("registrado_por", "uuid", {"NN"}),
+                                        ("revierte_ajuste_id", "uuid", {"UK"}), ("periodo_id", "uuid", {"NN"}), ("fecha_reconocimiento", "date", {"NN"}), ("registrado_por", "uuid", {"NN"}),
                                         ("registrado_en", "timestamptz", {"NN"}), NODO],
      [(["empresa_id", "sucursal_id", "liquidacion_id"], "liquidacion", ["empresa_id", "sucursal_id", "id"]),
       (["empresa_id", "sucursal_id", "revierte_ajuste_id"], "ajuste_liquidacion", ["empresa_id", "sucursal_id", "id"]),
@@ -149,11 +150,12 @@ TABLAS = [
                                      ("importe", IMP, {"NN"}), ("concepto", "varchar(160)", {"NN"}), ("proveedor_parte_id", "uuid", {"UK"}),
                                      ("referencia_origen", "varchar(60)", {"UK"}), ("documento_id", "uuid", set()), ("bonifica_gasto_id", "uuid", set()),
                                      ("estado", "varchar(10)", {"NN"}), ("fecha_economica", "date", {"NN"}), ("aprobado_por", "uuid", set()),
-                                     ("aprobado_en", "timestamptz", set()), ("snapshot_fuente_externa", "jsonb", set()), NODO],
+                                     ("aprobado_en", "timestamptz", set()), ("snapshot_fuente_externa", "jsonb", set()), ("periodo_id", "uuid", {"NN"}), ("fecha_reconocimiento", "date", {"NN"}), NODO],
      [(["empresa_id", "sucursal_id", "operacion_id"], "operacion", ["empresa_id", "sucursal_id", "id"]),
       (["empresa_id", "proveedor_parte_id"], "parte", ["empresa_id", "id"]),
       (["empresa_id", "sucursal_id", "bonifica_gasto_id"], "gasto_operacion", ["empresa_id", "sucursal_id", "id"]),
-      (["empresa_id", "sucursal_id", "documento_id"], "documento", ["empresa_id", "sucursal_id", "id"])], []),
+      (["empresa_id", "sucursal_id", "documento_id"], "documento", ["empresa_id", "sucursal_id", "id"]),
+      (["empresa_id", "sucursal_id", "periodo_id"], "periodo_cierre", ["empresa_id", "sucursal_id", "id"])], []),
     ("liq", "asignacion_costo", LOC + [ID, ("posicion_id", "uuid", {"NN"}), ("fuente_liquidacion_id", "uuid", set()), ("fuente_numero_concepto", "smallint", set()),
                                       ("fuente_gasto_id", "uuid", set()), ("fuente_ajuste_id", "uuid", set()), ("metodo", "varchar(18)", {"NN"}),
                                       ("base_valor", KG, {"NN"}), ("importe", IMP, {"NN"}), ("lote_reparto_id", "uuid", {"NN"}), ("periodo_id", "uuid", {"NN"}), NODO],
@@ -174,21 +176,24 @@ TABLAS = [
     ("liq", "pago", LOC + [ID, ("parte_id", "uuid", {"NN"}), ("tipo", "varchar(10)", {"NN"}), ("moneda", "char(3)", {"NN"}), ("importe", IMP, {"NN"}),
                           ("metodo", "varchar(14)", {"NN"}), ("referencia", "varchar(60)", set()), ("recibido_el", "date", {"NN"}),
                           ("estado", "varchar(10)", {"NN"}), ("pago_origen_id", "uuid", set()), ("documento_id", "uuid", set()),
-                          ("registrado_por", "uuid", {"NN"}), NODO],
+                          ("registrado_por", "uuid", {"NN"}), NODO, ("naturaleza", "varchar(10)", {"NN"}), ("periodo_id", "uuid", set()), ("fecha_reconocimiento", "date", set())],
      [(["empresa_id", "parte_id"], "parte", ["empresa_id", "id"]),
       (["empresa_id", "sucursal_id", "pago_origen_id"], "pago", ["empresa_id", "sucursal_id", "id"]),
-      (["empresa_id", "sucursal_id", "documento_id"], "documento", ["empresa_id", "sucursal_id", "id"])], []),
+      (["empresa_id", "sucursal_id", "documento_id"], "documento", ["empresa_id", "sucursal_id", "id"]),
+      (["empresa_id", "sucursal_id", "periodo_id"], "periodo_cierre", ["empresa_id", "sucursal_id", "id"])], []),
     ("liq", "aplicacion_pago", LOC + [ID, ("pago_id", "uuid", {"NN"}), ("liquidacion_id", "uuid", {"NN"}), ("importe", IMP, {"NN"}),
                                      ("naturaleza", "varchar(10)", {"NN"}), ("reverso_de_id", "uuid", {"UK"}), ("aplicada_en", "timestamptz", {"NN"}),
-                                     ("registrado_por", "uuid", {"NN"}), NODO],
+                                     ("registrado_por", "uuid", {"NN"}), NODO, ("periodo_id", "uuid", {"NN"}), ("fecha_reconocimiento", "date", {"NN"})],
      [(["empresa_id", "sucursal_id", "pago_id"], "pago", ["empresa_id", "sucursal_id", "id"]),
       (["empresa_id", "sucursal_id", "liquidacion_id"], "liquidacion", ["empresa_id", "sucursal_id", "id"]),
-      (["empresa_id", "sucursal_id", "reverso_de_id"], "aplicacion_pago", ["empresa_id", "sucursal_id", "id"])], []),
+      (["empresa_id", "sucursal_id", "reverso_de_id"], "aplicacion_pago", ["empresa_id", "sucursal_id", "id"]),
+      (["empresa_id", "sucursal_id", "periodo_id"], "periodo_cierre", ["empresa_id", "sucursal_id", "id"])], []),
     # ---------------- Evidencia, revisión y auditoría
     ("evi", "documento", LOC + [ID, ("tipo_documental", "varchar(24)", {"NN"}), ("clave_almacenamiento", "varchar(80)", {"NN", "UK"}),
                                ("sha256", "char(64)", {"NN"}), ("tamano_bytes", "bigint", {"NN"}), ("mime", "varchar(60)", {"NN"}),
                                ("version", "smallint", {"NN"}), ("documento_previo_id", "uuid", {"UK"}), ("emisor", "varchar(160)", set()),
                                ("folio", "varchar(60)", set()), ("fecha_emision", "date", set()), ("vigente_hasta", "date", set()),
+                               ("origen_texto", "varchar(200)", set()), ("destino_texto", "varchar(200)", set()),
                                ("finalidad", "varchar(120)", set()), ("es_sintetico", "boolean", {"NN"}), NODO, ("subido_por", "uuid", {"NN"}),
                                ("subido_en", "timestamptz", {"NN"})],
      [(["empresa_id", "sucursal_id", "documento_previo_id"], "documento", ["empresa_id", "sucursal_id", "id"])], []),
@@ -220,7 +225,7 @@ TABLAS = [
                               ("resultado", "varchar(10)", {"NN"})], [], []),
     ("tec", "infra.nodo_config", [("nodo", "char(1)", {"PK", "NN"}), ("empresa_id", "uuid", {"NN"}), ("descripcion", "varchar(80)", set())], [], []),
     ("tec", "infra.entrega_outbox", [("evento_id", "uuid", {"PK", "NN"}), ("destino", "varchar(40)", {"PK", "NN"}), ("intentos", "integer", {"NN"}),
-                                     ("proximo_intento", "timestamptz", set()), ("confirmado_en", "timestamptz", set()), ("ultimo_error", "text", set())], [], []),
+                                     ("proximo_intento", "timestamptz", set()), ("confirmado_en", "timestamptz", set()), ("ultimo_error", "text", set()), ("lease_token", "uuid", set()), ("lease_vence_en", "timestamptz", set())], [], []),
     ("tec", "infra.importacion_fuente", [("id", "uuid", {"PK", "NN"}), ("empresa_id", "uuid", {"NN", "UK"}), ("sucursal_id", "uuid", set()),
                                          ("fuente", "varchar(20)", {"NN", "UK"}), ("corte_en", "timestamptz", {"NN"}), ("sha256", "char(64)", {"NN", "UK"}),
                                          ("filas_leidas", "integer", {"NN"}), ("filas_error", "integer", {"NN"}), ("actor_id", "uuid", {"NN"}),

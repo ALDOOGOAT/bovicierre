@@ -1,9 +1,9 @@
 # Dependencias funcionales y normalización
 
-Referencia: F15. Estado: análisis diseñado; se comprobará contra el DDL (TEST-30).
+Referencia: F15. Estado: análisis de las 42 tablas lógicas, contrastadas en catálogo A/B; restricciones no expresadas como DF se prueban por separado. Las tablas técnicas adicionales JDBC/Flyway/captura no son entidades comerciales.
 
 ## 1. Dependencias funcionales y claves candidatas por tabla
-Notación: X → Y. "CK" = claves candidatas. `id` técnico es CK en todas las tablas que lo tienen; se listan además las claves comerciales.
+Notación: X → Y. "CK" = claves candidatas. Las claves técnicas conservan el scope E/S de su UNIQUE o PK: una UUID aislada no se presume única. Se listan además las claves comerciales.
 
 | Tabla | CK | DF no triviales relevantes | Forma |
 |---|---|---|---|
@@ -14,18 +14,18 @@ Notación: X → Y. "CK" = claves candidatas. `id` técnico es CK en todas las t
 | usuario | {E,id}, {E,login_normalizado} | — | BCNF |
 | membresia_usuario | {E,S,usuario_id,rol_codigo} | → vigente | BCNF |
 | animal | {E,id} (UK(E,sede,id) es superclave usada para FK) | E,id → sede_operadora_id, sexo, situacion | BCNF |
-| animal_identificacion | {E,id}, {E,sistema,codigo_normalizado} | codigo_declarado → codigo_normalizado (función determinista, ver §4) | 3FN; BCNF salvo la DF funcional derivable |
+| animal_identificacion | {E,id}, {E,sistema,codigo_normalizado} | codigo_declarado → codigo_normalizado (función determinista, ver §4) | Desnormalización derivada declarada; no afirmar 3FN/BCNF sin tratar codigo_declarado → codigo_normalizado |
 | operacion | {E,S,id}, {E,S,tipo,folio} | E,S,id → tipo, parte_id, estado, …; E,S,tipo,folio → id | BCNF |
 | lote_operacion | {E,S,operacion_id,numero_lote} | → descripcion | BCNF |
 | contrato_version | {E,S,operacion_id,numero_version} | → estado, politica_redondeo | BCNF |
 | condicion_lote | {E,S,operacion_id,numero_version,numero_lote} | → precio_unitario, unidad_precio, … | BCNF |
-| seleccion_compra | {E,S,op,lote,animal}, {E,S,op,animal} | E,S,op,animal → lote | BCNF (ambos determinantes son CK) |
+| seleccion_compra | {E,S,op,animal}; PK física {E,S,op,lote,animal} no mínima | E,S,op,animal → lote | BCNF respecto a la DF declarada: el determinante mínimo es {E,S,op,animal} |
 | posicion_inventario | {E,S,id}, {E,S,animal_id,numero_ciclo}, {E,S,compra_op,compra_lote,animal_id} | id → estado, …; animal_id,numero_ciclo → id | BCNF |
 | reserva_venta | {E,S,id} | id → posicion_id, estado, vence_en | BCNF |
-| pesaje | {E,S,id} | id → modo, bruto, tara, neto; (bruto,tara) → neto **cuando modo = BRUTO_TARA** | 3FN con CHECK (ver §4) |
+| pesaje | {E,S,id} | id → modo, bruto, tara, neto; (bruto,tara) → neto **cuando modo = BRUTO_TARA** | Dependencia condicional por modo; neto conservado con CHECK, no prueba automática de 3FN |
 | pesaje_animal | {E,S,pesaje_id,animal_id} | → peso_individual_kg | BCNF |
 | liquidacion | {E,S,id}, {E,S,operacion_id} | id → total, snapshots | BCNF (snapshots dependen de la liquidación, ver §5) |
-| concepto_liquidacion | {E,S,liquidacion_id,numero_concepto} | → tipo, cantidad, precio, importe; (cantidad, precio) → importe salvo redondeo | 3FN; importe se conserva como hecho redondeado |
+| concepto_liquidacion | {E,S,liquidacion_id,numero_concepto} | → tipo, cantidad, precio, importe; (cantidad, precio) → importe salvo redondeo | Importe derivado materializado: excepción a normalización estricta, hecho redondeado inmutable |
 | pago | {E,S,id} | id → parte_id, importe, tipo | BCNF |
 | aplicacion_pago | {E,S,id}, {E,S,reverso_de_id} (si no nulo) | id → pago_id, liquidacion_id, importe | BCNF |
 | asignacion_costo | {E,S,id} | id → posicion, fuente, importe | BCNF |
@@ -73,4 +73,59 @@ Planteamiento ingenuo: `liquidacion(id, total, pagado, saldo, pago1_ref, pago1_i
 | `asiento_valoracion.delta_*` | Columnas generadas: no editables |
 
 ## 6. BCNF y preservación de dependencias
-Todas las tablas de negocio cumplen BCNF salvo las DF "funcionales" de §5, que se controlan con CHECK o columnas generadas, no con descomposición. No se encontró ninguna descomposición BCNF que pierda dependencias: el caso típico (3FN pero no BCNF por solapamiento de claves candidatas) aparece en `seleccion_compra` con CK {op, lote, animal} y {op, animal}; la DF (op, animal) → lote tiene determinante que **es** CK, por lo que sigue en BCNF.
+La selección de compra tiene la clave candidata mínima {E,S,op,animal}; añadir lote produce una superclave no mínima. Su DF determina lote y no viola BCNF. La tabla anterior analiza las dependencias declaradas de las tablas enumeradas; no demuestra BCNF del modelo completo. El inventario completo siguiente explicita determinantes mínimos conocidos y excepciones; las restricciones físicas se contrastaron con el catálogo ejecutado, sin confundir una comparación con una demostración exhaustiva de reglas (TEST-30). Los totales materializados y snapshots conservan autoridad e inmutabilidad explícitas; no son campos editables paralelos.
+
+## 7. Inventario completo de determinantes conocidos
+
+Para cada fila, K → todos los atributos propios del registro. Las claves de abajo provienen de PK/UK completas declaradas, eliminando superclaves que contienen otra clave más pequeña. UK con NULL y unicidad parcial por estado no son claves candidatas del conjunto completo. Todas las DF abreviadas id → … de la tabla inicial significan la clave E[,S],id correspondiente, nunca UUID global.
+
+Los datos escalares/composición separados sostienen 1FN; los atributos comerciales de contraparte/animal se separan de selecciones y hechos (2FN/3FN). Las constantes para FK de tipo, valores calculados, JSON snapshots y efectos históricos son excepciones explícitas. Una comprobación de claves no descubre automáticamente todas las DF semánticas; este inventario analiza las reconocidas por el dominio, sin una proclamación global falsa de BCNF.
+
+| Tabla | Determinantes mínimos NOT NULL | UK condicional conocida | Análisis / excepción |
+|---|---|---|---|
+| empresa | {id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| sucursal | {empresa_id,id}, {empresa_id,codigo} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| rol_aplicacion | {codigo} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| usuario | {empresa_id,id}, {empresa_id,login_normalizado} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| membresia_usuario | {empresa_id,sucursal_id,usuario_id,rol_codigo} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| parte | {empresa_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| predio | {empresa_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| animal | {empresa_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| animal_identificacion | {empresa_id,id}, {empresa_id,sistema,codigo_normalizado} | — | normalización derivada del código; véase §5, no BCNF estricta |
+| operacion | {empresa_id,sucursal_id,id}, {empresa_id,sucursal_id,tipo,folio} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| folio_contador | {empresa_id,sucursal_id,tipo,anio} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| lote_operacion | {empresa_id,sucursal_id,operacion_id,numero_lote} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| contrato_version | {empresa_id,sucursal_id,operacion_id,numero_version} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| condicion_lote | {empresa_id,sucursal_id,operacion_id,numero_version,numero_lote} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| pesaje | {empresa_id,sucursal_id,id} | — | neto derivado sólo en BRUTO_TARA; dependencia condicional con CHECK |
+| pesaje_animal | {empresa_id,sucursal_id,pesaje_id,animal_id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| seleccion_compra | {empresa_id,sucursal_id,operacion_id,animal_id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| posicion_inventario | {empresa_id,sucursal_id,id}, {empresa_id,sucursal_id,animal_id,numero_ciclo}, {empresa_id,sucursal_id,compra_operacion_id,compra_numero_lote,animal_id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| seleccion_venta | {empresa_id,sucursal_id,operacion_id,posicion_id} | — | selección de posición por operación mínima; estado derivado de reserva/posición, no atributo repetido |
+| reserva_venta | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| movimiento_inventario | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| periodo_cierre | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| cierre_periodo_version | {empresa_id,sucursal_id,periodo_id,numero_version} | — | totales/versiones y hash de corte materializados e inmutables |
+| liquidacion | {empresa_id,sucursal_id,id}, {empresa_id,sucursal_id,operacion_id} | — | snapshots temporales inmutables, no copia del maestro actual |
+| concepto_liquidacion | {empresa_id,sucursal_id,liquidacion_id,numero_concepto} | — | importe redondeado materializado; no 3FN estricta respecto a fórmula |
+| ajuste_liquidacion | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| gasto_operacion | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| asignacion_costo | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| asiento_valoracion | {empresa_id,sucursal_id,id} | — | deltas generados, fórmulas no editables |
+| pago | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| aplicacion_pago | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| documento | {empresa_id,sucursal_id,id} | — | sha256 no determina nombre original/versión/scope; múltiples metadatos de mismos bytes son válidos |
+| operacion_documento | {empresa_id,sucursal_id,operacion_id,documento_id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| revision_administrativa | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| revision_documento | {empresa_id,sucursal_id,revision_id,documento_id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| auditoria_evento | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| evento_outbox | {empresa_id,sucursal_id,id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| clave_idempotencia | {empresa_id,sucursal_id,principal_id,comando,clave} | — | resultado inmutable de intención; contenido/hash/resultado forman hecho temporal |
+| mensaje_inbox | {consumidor,fuente_id,event_id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| infra.nodo_config | {nodo} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| infra.entrega_outbox | {evento_id,destino} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+| infra.importacion_fuente | {id} | — | 1FN/2FN/3FN y BCNF respecto a DF declaradas: determinantes son claves; no se presume otra unicidad comercial |
+
+### Tablas técnicas del catálogo
+
+SpringSession (clave PRIMARY_ID; SESSION_ID única) y attributes (PRIMARY_ID,ATTRIBUTE_NAME) separan el grupo repetido; bytes de atributo son serialización técnica, no una nueva entidad comercial. Flyway conserva historia de versión/checksum. `infra.tarifa_snapshot.id` determina captura/actor/scope/contenido; sólo aceptada_en puede transitar de NULL a timestamp una vez. Precio y hash son derivados materializados deliberados; el snapshot aceptado del gasto conserva hechos aunque cambie la fuente FDW. Ninguna se publica como maestro comercial ni implica normalización de contenido binario/JSON.

@@ -1,9 +1,9 @@
 # Reglas de negocio RN-001..RN-045
 
-Fuente canónica de las reglas. Origen: **MP** = megaprompt §5 (propuesta del producto); **DEC-xx** = decisión registrada en `docs/research/evidence-register.md`. Estado de todas: **diseñada, no implementada** (2026-10-10).
+Fuente canónica de las reglas. Origen: **MP** = megaprompt §5 (propuesta del producto); **DEC-xx** = decisión registrada en `docs/research/evidence-register.md`. Línea base de diseño: 2026-10-10. Al 2026-10-11 existen implementación SQL/Java y pruebas locales por incremento; el resultado y alcance de cada ejecución se registran en [evidencia](../testing/evidence.md). La presencia de una RN o un TEST en esta tabla no acredita por sí sola su cumplimiento completo.
 
 ## Convención de errores
-Errores de dominio levantados por PL/pgSQL con `RAISE EXCEPTION ... USING ERRCODE = 'BVnnn'` y mapeados por la API: `BV0xx` → 422 (regla de dominio), `BV4xx` → 409 (conflicto/concurrencia/idempotencia), `BV5xx` → 503 (dueño no disponible). Errores nativos relevantes: `23505` unique_violation → 409, `23503` foreign_key_violation → 422, `23514` check_violation → 422, `42501` insufficient_privilege → 403 (sólo pruebas de rol), `40001`/`40P01` → reintento acotado.
+Errores de dominio levantados por PL/pgSQL con `RAISE EXCEPTION ... USING ERRCODE = 'P0001', DETAIL = json` (objeto validado con `codigo`, `regla_id` y campos públicos) y mapeados por la API: `BV0xx` → 422 (regla de dominio), `BV4xx` → 409 (conflicto/concurrencia/idempotencia), `BV5xx` → 503 (dueño no disponible). Errores nativos relevantes: `23505` unique_violation → 409, `23503` foreign_key_violation → 422, `23514` check_violation → 422, `42501` insufficient_privilege → 403 (sólo pruebas de rol), `40001`/`40P01` → reintento acotado.
 
 Actores: **ADM** administrador · **OPE** operador · **CAJ** caja · **AUD** auditor · **SIS** sistema (comando/trigger).
 
@@ -49,7 +49,7 @@ Actores: **ADM** administrador · **OPE** operador · **CAJ** caja · **AUD** au
 | RN-038 | Cancelación, pérdida, muerte, devolución y venta son motivos distintos con evidencia y autorización; no borrar animales | Trazabilidad | ADM | — | RegistrarBajaInventario → BAJA | posicion_inventario.motivo_baja, animal.situacion | `BV024` | Comando; sin DELETE | TEST-08, TEST-33 | MP, DEC-03/04 |
 | RN-039 | Periodo cerrado impide ediciones retroactivas; reapertura con permiso y bitácora | Cierres confiables | ADM | — | Cerrar/ReabrirPeriodo | periodo_cierre, cierre_periodo_version | `BV025` | Lock de fila de periodo | TEST-09 | MP |
 | RN-040 | Una réplica retrasada no autoriza operaciones críticas; decide el escritor propietario | Consistencia | SIS | — | — | — | `BV501`→503 | OwnerDatabaseRouter | TEST-22 | MP |
-| RN-041 | Si el dueño no está disponible la escritura queda sin confirmar; no hay cambio automático de dueño | Evitar split-brain | SIS | — | — | — | `BV501`→503 | Router sin failover | TEST-22 | MP |
+| RN-041 | Si el dueño no está disponible la respuesta puede quedar pendiente de comprobar; no hay cambio automático de dueño | Evitar split-brain | SIS | — | — | — | `BV501`→503 | Router sin failover | TEST-22 | MP |
 | RN-042 | Dato del proveedor FDW no es histórico por sí mismo: se guarda snapshot aceptado localmente | Reproducibilidad | OPE | — | AceptarCotizacion crea snapshot | gasto_operacion/documento snapshot | — | Copia local con hash | TEST-25 | MP |
 | RN-043 | Confirmar una operación y su auditoría es atómico; evento de integración en outbox en la misma transacción | Consistencia | SIS | — | — | auditoria_evento, evento_outbox | — | Insert en el comando | TEST-24 | MP |
 | RN-044 | Entrega externa admite reintentos; outbox no garantiza exactamente una vez | Honestidad técnica | SIS | — | — | infra.entrega_outbox, mensaje_inbox | — | Inbox deduplica | TEST-24 | MP |

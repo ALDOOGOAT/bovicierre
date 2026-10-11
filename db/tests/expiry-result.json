@@ -1,0 +1,12 @@
+{
+  "database": "bovicierre_release_replay",
+  "seconds": 5.044,
+  "command_calls": 9,
+  "two_connections": true,
+  "barrier": true,
+  "lock_wait_observed": true,
+  "tx_began_before_expiry": true,
+  "result": "BV403",
+  "liquidacion_partial": false,
+  "kg_incomplete_public_BV013": true
+}

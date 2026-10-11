@@ -2,7 +2,7 @@
 
 SaaS B2B (proyecto académico de **Tópicos Avanzados de Bases de Datos**, con intención comercial) para cerrar y conciliar operaciones de compraventa de ganado bovino en pie: qué animales participaron, qué peso y condiciones se pactaron, qué gastos se asignaron, cómo se calculó la liquidación y qué queda por cobrar o pagar.
 
-> **Estado al 2026-10-10:** paquete de diseño documental (negocio, reglas, modelo conceptual y relacional en texto, arquitectura, ADR, contrato OpenAPI, plan). **No existe código, migraciones ni pruebas ejecutadas.** Láminas MER Chen y relacional en `docs/diagrams/` (pendientes de revisión humana); grafo de Graphify generado localmente (ver `docs/knowledge/graph-status.md`). Ver [`docs/status.md`](docs/status.md).
+> **Estado al 2026-10-11:** demo local integrada disponible en localhost:15180. Java/React/PostgreSQL por Pgpool: 24 pruebas backend, 13 unitarias frontend y dieciséis recorridos UI pasan (15integrados+1caída física de proveedor). Restauración V13, fallos A/B/proveedor y persistencia comprobados; aceptación humana pendiente. Estado técnico y revisión humana separados en [estado](docs/status.md), [evidencia](docs/testing/evidence.md) y [handoff](docs/implementation/handoff.md).
 
 Equipo: **Aldo Fabio Contreras Marroquín** (backend, bases de datos, infraestructura) · **Jared** (frontend). Entrega académica: **31-oct-2026**. Especificación maestra: [`docs/spec/megaprompt.md`](docs/spec/megaprompt.md).
 
@@ -13,10 +13,10 @@ Equipo: **Aldo Fabio Contreras Marroquín** (backend, bases de datos, infraestru
 - Segmento, precio y diferenciación son **hipótesis sin validar** ([plan de validación](docs/business/validation-plan.md)).
 
 ## Modelo de negocio
-Suscripción por sede (rango a investigar MXN 2,000–4,000/mes) + configuración inicial cotizada. Sin comisión sobre ganado, sin custodia de dinero. El dinero del ganado es del cliente, no ingreso de BoviCierre. Detalle: [modelo](docs/business/business-model.md) · [economía unitaria](docs/business/unit-economics.md).
+Hipótesis HIP-PRICE-01: suscripción de MXN 3,000 por sede/mes (cinco usuarios, 5 GB, dos horas de soporte) + configuración inicial cotizada. Sin comisión sobre ganado, sin custodia de dinero. El dinero del ganado es del cliente, no ingreso de BoviCierre. Detalle: [modelo](docs/business/business-model.md) · [economía unitaria](docs/business/unit-economics.md).
 
 ## Alcance del MVP
-Incluye: empresas, sedes, usuarios y permisos; contrapartes; identificación animal, lotes y ciclos de inventario; compras/ventas MXN por kg o cabeza con condiciones versionadas; pesajes de lote o individuales; reservas contra doble venta; recepciones/entregas; gastos y asignación de costos; liquidaciones y ajustes; pagos y aplicaciones; expediente documental; reportes de margen, cartera e inventario; auditoría, respaldo, replicación M–M y FDW; simulador de margen y QR interno; OCR supervisado como extra.
+Incluye: empresas, sedes, usuarios y permisos; contrapartes; identificación animal, lotes y ciclos de inventario; compras/ventas MXN por kg o cabeza con condiciones versionadas; pesajes de lote o individuales; reservas contra doble venta; recepciones/entregas; gastos y asignación de costos; liquidaciones y ajustes; pagos y aplicaciones; expediente documental; reportes de margen, cartera e inventario; auditoría, respaldo, replicación M–M y FDW; simulador de margen y QR interno; OCR y captura offline avanzada aplazados.
 Fuera: ver [ADR-012](docs/architecture/adr/ADR-012-alcance-aplazado.md) (CFDI, crédito, custodia, traspasos entre sedes, devoluciones físicas posteriores, inventario histórico, etc.).
 
 ## Requisitos académicos
@@ -39,7 +39,7 @@ Java 21 + Spring Boot 4.1.1 (Web, Validation, Security, JDBC) · Maven Wrapper �
 ## Arquitectura
 ```mermaid
 flowchart TB
-    U["Navegador"] --> C["Caddy · HTTPS"]
+    U["Navegador"] --> C["Caddy · HTTP local / HTTPS futuro"]
     C --> F["Frontend React"]
     C --> API["API Java · monolito modular"]
     API --> PA["Pgpool A · raw"]
@@ -65,15 +65,23 @@ Monolito modular (10 módulos), escritor exclusivo por agregado, maestros en A, 
 - `origin = none` evita loops; **no** resuelve conflictos. Si el profesor exige dos escritores sobre la misma fila, se requiere otro diseño (riesgo R-01).
 
 ## Ejecución
-Herramientas de desarrollo UI/UX y web ya verificadas: [configuración, selección y reanudación](docs/development/web-tools.md). La [primera mejora de liquidación/pagos](docs/ui/flows-and-screens.md#liquidación--pago--aplicación-primera-mejora-documental) sigue siendo diseño; no hay frontend conectado.
+Herramientas UI/UX y web: [selección y uso](docs/development/web-tools.md), [inventario actual](docs/development/tooling-inventory.md). Java/React usan datos sintéticos persistidos, sin presentar mocks como servicios conectados.
 
-Aún no hay código. Comandos previstos (se actualizarán con comandos verificados):
 ```bash
-docker compose -f infra/compose/compose.academic.yml up -d   # TASK-A-011
-cd backend && ./mvnw verify                                   # TASK-A-008
-cd frontend && npm ci && npm run dev                          # TASK-J-004
+make doctor
+make academic   # PostgreSQL/Pgpool + API/frontend/Caddy en contenedores, localhost15180
+make demo       # seedDEMO reproducible; no restablece una BD ajena
+make verify     # docs, build, unitarias y catálogo; no es suite académica completa
+make verify-api # requiere API viva y secretos DEMO externos
 ```
-Bootstrap de replicación: [runbook](docs/runbooks/bootstrap.md). Despliegue a staging pendiente de servidor (sin URL pública).
+
+Interfaz integrada: `http://localhost:15180`. Alternativa de desarrollo, con API de contenedor detenida: `sh db/bootstrap/start.sh`, `npm --prefix frontend ci`, `make dev`; UI15173/API18080 en primer plano. Roles DEMO: `demo.admin`, `demo.operador`, `demo.caja`, `demo.auditor`. Contraseñas generadas localmente en directorio privado `~/.local/share/bovicierre-academic/secrets`; no son valores fijos ni se copian al README. Inicio de acceso: CSRF anónimo → login → selección de sede. El perfil de despliegue exige cookie Secure/HTTPS; el local usa HTTP loopback.
+
+El esquema inicial de desarrollo se aplicó con psql, distinto del replay Flyway limpio; no se atribuye retrospectivamente a Flyway. [Autoridad física](docs/architecture/adr/ADR-016-autoridad-esquema.md). A caída implica 503 de nuevas solicitudes autenticadas de ambas sedes; no hay alta disponibilidad ni promoción automática de B.
+
+`make stop` conserva volúmenes y detiene sólo la topología de contenedores BoviCierre; API/Vite arrancados manualmente se detienen desde sus propias terminales. No borra datos. Respaldo/restauración V13 aislada comprobada, con archivos por hash, compra nueva y reintento; [procedimiento y límites](docs/runbooks/backup-restore.md). No acredita pérdida del host ni PITR.
+
+[Backend](backend/README.md) · [datos](data/README.md) · [demo y GOLD](docs/testing/demo-script.md) · [contrato](docs/api/openapi.yaml). Generar cliente: `npm --prefix frontend run generate:api`. Despliegue público, staging/TLS, entrevistas y revisión del profesor permanecen externos; sin publicación en esta etapa.
 
 ## Diagramas
 - **MER completo (Chen)**: [`mer-completo.pdf`](docs/diagrams/exports/mer-completo.pdf)
@@ -99,76 +107,48 @@ Kanban con WIP 1 por persona ([roadmap](docs/project/roadmap.md), [definition of
 | 29–31 oct | Correcciones, evidencia, release | Correcciones, capturas, demo | Entrega reproducible |
 
 ## Tareas
-Las casillas `[ ]` de las tablas son texto (no interactivas); las listas de abajo sí lo son en GitHub. Se marcan `[x]` sólo con evidencia en [`docs/testing/evidence.md`](docs/testing/evidence.md). Detalle con evidencia: [backlog](docs/project/backlog.md).
+
+Fuente única: [backlog](docs/project/backlog.md). Estas tablas/listas se regeneran con `python3 scripts/sync-task-tables.py`. Revisión humana pendiente; verificado local no equivale a Hecho.
 
 ### Aldo — backend, bases de datos e infraestructura
 
-| Estado | ID | Tarea/entregable | Depende de | Ventana (oct) | Criterio de aceptación | Kanban |
-|---|---|---|---|---|---|---|
-| [ ] | TASK-A-001 | Inventario del repo/herramientas y matriz AC | Inicio | 11 | Requisitos de imagen separados de supuestos; archivos existentes respetados | Revisión |
-| [ ] | TASK-A-002 | Negocio, glosario, reglas y GOLD | A-001 | 11–12 | RN completas, reconocimiento único, costos/pagos distinguibles | Revisión |
-| [ ] | TASK-A-003 | MER Chen y matriz de relaciones | A-002 | 11–12 | Fuertes/débiles, rombos, óvalos, verbos, mínimos/máximos y exportaciones revisadas | Revisión |
-| [ ] | TASK-A-004 | Modelo relacional, diccionario y normalización | A-003 | 12–13 | Todas las relaciones con claves, FKs, tipos, restricciones y justificación | Revisión |
-| [ ] | TASK-A-005 | Arquitectura, ADR y plan de despliegue | A-002/A-004 | 12–13 | Dueños, transacciones, límites M–M y recuperación explícitos | Revisión |
-| [ ] | TASK-A-006 | Contexto Markdown, README y grafo inicial | A-003/A-005/A-007 | 12–13 | Archivos sustantivos y grafo real verificado; si Graphify está bloqueado, sólo el avance documental se registra y la subtarea de grafo sigue pendiente | Revisión |
-| [ ] | TASK-A-007 | OpenAPI, errores y ejemplos para Jared | A-004/A-005 | 13 | Contrato validado con decimales exactos, scope e idempotencia | Revisión |
-| [ ] | TASK-A-008 | Backend modular y build reproducible | A-005/A-007 | 13–14 | Maven Wrapper, configuración por entorno y arranque verificable | Listo |
-| [ ] | TASK-A-009 | DDL/Flyway, claves, índices y seed sintético | A-004 | 13–15 | Base limpia construida; restricciones fallan ante datos inválidos | Listo |
-| [ ] | TASK-A-010 | Roles PostgreSQL, grants y guardas de dueño | A-009 | 13–15 | App sin privilegios administrativos; DML indebido rechazado | Backlog |
-| [ ] | TASK-A-011 | Compose A/B + Pgpool y experimento M–M mínimo | A-005 y esquema mínimo aislado | 13–14 | Dos clusters escriben dueños distintos y convergen; prueba inicial no sustituye dominio definitivo | Listo |
-| [ ] | TASK-A-012 | Tercero simulado y FDW sólo lectura | A-011 | 14 | Consulta real externa; escrituras rechazadas; procedencia visible | Backlog |
-| [ ] | TASK-A-013 | Autenticación y permisos por sede | A-008/A-010 | 14–15 | Sesión/CSRF; pruebas 401/403 y autorización de recursos | Backlog |
-| [ ] | TASK-A-014 | Maestros, animal e identificaciones centrales | A-009/A-013 | 15 | Colisión de identificador resuelta en A; B espera visibilidad | Backlog |
-| [ ] | TASK-A-015 | Operaciones, lotes y versiones contractuales | A-014 | 15–16 | Borradores, selecciones únicas y condiciones versionadas | Backlog |
-| [ ] | TASK-A-016 | Documentos, revisión y pesajes | A-015 | 16–17 | Archivos privados; neto/grupo reales; revisión de versión exacta | Backlog |
-| [ ] | TASK-A-017 | ConfirmarCompra y asignar costo inicial | A-015/A-016 | 17–18 | Posiciones, obligación y costo inicial atómicos; componentes de compra de GOLD-01/02 y GOLD-03 completo | Backlog |
-| [ ] | TASK-A-018 | Movimientos, recepción, entrega y baja | A-017 | 18–20 | Ejes físicos separados; baja conserva historia y costo | Backlog |
-| [ ] | TASK-A-019 | Reservas, expiración y ConfirmarVenta | A-017/A-018 | 19–20 | Una venta ganadora en carrera; costo parcial correcto | Backlog |
-| [ ] | TASK-A-020 | Pagos, anticipos y aplicaciones | A-017/A-019 | 20–21 | Sumatorias bajo lock, mismo scope, idempotencia y GOLD-04 | Backlog |
-| [ ] | TASK-A-021 | Ajustes, reversos y reembolsos | A-020 | 21–22 | GOLD-07; ninguna sobreaplicación o borrado de originales | Backlog |
-| [ ] | TASK-A-022 | Costo tardío, valoración y periodos | A-019/A-021 | 21–23 | GOLD-06/08/10; cierre conserva versiones y concilia | Backlog |
-| [ ] | TASK-A-023 | Auditoría, outbox/inbox y reintentos | A-017..A-022 | 22–24 | Hecho y evento atómicos; consumidor no duplica al reintentar | Backlog |
-| [ ] | TASK-A-024 | Consultas de cartera, margen e inventario | A-020/A-022 | 23–24 | Totales reconciliados, corte visible y EXPLAIN documentado | Backlog |
-| [ ] | TASK-A-025 | Integrar aceptación de fuente FDW y QR | A-012/A-016 | 23–25 | Snapshot local de tarifa/ticket; QR con acceso autorizado | Backlog |
-| [ ] | TASK-A-026 | Pruebas M–M completas, fallas y conciliación | A-009/A-011/A-023 | 24–25 | Partición/reconexión del esquema definitivo, sin loops ni auditoría duplicada, sin redirigir dueño | Backlog |
-| [ ] | TASK-A-027 | Pruebas acumulativas de dominio/SQL/API y concurrencia | Incremental por módulo; cierre tras A-026 | 18–27 | Escenarios TEST, GOLD integrales y PostgreSQL real; no posponer pruebas hasta el final | Backlog |
-| [ ] | TASK-A-028 | Pipeline, staging, TLS y configuración | A-008/A-011 | 26–27 | Checkout limpio desplegable y smoke test; secretos externos | Backlog |
-| [ ] | TASK-A-029 | Respaldo, restauración y runbooks | A-026/A-028 | 26–28 | Restauración aislada cronometrada con cifras y archivos conciliados | Backlog |
-| [ ] | TASK-A-030 | Rendimiento, conexiones y observabilidad | A-024/A-028 | 27–28 | Carga/dataset declarados; límites y resultados auténticos | Backlog |
-| [ ] | TASK-A-031 | OCR supervisado si se aprueba el núcleo | A-016/A-027 | 25–28 opcional | Propuesta revisable, sin confirmar importes automáticamente | Backlog |
-| [ ] | TASK-A-032 | Dossier académico, manual SQL y exposición | A-027..A-030 | 29–31 | Cada AC enlaza artefacto y demo ejecutada | Backlog |
-| [ ] | TASK-A-033 | Fuentes, README y Graphify final consolidado | A-032/J-022 | 29–31 | Trazabilidad de ambos, casillas con evidencia, grafo sobre revisión integrada y release verificable | Backlog |
+| Estado | ID | Tarea/entregable | Depende de | Ventana (oct) | Criterio de aceptación | Kanban | Evidencia | Responsable humano | Ejecutor real | Estado técnico | Revisión humana | Próxima acción |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| [ ] | TASK-A-001 | Inventario del repo/herramientas y matriz AC | Inicio | 11 | Requisitos de imagen separados de supuestos; archivos existentes respetados | Revisión | docs/architecture/versions.md, docs/academic/requirements-matrix.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | Revisión humana de la matriz; no afirmar cumplimiento de una rúbrica no suministrada. |
+| [ ] | TASK-A-002 | Negocio, glosario, reglas y GOLD | A-001 | 11–12 | RN completas, reconocimiento único, costos/pagos distinguibles | Revisión | docs/domain/, db/tests/gold-final-all.log, docs/testing/evidence/sql-test-matrix.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | La revisión semántica humana completa sigue pendiente; los tests no prueban cada frase de todas las RN. |
+| [ ] | TASK-A-003 | MER Chen y matriz de relaciones | A-002 | 11–12 | Fuertes/débiles, rombos, óvalos, verbos, mínimos/máximos y exportaciones revisadas | Revisión | docs/database/conceptual-model.md, docs/database/relationship-matrix.md, docs/diagrams/README.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | Aprobación semántica humana de cardinalidades y láminas. |
+| [ ] | TASK-A-004 | Modelo relacional, diccionario y normalización | A-003 | 12–13 | Todas las relaciones con claves, FKs, tipos, restricciones y justificación | Revisión | docs/database/relational-model.md, docs/database/data-dictionary.md, docs/database/normalization.md, docs/testing/evidence/sql-test-matrix.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | Aprobación humana del modelo; tablas técnicas infra separadas del MER. |
+| [ ] | TASK-A-005 | Arquitectura, ADR y plan de despliegue | A-002/A-004 | 12–13 | Dueños, transacciones, límites M–M y recuperación explícitos | Revisión | docs/architecture/, docs/testing/evidence/review-recovery.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | Plan externo preparado; no se acredita despliegue comercial ni alta disponibilidad. |
+| [ ] | TASK-A-006 | Contexto Markdown, README y grafo inicial | A-003/A-005/A-007 | 12–13 | Archivos sustantivos y grafo real verificado; si Graphify está bloqueado, sólo el avance documental se registra y la subtarea de grafo sigue pendiente | Revisión | README.md, CLAUDE.md, docs/knowledge/graph-status.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | La extracción semántica final de todo el corpus pertenece a A-033 y no se declara terminada aquí. |
+| [ ] | TASK-A-007 | OpenAPI, errores y ejemplos para Jared | A-004/A-005 | 13 | Contrato validado con decimales exactos, scope e idempotencia | Revisión | docs/api/openapi.yaml, docs/testing/evidence/contract-read.json, backend/verification-result.json | Aldo | Codex coordinador | verificado_local | pendiente_humano | Revisión humana;17intercambios no equivalen a cada respuesta de todos los endpoints. |
+| [ ] | TASK-A-008 | Backend modular y build reproducible | A-005/A-007 | 13–14 | Maven Wrapper, configuración por entorno y arranque verificable | Revisión | backend/verification-result.json, backend/mvnw, backend/Dockerfile | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Aceptación humana; sólo despliegue local. |
+| [ ] | TASK-A-009 | DDL/Flyway, claves, índices y seed sintético | A-004 | 13–15 | Base limpia construida; restricciones fallan ante datos inválidos | Revisión | backend/verification-result.json, db/tests/flyway-adoption.json, db/tests/negatives-result.json, db/tests/seed-demo-replay.json | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | No atribuir retrospectivamente V1–V3 originales a Flyway; no usar semilla DEMO en producción. |
+| [ ] | TASK-A-010 | Roles PostgreSQL, grants y guardas de dueño | A-009 | 13–15 | App sin privilegios administrativos; DML indebido rechazado | Revisión | db/tests/security-final.log, db/tests/negatives-result.json | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Permisos comerciales/operación pública no aprovisionados. |
+| [ ] | TASK-A-011 | Compose A/B + Pgpool y experimento M–M mínimo | A-005 y esquema mínimo aislado | 13–14 | Dos clusters escriben dueños distintos y convergen; prueba inicial no sustituye dominio definitivo | Revisión | db/tests/academic-result.json, infra/compose/compose.academic.yml | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Replicación asíncrona; Pgpool no promueve ni redirige dueños. |
+| [ ] | TASK-A-012 | Tercero simulado y FDW sólo lectura | A-011 | 14 | Consulta real externa; escrituras rechazadas; procedencia visible | Revisión | db/tests/academic.log, db/tests/provider-precision-result.json, db/tests/outages-result.json | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Proveedor simulado local, no integración comercial. |
+| [ ] | TASK-A-013 | Autenticación y permisos por sede | A-008/A-010 | 14–15 | Sesión/CSRF; pruebas 401/403 y autorización de recursos | Revisión | backend/verification-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | No prueba física de HTTPS público; cookie segura preparada para perfil production. |
+| [ ] | TASK-A-014 | Maestros, animal e identificaciones centrales | A-009/A-013 | 15 | Colisión de identificador resuelta en A; B espera visibilidad | Revisión | db/tests/negatives-result.json, db/tests/academic-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | No promoción del maestro si A cae. |
+| [ ] | TASK-A-015 | Operaciones, lotes y versiones contractuales | A-014 | 15–16 | Borradores, selecciones únicas y condiciones versionadas | Revisión | db/tests/gold-final-all.log, db/tests/negatives-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Aceptación humana de los flujos documentados. |
+| [ ] | TASK-A-016 | Documentos, revisión y pesajes | A-015 | 16–17 | Archivos privados; neto/grupo reales; revisión de versión exacta | Revisión | db/tests/gold-final-all.log, backend/verification-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | SQL metadata sintética no se presenta como bytes reales; prueba de bytes corresponde a API/UI. |
+| [ ] | TASK-A-017 | ConfirmarCompra y asignar costo inicial | A-015/A-016 | 17–18 | Posiciones, obligación y costo inicial atómicos; componentes de compra de GOLD-01/02 y GOLD-03 completo | Revisión | db/tests/gold-final-all.log, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Ninguna aritmética monetaria Java/UI. |
+| [ ] | TASK-A-018 | Movimientos, recepción, entrega y baja | A-017 | 18–20 | Ejes físicos separados; baja conserva historia y costo | Revisión | db/tests/gold-final-all.log, db/tests/academic-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | El abandono de worker se simula con lease, no matando Java. |
+| [ ] | TASK-A-019 | Reservas, expiración y ConfirmarVenta | A-017/A-018 | 19–20 | Una venta ganadora en carrera; costo parcial correcto | Revisión | db/tests/gold-final-all.log, db/tests/academic-result.json, db/tests/expiry-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Carreras son SQL de dos conexiones; no se atribuyen a dos navegadores simultáneos. |
+| [ ] | TASK-A-020 | Pagos, anticipos y aplicaciones | A-017/A-019 | 20–21 | Sumatorias bajo lock, mismo scope, idempotencia y GOLD-04 | Revisión | db/tests/gold-final-all.log, db/tests/academic-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Aceptación humana de criterios. |
+| [ ] | TASK-A-021 | Ajustes, reversos y reembolsos | A-020 | 21–22 | GOLD-07; ninguna sobreaplicación o borrado de originales | Revisión | db/tests/gold-final-all.log, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Sin estados intermedios confirmados; prueba se acota a los escenarios fijos. |
+| [ ] | TASK-A-022 | Costo tardío, valoración y periodos | A-019/A-021 | 21–23 | GOLD-06/08/10; cierre conserva versiones y concilia | Revisión | db/tests/gold-final-all.log, db/tests/closure-order-result.json, db/tests/academic-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Datos sintéticos locales, sin cierre contable de una empresa real. |
+| [ ] | TASK-A-023 | Auditoría, outbox/inbox y reintentos | A-017..A-022 | 22–24 | Hecho y evento atómicos; consumidor no duplica al reintentar | Revisión | db/tests/academic-result.json, db/tests/outages-result.json, backend/verification-result.json | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | ACK perdido se simula omitiendo llamada; proceso worker Java no se mata. |
+| [ ] | TASK-A-024 | Consultas de cartera, margen e inventario | A-020/A-022 | 23–24 | Totales reconciliados, corte visible y EXPLAIN documentado | Revisión | db/tests/gold-final-all.log, db/tests/performance-result.json, docs/testing/evidence/contract-read.json | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Microconsultas de fixture pequeño; no SLO ni capacidad bajo carga concurrente. |
+| [ ] | TASK-A-025 | Integrar aceptación de fuente FDW y QR | A-012/A-016 | 23–25 | Snapshot local de tarifa/ticket; QR con acceso autorizado | Revisión | db/tests/owner-capture-result.json, db/tests/provider-precision-result.json, backend/verification-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Integración probada de tarifa DEMO; no fuente externa de tickets comerciales. |
+| [ ] | TASK-A-026 | Pruebas M–M completas, fallas y conciliación | A-009/A-011/A-023 | 24–25 | Partición/reconexión del esquema definitivo, sin loops ni auditoría duplicada, sin redirigir dueño | Revisión | db/tests/academic-result.json, db/tests/outages-result.json, docs/testing/evidence/recovery/restore-v11.json | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Partición de stream simulada deshabilitando suscripción QA; no corte de red física. |
+| [ ] | TASK-A-027 | Pruebas acumulativas de dominio/SQL/API y concurrencia | Incremental por módulo; cierre tras A-026 | 18–27 | Escenarios TEST, GOLD integrales y PostgreSQL real; no posponer pruebas hasta el final | Revisión | db/tests/gold-final-all.log, docs/testing/evidence/sql-test-matrix.md, backend/verification-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Matriz TEST con evidencia SQL/API/UI, concurrencia y límites por caso cerrada; no afirmar cobertura universal ni revisión humana. |
+| [ ] | TASK-A-028 | Pipeline, staging, TLS y configuración | A-008/A-011 | 26–27 | Checkout limpio desplegable y smoke test; secretos externos | Backlog | .github/workflows/, infra/compose/production.example.yml, db/tests/production-compose-result.json | Aldo | Codex coordinador | pendiente_externo | pendiente_humano | Autorizar VM/dominio/TLS/secretos comerciales y ejecutar CI remota/checkout limpio/smoke real. |
+| [ ] | TASK-A-029 | Respaldo, restauración y runbooks | A-026/A-028 | 26–28 | Restauración aislada cronometrada con cifras y archivos conciliados | Revisión | docs/testing/evidence/recovery/backup-v11.json, docs/testing/evidence/recovery/restore-v11.json, docs/testing/evidence/review-recovery.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | Mismo host; no PITR, respaldo externo ni pérdida del equipo; ramas de error sólo revisadas en código. |
+| [ ] | TASK-A-030 | Rendimiento, conexiones y observabilidad | A-024/A-028 | 27–28 | Carga/dataset declarados; límites y resultados auténticos | Revisión | db/tests/benchmark-result.json, db/tests/benchmark-idempotency-result.json, db/tests/benchmark-report.md, docs/testing/evidence/connection-budget.json | Aldo | Codex gpt-6.1-sol/high (BD/backend) | verificado_local | pendiente_humano | Medición local QA con1/4clientes; caché caliente, sinHTTP/carga escritora. Definir capacidad/SLO del piloto mediante medición específica. |
+| [ ] | TASK-A-031 | OCR supervisado si se aprueba el núcleo | A-016/A-027 | 25–28 opcional | Propuesta revisable, sin confirmar importes automáticamente | Backlog | docs/project/backlog.md | Aldo | — | diferido | pendiente_humano | Reabrir sólo con autorización posterior al núcleo; sin propuesta automática confirmada. |
+| [ ] | TASK-A-032 | Dossier académico, manual SQL y exposición | A-027..A-030 | 29–31 | Cada AC enlaza artefacto y demo ejecutada | Revisión | docs/academic/dossier.md, docs/academic/requirements-matrix.md, docs/testing/evidence.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | Dossier y matriz por AC enlazan código, demo y evidencia. Revisión humana/profesor y rúbrica original pendientes. |
+| [ ] | TASK-A-033 | Fuentes, README y Graphify final consolidado | A-032/J-022 | 29–31 | Trazabilidad de ambos, casillas con evidencia, grafo sobre revisión integrada y release verificable | Revisión | docs/knowledge/graph-status.md, docs/traceability.md, README.md | Aldo | Codex coordinador | verificado_local | pendiente_humano | Candidato local integrado, artefactos/modelos/doc y grafo de53documentos verificados; commit local, revisión humana y publicación externa separados. |
 
-### Jared — frontend e integración de experiencia
-
-| Estado | ID | Tarea/entregable | Depende de | Ventana (oct) | Criterio de aceptación | Kanban |
-|---|---|---|---|---|---|---|
-| [ ] | TASK-J-001 | Entender negocio, actores y términos | A-002 | 11–12 | Flujos y preguntas documentados; distingue operación/pago/entrega | Listo |
-| [ ] | TASK-J-002 | Wireframes y arquitectura de información | J-001/A-003 | 11–12 | Recorrido compra→venta→liquidación→pago y excepciones | Listo |
-| [ ] | TASK-J-003 | Tokens y componentes visuales accesibles | J-002 | 12–14 | Tablas, formularios, feedback y jerarquía consistentes | Backlog |
-| [ ] | TASK-J-004 | React/TS/Vite, router y build | A-007/J-003 | 13–14 | Proyecto reproducible y separación por funciones | Backlog |
-| [ ] | TASK-J-005 | Cliente tipado, mocks y errores del contrato | A-007/J-004 | 13–14 | Mocks identificados; formato decimal y 401/403/409/422/503 | Backlog |
-| [ ] | TASK-J-006 | Sesión, navegación y sede autorizada | A-013/J-005 | 14–15 | Cookie/CSRF integrados; permiso denegado sin revelar datos | Backlog |
-| [ ] | TASK-J-007 | Contrapartes y predios | A-014/J-006 | 15–16 | Captura/búsqueda/paginación con validación | Backlog |
-| [ ] | TASK-J-008 | Ficha animal, ciclos e inventario | A-014/A-017 | 16–18 | Identidad permanente, posiciones históricas y disponibilidad claras | Backlog |
-| [ ] | TASK-J-009 | Captura de compra y condiciones por lote | A-015/J-007 | 16–18 | Borrador por pasos; precio por kg/cabeza y versión | Backlog |
-| [ ] | TASK-J-010 | Pesajes, archivos y revisión | A-016/J-009 | 17–18 | Conjunto, unidad, evidencia, incompatibilidad y corrección visibles | Backlog |
-| [ ] | TASK-J-011 | Selección de venta y reservas | A-019/J-008 | 19–20 | Expiración/conflicto real y recarga sin doble confirmación | Backlog |
-| [ ] | TASK-J-012 | Simulador y detalle explicable de liquidación | A-019/J-010 | 19–21 | Fórmula, costos, ajustes, saldo y estado de entrega separados | Backlog |
-| [ ] | TASK-J-013 | Cobros/pagos y aplicación guiada | A-020/J-012 | 20–22 | Anticipo, disponible y saldos correctos; reintento seguro | Backlog |
-| [ ] | TASK-J-014 | Ajustes, devoluciones de dinero y periodos | A-021/A-022 | 21–23 | Motivo, autorización y versiones; muestra GOLD-07 sin ambigüedad | Backlog |
-| [ ] | TASK-J-015 | Recepciones, entregas y expediente temporal | A-018/A-023 | 22–24 | Eventos verificables, documentos privados y estados físicos claros | Backlog |
-| [ ] | TASK-J-016 | Cartera, margen y QR interno | A-024/A-025 | 23–25 | Datos reales de API, corte/provisionalidad y navegación autorizada | Backlog |
-| [ ] | TASK-J-017 | Estados de fuente caída/sincronización/conflicto | A-026/J-016 | 24–26 | Mensajes accionables; nunca confirma una escritura fallida | Backlog |
-| [ ] | TASK-J-018 | Responsive, teclado y accesibilidad | J-006..J-017 | 25–28 | Flujo principal usable en móvil y teclado, sin cortes de información | Backlog |
-| [ ] | TASK-J-019 | Pruebas E2E integradas con Aldo | Recorrido con API real/J-017; coordina A-027 | 26–28 | Compra/venta/pago, errores y permisos con backend real | Backlog |
-| [ ] | TASK-J-020 | UI de OCR sólo si el extra está implementado | A-031/J-010 | 25–28 opcional | Datos propuestos y revisión humana obligatoria | Backlog |
-| [ ] | TASK-J-021 | Manual, capturas auténticas y demo | J-018/J-019 | 29–31 | Recorrido reproducible, sin pantallas ficticias presentadas como integración | Backlog |
-| [ ] | TASK-J-022 | README, contexto frontend y actualización de grafo | J-021 | 29–31 | Pantallas→API→reglas enlazadas y evidencia lista; A-033 consolida después el grafo final | Backlog |
-
-### Listas por responsable
-
-**Aldo**
+### Lista de Aldo
 
 - [ ] TASK-A-001 — Inventario del repo/herramientas y matriz AC
 - [ ] TASK-A-002 — Negocio, glosario, reglas y GOLD
@@ -204,7 +184,34 @@ Las casillas `[ ]` de las tablas son texto (no interactivas); las listas de abaj
 - [ ] TASK-A-032 — Dossier académico, manual SQL y exposición
 - [ ] TASK-A-033 — Fuentes, README y Graphify final consolidado
 
-**Jared**
+### Jared — frontend y experiencia de usuario
+
+| Estado | ID | Tarea/entregable | Depende de | Ventana (oct) | Criterio de aceptación | Kanban | Evidencia | Responsable humano | Ejecutor real | Estado técnico | Revisión humana | Próxima acción |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| [ ] | TASK-J-001 | Entender negocio, actores y términos | A-002 | 11–12 | Flujos y preguntas documentados; distingue operación/pago/entrega | Revisión | docs/ui/flows-and-screens.md, docs/domain/, docs/testing/evidence/ui/frontend-ui-tests.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Revisión humana de vocabulario y preguntas. |
+| [ ] | TASK-J-002 | Wireframes y arquitectura de información | J-001/A-003 | 11–12 | Recorrido compra→venta→liquidación→pago y excepciones | Revisión | docs/ui/flows-and-screens.md, docs/ui/references.md, docs/testing/evidence/ui/frontend-ui-tests.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | No se presenta una maqueta como integración; aceptación del diseño por Jared pendiente. |
+| [ ] | TASK-J-003 | Tokens y componentes visuales accesibles | J-002 | 12–14 | Tablas, formularios, feedback y jerarquía consistentes | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Teclado, foco y responsive comprobados; sin certificación WCAG ni lector de pantalla. |
+| [ ] | TASK-J-004 | React/TS/Vite, router y build | A-007/J-003 | 13–14 | Proyecto reproducible y separación por funciones | Revisión | frontend/package-lock.json, docs/testing/evidence/ui/frontend-ui-tests.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Revisión humana; no publicación remota. |
+| [ ] | TASK-J-005 | Cliente tipado, mocks y errores del contrato | A-007/J-004 | 13–14 | Mocks identificados; formato decimal y 401/403/409/422/503 | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/review-frontend-integration.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | El502es fallo de entrega inducido después del commit real; no una caída500/504real del servidor. |
+| [ ] | TASK-J-006 | Sesión, navegación y sede autorizada | A-013/J-005 | 14–15 | Cookie/CSRF integrados; permiso denegado sin revelar datos | Revisión | backend/verification-result.json, docs/testing/evidence/ui/frontend-ui-tests.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | HTTPS/cookie segura pública no ejecutados. |
+| [ ] | TASK-J-007 | Contrapartes y predios | A-014/J-006 | 15–16 | Captura/búsqueda/paginación con validación | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Predios: captura, búsqueda y paginación comprobadas; revisión humana pendiente. |
+| [ ] | TASK-J-008 | Ficha animal, ciclos e inventario | A-014/A-017 | 16–18 | Identidad permanente, posiciones históricas y disponibilidad claras | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Ciclos de compra/venta entregada/recompra visibles con costes canónicos; revisión humana pendiente. |
+| [ ] | TASK-J-009 | Captura de compra y condiciones por lote | A-015/J-007 | 16–18 | Borrador por pasos; precio por kg/cabeza y versión | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Revisión humana de la experiencia. |
+| [ ] | TASK-J-010 | Pesajes, archivos y revisión | A-016/J-009 | 17–18 | Conjunto, unidad, evidencia, incompatibilidad y corrección visibles | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Corrección con misma composición y motivo; incompatibilidad de conjuntos comprobada. Revisión humana pendiente. |
+| [ ] | TASK-J-011 | Selección de venta y reservas | A-019/J-008 | 19–20 | Expiración/conflicto real y recarga sin doble confirmación | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Conflicto409 con dos usuarios y expiración real409; recarga sin doble confirmación. |
+| [ ] | TASK-J-012 | Simulador y detalle explicable de liquidación | A-019/J-010 | 19–21 | Fórmula, costos, ajustes, saldo y estado de entrega separados | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, db/tests/gold-final-all.log | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Resultados fijos, no certificación de todas las combinaciones posibles. |
+| [ ] | TASK-J-013 | Cobros/pagos y aplicación guiada | A-020/J-012 | 20–22 | Anticipo, disponible y saldos correctos; reintento seguro | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, db/tests/gold-final-all.log | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Revisión humana del guiado. |
+| [ ] | TASK-J-014 | Ajustes, devoluciones de dinero y periodos | A-021/A-022 | 21–23 | Motivo, autorización y versiones; muestra GOLD-07 sin ambigüedad | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, db/tests/gold-final-all.log | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Periodos del fixture, sin cierre empresarial real. |
+| [ ] | TASK-J-015 | Recepciones, entregas y expediente temporal | A-018/A-023 | 22–24 | Eventos verificables, documentos privados y estados físicos claros | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Entrega e historial de ciclos comprobados en la interfaz; revisión humana pendiente. |
+| [ ] | TASK-J-016 | Cartera, margen y QR interno | A-024/A-025 | 23–25 | Datos reales de API, corte/provisionalidad y navegación autorizada | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Cartera/margen reales con corte, fuente, filtros y CSV de toda la sede; revisión humana pendiente. |
+| [ ] | TASK-J-017 | Estados de fuente caída/sincronización/conflicto | A-026/J-016 | 24–26 | Mensajes accionables; nunca confirma una escritura fallida | Revisión | db/tests/outages-result.json, docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/review-frontend-integration.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Caída física proveedor503 y recuperación200 con captura preservada; núcleo sigue disponible. Revisión humana pendiente. |
+| [ ] | TASK-J-018 | Responsive, teclado y accesibilidad | J-006..J-017 | 25–28 | Flujo principal usable en móvil y teclado, sin cortes de información | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/ | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Flujo compra→venta→pago sólo teclado390px y responsive390/768/1440. Sin teléfono físico ni certificación WCAG. |
+| [ ] | TASK-J-019 | Pruebas E2E integradas con Aldo | Recorrido con API real/J-017; coordina A-027 | 26–28 | Compra/venta/pago, errores y permisos con backend real | Revisión | docs/testing/evidence/ui/frontend-ui-tests.md, docs/testing/evidence/ui/bovicierre-ui-final-run.json, backend/verification-result.json | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Dieciséis casos reales:15integrados+1caída física de proveedor; alcance y límites explícitos, sin cobertura universal. |
+| [ ] | TASK-J-020 | UI de OCR sólo si el extra está implementado | A-031/J-010 | 25–28 opcional | Datos propuestos y revisión humana obligatoria | Backlog | docs/project/backlog.md | Jared | — | diferido | pendiente_humano | Sin pantalla simulada presentada como OCR implementado. |
+| [ ] | TASK-J-021 | Manual, capturas auténticas y demo | J-018/J-019 | 29–31 | Recorrido reproducible, sin pantallas ficticias presentadas como integración | Revisión | docs/ui/, docs/testing/evidence/ui/frontend-ui-tests.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Revisión humana; no exposición pública o académica ejecutada. |
+| [ ] | TASK-J-022 | README, contexto frontend y actualización de grafo | J-021 | 29–31 | Pantallas→API→reglas enlazadas y evidencia lista; A-033 consolida después el grafo final | Revisión | frontend/README.md, docs/traceability.md, docs/knowledge/graph-status.md | Jared | Codex gpt-6.1-sol/high (frontend) | verificado_local | pendiente_humano | Pantallas→API→RN enlazadas;53documentos reinterpretados y rutas críticas contrastadas. Revisión humana pendiente. |
+
+### Lista de Jared
 
 - [ ] TASK-J-001 — Entender negocio, actores y términos
 - [ ] TASK-J-002 — Wireframes y arquitectura de información
@@ -228,7 +235,6 @@ Las casillas `[ ]` de las tablas son texto (no interactivas); las listas de abaj
 - [ ] TASK-J-020 — UI de OCR sólo si el extra está implementado
 - [ ] TASK-J-021 — Manual, capturas auténticas y demo
 - [ ] TASK-J-022 — README, contexto frontend y actualización de grafo
-
 
 ## Documentación
 | Área | Archivos |

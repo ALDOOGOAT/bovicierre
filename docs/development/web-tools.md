@@ -1,6 +1,6 @@
 # Herramientas de UI/UX y operaciones web
 
-Verificado el **2026-10-11** en Ubuntu 24.04.4, zsh, Codex CLI 0.162.1, Python 3.12.3 y Chrome 148.0.7778.96. Node del entorno del proyecto: 20.20.2; npm 10.8.2. Git estaba limpio al comenzar. BoviCierre es documental: React/TypeScript/Vite y Java/Spring/PostgreSQL están planificados; no hay aplicación ni tokens/componentes implementados. Usuarios: comercializador/acopiador, operación y caja; recorrido principal en [flujos](../ui/flows-and-screens.md).
+Verificado el **2026-10-11** en Ubuntu 24.04.4, zsh, Codex CLI 0.162.1, Python 3.12.3 y Chrome 148.0.7778.96. Node del entorno del proyecto: 20.20.2; npm 10.8.2. Git estaba limpio al comenzar. Ese inventario corresponde al inicio documental. Ahora existe aplicación React/Java/PostgreSQL local: consultar [inventario de implementación](tooling-inventory.md), [estado](../status.md) y [sistema visual](../ui/design-system.md). Usuarios: comercializador/acopiador, operación y caja; recorrido principal en [flujos](../ui/flows-and-screens.md).
 
 ## Instalación y disponibilidad
 
@@ -55,14 +55,14 @@ Adaptar el PATH Node24 del lanzador a una instalación completa compatible; Node
 
 ## Playwright y alternativas
 
-No se añadió Playwright MCP: Chrome cubre observación y recorrido, y no hay runner ni frontend que necesiten una alternativa. Playwright está planificado para pruebas del producto; `playwright-core` transitivo de API Anything no es ese runner. [Playwright MCP](https://github.com/microsoft/playwright-mcp) es MIT, requiere Node ≥18 y sería complemento si apareciera una carencia concreta.
+En el inventario inicial, anterior a la implementación, no se añadió Playwright MCP: Chrome cubría observación y el repositorio todavía no tenía frontend ni runner. Actualmente frontend/ usa el runner Playwright1.58.2 contra la API real y Chrome visible;16casos V13 pasaron. `playwright-core` transitivo de API Anything no es el runner del producto. [Playwright MCP](https://github.com/microsoft/playwright-mcp) es MIT, requiere Node ≥18 y sería complemento si apareciera una carencia concreta.
 
 [Unbrowse](https://github.com/unbrowse-ai/unbrowse) y [Reverse API Engineer](https://github.com/kalil0321/reverse-api-engineer) quedan como alternativas evaluadas, sin activar; ambos repositorios declaran MIT. Unbrowse requiere Node ≥18.17 para CLI y ofrece MCP remoto con OAuth en `https://unbrowse.ai/mcp`: evaluar cuenta, cuotas, costes y transmisión de HAR/capturas al servicio antes de usarlo. Reverse requiere Python ≥3.11 y proveedor/modelo configurado con API key para su agente; el modo manual usa extras `[manual]` y Playwright Chromium. Genera clientes desde tráfico capturado: confirmar licencia del commit elegido y autorización de la captura antes de instalar. No existe hoy una necesidad de integrar datos externos de ganado: Hacker News es sólo una prueba pública.
 
 ## Evidencia y punto de reanudación
 
-Ver [evidencia](../testing/evidence.md), [referencias](../ui/references.md) y capturas en `docs/ui/evidence/`. Primera mejora: especificación de liquidación → registro → aplicación, separación de operación/entrega/saldo, errores accesibles y criterios 390/768/1440. Faltan endpoints y frontend: no se presenta como flujo conectado ni tarea J completada.
+Ver [evidencia](../testing/evidence.md), [referencias](../ui/references.md) y capturas en `docs/ui/evidence/`. Primera mejora documental histórica: liquidación → registro → aplicación, separación de operación/entrega/saldo y criterios390/768/1440; entonces faltaban endpoints y frontend. La implementación actual conecta React/Java/PostgreSQL y documenta16recorridos reales en docs/testing/evidence/ui; las casillas originales siguen pendientes de revisión humana.
 
-Al abrir una nueva sesión: comprobar `codex mcp get chrome-devtools --json` y `codex mcp get api-anything --json`, invocar una lectura MCP y continuar TASK-J-002/J-012/J-013 según el contrato. No repetir investigación salvo cambio de problema, versión o referencia. Perfiles, caches y capturas privadas quedan fuera de Git y del futuro bundle.
+Al abrir una nueva sesión: comprobar `codex mcp get chrome-devtools --json` y `codex mcp get api-anything --json`, invocar una lectura MCP cuando la tarea la necesite y consultar docs/implementation/handoff.md para continuar desde el avance real. No repetir investigación salvo cambio de problema, versión o referencia. Perfiles, caches y capturas privadas quedan fuera de Git y del futuro bundle.
 
 Fuentes primarias consultadas: [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp), [UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill), [API Anything](https://github.com/goodnight000/api-anything), [Codex MCP](https://developers.openai.com/codex/mcp), [skills](https://developers.openai.com/codex/skills) y [AGENTS.md](https://developers.openai.com/codex/guides/agents-md). La ayuda y ejecución locales prevalecen sobre ejemplos incompatibles de instalación.

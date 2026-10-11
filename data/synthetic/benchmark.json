@@ -1,0 +1,24 @@
+{
+  "dataset": "DEMO-BENCH-V11",
+  "database": "bovicierre_release_replay",
+  "fecha": "2026-10-11",
+  "animales": 200,
+  "compras": 200,
+  "ventas": 100,
+  "precio_compra": "1000.00",
+  "costo_compra": "100.00",
+  "precio_venta": "1600.00",
+  "gasto_directo_venta": "20.00",
+  "cobro": "1200.00",
+  "aplicacion": "1000.00",
+  "esperados": {
+    "inventario": "110000.00",
+    "costo_vendido": "110000.00",
+    "margen": "48000.00",
+    "saldo_ventas": "60000.00",
+    "disponible_pagos": "20000.00",
+    "posiciones_disponibles": 100,
+    "posiciones_entregadas": 100
+  },
+  "limite": "Conjunto sintético QA de lectura moderada; no datos comerciales ni SLO."
+}

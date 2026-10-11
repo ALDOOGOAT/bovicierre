@@ -1,0 +1,68 @@
+{
+  "java": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "openjdk version \"21.0.12.1\" 2026-08-18"
+  },
+  "maven": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "\u001b[1mApache Maven 3.8.7\u001b[m"
+  },
+  "node": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "v20.20.2"
+  },
+  "npm": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "10.8.2"
+  },
+  "python": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "Python 3.12.3"
+  },
+  "docker": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "29.4.1"
+  },
+  "compose": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "5.1.3"
+  },
+  "psql": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "psql (PostgreSQL) 18.3 (Ubuntu 18.3-1.pgdg24.04+1)"
+  },
+  "codex": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "codex-cli 0.162.1"
+  },
+  "graphify": {
+    "ok": true,
+    "exit_code": 0,
+    "version": "graphify 0.9.49"
+  },
+  "recursos": {
+    "sistema": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "shell": "/usr/bin/zsh",
+    "cpu_logicos": 16,
+    "memoria_total_mib": 15724
+  },
+  "puertos": {
+    "15432": "ocupado; identificar servicio antes de arrancar",
+    "15433": "ocupado; identificar servicio antes de arrancar",
+    "15434": "ocupado; identificar servicio antes de arrancar",
+    "19999": "ocupado; identificar servicio antes de arrancar",
+    "19998": "ocupado; identificar servicio antes de arrancar",
+    "18080": "libre",
+    "15173": "libre",
+    "15180": "ocupado; identificar servicio antes de arrancar"
+  }
+}

@@ -1,0 +1,1 @@
+PASS 4 query plans +100samples each; observations only {"inventario": {"p50_ms": 0.039, "p95_ms": 0.156}, "cartera": {"p50_ms": 0.13, "p95_ms": 0.279}, "liquidacion": {"p50_ms": 0.051, "p95_ms": 0.068}, "expediente": {"p50_ms": 0.044, "p95_ms": 0.091}}

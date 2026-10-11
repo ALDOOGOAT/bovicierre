@@ -6,7 +6,11 @@ Datos 100 % sintéticos (prefijo DEMO). Ensayar con cronómetro; si no hay red, 
 |---|---|---|---|
 | 0–2 | Problema y propuesta | Comprador, propuesta de valor, alcance y límites | `docs/business/business-model.md` |
 | 2–5 | Datos | MER Chen (entidad débil LoteOperacion, cardinalidad Animal–Posición), relacional, índice único parcial de posición activa | láminas, `relational-model.md` |
-| 5–9 | Flujo | Compra GOLD-01 → pesaje → venta → liquidación → anticipo 50,000 → saldo 244,000 | UI o API |
+| 5–9 | Flujo | Seed DEMO-2026-10-V1: inventario2200, costo vendido1100, margen500, saldo1200, anticipo200; compra→venta→pago nuevos por UI. GOLD-01 completo mediante suiteSQL | UI o API |
 | 9–12 | Garantías | Doble venta concurrente rechazada (TEST-10); permiso denegado; escritura en A y B converge; consulta FDW y DML rechazado | scripts de prueba |
 | 12–14 | Operación | Restauración medida, arquitectura, grafo | runbook, `graph-status.md` |
 | 14–15 | Comercial | Modelo de ingresos, resultados reales obtenidos, límite del piloto | `unit-economics.md` |
+
+## Preparación comprobable
+
+`make academic` inicia la topología y aplicación local; `make demo` ejecuta comandos sintéticos idempotentes, no inserta resultados económicos directamente. Credenciales se generan fuera del repo. [ManualUI](../ui/user-manual.md), [seed repetido](../../db/tests/seed-demo-replay.json), [suite SQL](../../db/tests/gold.py). El fixture demo corresponde a octubre2026 y fecha fija, no precios reales. La duración12–15min es guion propuesto, no ensayo humano cronometrado.

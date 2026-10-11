@@ -1,0 +1,113 @@
+{
+  "capturado_en": "2026-10-11T21:41:45.192202+00:00",
+  "comando": "BOVI_API_IT=true BOVI_TC_IT=true BOVI_API_TEST_URL=http://127.0.0.1:15180/api/v1 BOVI_TEST_PASSWORD_FILE=<archivo externo> ./backend/mvnw -q -f backend/pom.xml verify",
+  "resultado": "PASS",
+  "pruebas": [
+    {
+      "name": "mx.bovicierre.ApiPostgresTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.23"
+    },
+    {
+      "name": "mx.bovicierre.ContractTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.039"
+    },
+    {
+      "name": "mx.bovicierre.ExportTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.013"
+    },
+    {
+      "name": "mx.bovicierre.PostgresContainerTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.3"
+    },
+    {
+      "name": "mx.bovicierre.PrivateDocumentsTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.06"
+    },
+    {
+      "name": "mx.bovicierre.SettlementPdfTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.002"
+    },
+    {
+      "name": "mx.bovicierre.operaciones.PesajeCorrectionTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.81"
+    }
+  ],
+  "total_ejecutadas": 24,
+  "unitarias": 15,
+  "http_reales": 8,
+  "testcontainers_postgresql_fresco": 1,
+  "api_base": "http://127.0.0.1:15180/api/v1",
+  "runtime_container": "bovicierre-academic-backend-1",
+  "docker_local_manifest": "sha256:cf49daa30e29a6edc94495f6ebf4fa09b73c2542b6273f75b796a7312dd75335",
+  "migraciones_postgresql_fresco": [
+    "V1__esquema.sql",
+    "V2__comandos.sql",
+    "V3__consultas_sesiones_grants.sql",
+    "V4__capturas_proveedor_dto.sql",
+    "V5__corte_por_periodo_reconocimiento.sql",
+    "V6__tarifa_money_paginacion.sql",
+    "V7__filtros_consultas.sql",
+    "V8__borrador_kg_y_expiracion.sql",
+    "V9__lector_a_captura_owner_fecha.sql",
+    "V10__filtro_posiciones_vendibles.sql",
+    "V11__cancelacion_anulacion_version.sql",
+    "V12__pesajes_reportes_canonicos.sql",
+    "V13__correccion_composicion_exacta.sql"
+  ],
+  "fuentes_nuevas": {
+    "backend/src/main/java/mx/bovicierre/operaciones/CoreController.java": "b1dfb33002e08028c46057fcfe8cc2ef8103c6a0fe72c13f0a528f347ab5c261",
+    "backend/src/test/java/mx/bovicierre/ApiPostgresTest.java": "445a0ea08a3d03c375d070b6d8d9eadb424908de02ebebd1b7cba4c403bd6360",
+    "backend/src/test/java/mx/bovicierre/operaciones/PesajeCorrectionTest.java": "aba84429db30e18b2ca1a5f1fea3fdad6e0cb7160ff1e1cf128d336d7bfefb07",
+    "db/migrations/V12__pesajes_reportes_canonicos.sql": "ba0af087d801fafaf088f7d38012412cd4dd1b1a2cb513728b624341890ccdf9",
+    "db/migrations/V13__correccion_composicion_exacta.sql": "1c58fc42da30d1cdea67b339f8ece408764fa7f0103eda20d9792eb2b30d743c",
+    "backend/src/main/java/mx/bovicierre/reportes/CsvController.java": "3e47b279a3e96034c186d92ac8cb9943acbca898cce440a2662a0c5e49646195"
+  },
+  "comprobado": [
+    "Motivo corrección requerido; referencia de ruta coincide; rechazo400 de motivo ausente y referencia distinta.",
+    "Corrección subset/superset422: original permaneceAPROBADO con composición exacta y peso no medidoNULL.",
+    "Corrección misma composición201, motivo auditado, replay exacto y distinta intención409; original quedaCORREGIDO con composición previa.",
+    "Cartera.filas y cinco totales Dinero de margen provienen SQL; corte_en presente; vencida boolean y UUID inválidos400; cartera rechaza periodo_id.",
+    "PostgreSQL18.6 fresco aplica V1–V13; roles runtime sin DDL/DELETE/hash de contraseña, constraints reales, idempotencia canónica.",
+    "Exportación CSV real contiene cabeceras, liquidación propia con saldo400.00, margen de una fila y monto igual al GET SQL, posición propia en inventario."
+  ],
+  "limites": [
+    "Validación HTTP local mediante Caddy; no TLS público ni aceptación comercial.",
+    "La prueba fresca usa único PostgreSQL; las topologías distribuidas y cierres tardíos constan en pruebas SQL separadas.",
+    "La evidencia V11/21PASS permanece en verification-result.json sin reescribir."
+  ],
+  "csv_contenido_verificado": {
+    "cartera": "Cabecera liquidacion_id, fila de la liquidación propia con saldo Dinero400.00; recorre páginas100.",
+    "margen": "Cabeceras venta_neta/margen, exactamente una fila con importe canónico igual al GET SQL.",
+    "inventario": "Cabecera animal_id y UUID de la posición propia; conserva elementos/paginación.",
+    "limite_filas": 10000,
+    "escape_formulas_unitario": "PASS ExportTest existente"
+  }
+}
