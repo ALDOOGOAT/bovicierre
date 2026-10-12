@@ -166,3 +166,16 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 | Carga HTTP | `k6 run tests/performance/load.js` (k6 v1.0.0) | 1→20 sesiones, 8,105 peticiones, p95 19.5/20.0 ms, 1 error (DIV-01, corregido), conciliación 1,185=1,185 ([report](evidence/performance/20261012T0242-ramp/report.md)) |
 | Dependencias | `npm audit` | 1 alto dev (vite 8.0.3) corregido con 8.0.16; queda 1 bajo dev. Maven/Python/imágenes: INCOMPLETO ([informe](../security/dependency-report.md)) |
 | No ejecutado | recuperación (sin cambios de esquema), `provider.spec.ts`, DAST/ZAP, Semgrep/Gitleaks/Trivy, dataset 10k/100k, carga sostenida | Pendiente |
+
+## Campaña UI/UX + QA (Claude) · S2 · V14 inmutabilidad terminal y search_path · 12-oct-2026
+
+| Comprobación | Comando | Resultado |
+|---|---|---|
+| Fase roja DIV-04 (antes de migrar) | `python3 db/tests/immutability.py` | 13 fallos esperados: los 13 intentos sobre estados terminales pasaban o sólo los frenaba una FK; borrar un `pago` VALIDADO se permitía ([antes](evidence/coherence/20261012-v14/immutability-antes-v14.json)) |
+| Migración | `sh db/bootstrap/migrate.sh` (Flyway, A y B) | V14 aplicada; validadas 15 migraciones; `prepare.sh` la aplicó a las bases aisladas (6 bases en V14) |
+| Inmutabilidad RN-023 + DIV-04 | `python3 db/tests/immutability.py` | 44/44: 26 previos + 13 bloqueos BV016 + 5 transiciones legítimas permitidas; conteos intactos ([después](evidence/coherence/20261012-v14/immutability.json)) |
+| SF-08 | `psql < db/tests/security.sql` en A y B | PASS: todas las funciones `pg_catalog, pg_temp`; PUBLIC/runtime sin TEMP; `CREATE TEMP TABLE pg_tables` como `bovi_auditor` → 42501 |
+| Catálogo A/B | `python3 tools/esquema/comparar_catalogo.py` (A y B) | 0 errores (alcance: columnas/tipos/PK/UK/FK) |
+| Puerta local con carga | `python3 scripts/verify_release_local.py --with-load` | **PASS** — docs; frontend 14; backend 28 (Testcontainers limpio V1–V14); SQL 37; inmutabilidad 44; E2E 16; seguridad 63; k6 8,194 peticiones, 0 fallidas, 8,114/8,114 checks, p95 21.2 ms ([release-gate](evidence/release-local/20261012T0544/release-gate.json)) |
+| Recuperación tras V14 | `make backup` / `make restore-check` (BACKUP_DIR privado) | Primer ensayo: firma y hashes OK, pero la base restaurada **recuperaba TEMP para PUBLIC** (ACL de base fuera de `pg_dump`). Corregido en `scripts/recovery.py`; segundo ensayo conciliado en 29.7 s con 4 triggers V14, TEMP revocado y `security.sql` PASS en la base restaurada ([restore-v14](evidence/recovery/restore-v14.json)) |
+| No ejecutado | dataset 10k/100k, carga sostenida 15–20 min, `provider.spec.ts`, PITR | Pendiente |

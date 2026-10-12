@@ -1,0 +1,101 @@
+
+> bovicierre-frontend@0.1.0 build
+> tsc -b && vite build
+
+vite v8.0.16 building client environment for production...
+[2K
+transforming...✓ 23 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                       0.48 kB │ gzip:  0.33 kB
+dist/assets/inter-latin-wght-normal-Dx4kXJAl.woff2   48.25 kB
+dist/assets/index-Ch5ayczA.css                       23.35 kB │ gzip:  5.91 kB
+dist/assets/index-rTYgMYye.js                       281.46 kB │ gzip: 84.28 kB
+
+✓ built in 244ms
+
+> bovicierre-frontend@0.1.0 test
+> tsx --test tests/*.test.ts
+
+TAP version 13
+# Subtest: importe exacto grande y centavos conservados sin conversión binaria
+ok 1 - importe exacto grande y centavos conservados sin conversión binaria
+  ---
+  duration_ms: 0.665956
+  ...
+# Subtest: captura decimal canónica rechaza exponentes, negativos y precisión excesiva
+ok 2 - captura decimal canónica rechaza exponentes, negativos y precisión excesiva
+  ---
+  duration_ms: 0.304136
+  ...
+# Subtest: reintento conserva clave, contenido y If-Match aun si cambia el objeto original
+ok 3 - reintento conserva clave, contenido y If-Match aun si cambia el objeto original
+  ---
+  duration_ms: 11.595747
+  ...
+# Subtest: error de campo tiene etiqueta, relación accesible y contraseña permite gestores
+ok 4 - error de campo tiene etiqueta, relación accesible y contraseña permite gestores
+  ---
+  duration_ms: 4.498279
+  ...
+# Subtest: CSRF usa la cabecera entregada por el backend y se mantiene fuera de persistencia
+ok 5 - CSRF usa la cabecera entregada por el backend y se mantiene fuera de persistencia
+  ---
+  duration_ms: 4.106128
+  ...
+# Subtest: fecha económica predeterminada usa día de Ciudad de México después de las 18 h
+ok 6 - fecha económica predeterminada usa día de Ciudad de México después de las 18 h
+  ---
+  duration_ms: 29.67081
+  ...
+# Subtest: resultado incierto consulta primero el comando y recupera el resultado sin nuevo POST
+ok 7 - resultado incierto consulta primero el comando y recupera el resultado sin nuevo POST
+  ---
+  duration_ms: 0.579267
+  ...
+# Subtest: comando en curso conserva el intento y evita volver a enviarlo
+ok 8 - comando en curso conserva el intento y evita volver a enviarlo
+  ---
+  duration_ms: 0.411139
+  ...
+# Subtest: formularios simultáneos no comparten identificadores de campo
+ok 9 - formularios simultáneos no comparten identificadores de campo
+  ---
+  duration_ms: 4.277601
+  ...
+# Subtest: tono por estado no altera el valor y separa operación, entrega y pago
+ok 10 - tono por estado no altera el valor y separa operación, entrega y pago
+  ---
+  duration_ms: 1.009151
+  ...
+# Subtest: editar el primer lote conserva identidad y orden de todos los demás
+ok 11 - editar el primer lote conserva identidad y orden de todos los demás
+  ---
+  duration_ms: 0.936266
+  ...
+# Subtest: venta KG conserva identidad animal y exige resolver cada posición del lote
+ok 12 - venta KG conserva identidad animal y exige resolver cada posición del lote
+  ---
+  duration_ms: 0.347865
+  ...
+# Subtest: resultado incierto 500/502/504 y autenticación expirada conserva intención; rechazo de dominio permite corregir
+ok 13 - resultado incierto 500/502/504 y autenticación expirada conserva intención; rechazo de dominio permite corregir
+  ---
+  duration_ms: 0.192394
+  ...
+# Subtest: intención sobrevive expiración de sesión, queda aislada por principal y lookup recupera sin duplicar POST
+ok 14 - intención sobrevive expiración de sesión, queda aislada por principal y lookup recupera sin duplicar POST
+  ---
+  duration_ms: 19.196824
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 243.087889
+
+--- stderr ---

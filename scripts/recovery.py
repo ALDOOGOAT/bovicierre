@@ -191,6 +191,10 @@ def restore(destination):
             container = f'{project}-pg-{node}-1'
             # Host aliases are resolved only inside this project's private network.
             run(['docker', 'exec', '-i', container, 'pg_restore', '-U', 'postgres', '-d', 'bovicierre', '--exit-on-error'], input=(destination / f'{node}.dump').read_bytes())
+        for node in ('a', 'b'):
+            # El ACL de la base (V14/SF-08: PUBLIC sin TEMP) no viaja en pg_dump sin --create.
+            sql(project, node, 'REVOKE TEMPORARY ON DATABASE bovicierre FROM PUBLIC')
+            assert sql(project, node, "SELECT has_database_privilege('bovi_auditor',current_database(),'TEMP')") == 'f'
         assert signature(project, 'a') == expected['signature']
         assert signature(project, 'b') == expected['signature']
         for node, records in expected['local_signatures'].items():

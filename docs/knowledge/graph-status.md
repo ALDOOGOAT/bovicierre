@@ -70,3 +70,5 @@ El PDF y su fuente LaTeX, que duplican el corpus explicado, quedan excluidos en 
 ## Campaña UI/UX + QA (S1/S2) · 12-oct-2026
 
 `graphify update .` (sólo AST de código, sin LLM): 149 archivos reextraídos → **2930 nodos, 5404 aristas, 290 comunidades** (83 comunidades renombradas por su hub; etiquetas LLM no refrescadas: `graphify label` no ejecutado). Incluye `frontend/src/brand.tsx`, `tone.ts`, `LoginThrottle.java`, `tests/security/sec_dynamic.py`, `db/tests/immutability.py`, `tools/claude/*`. Los documentos nuevos (`docs/ui/redesign-*`, `docs/security/*`, `docs/quality/*`, `docs/continuity/*`) **no** se extrajeron semánticamente en esta ventana: pendiente `/graphify . --update`. Copia de seguridad del grafo curado previo creada por graphify en `graphify-out/2026-10-12/`. Las aristas no sustituyen las pruebas.
+
+`graphify update .` tras V14 (12-oct-2026, sólo AST): **2946 nodos, 5434 aristas, 294 comunidades**. La migración SQL y los documentos nuevos no se reinterpretan semánticamente; `/graphify . --update` sigue pendiente.

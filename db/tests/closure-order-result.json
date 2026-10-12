@@ -1,13 +1,13 @@
 {
   "database": "bovicierre_release_replay",
   "command_calls": 7,
-  "seconds": 0.093,
+  "seconds": 0.082,
   "two_connections_barrier": true,
   "period_lock_wait_observed": true,
   "order": "cost_first_commit_then_close",
-  "inventory_before": "111321.00",
-  "inventory_after": "111328.00",
-  "closure_inventory": "111328.00",
+  "inventory_before": "111628.00",
+  "inventory_after": "111635.00",
+  "closure_inventory": "111635.00",
   "documentary_date": "2027-02-01",
   "recognition_date": "2026-10-11",
   "old_closure_immutable_after_reopen": true

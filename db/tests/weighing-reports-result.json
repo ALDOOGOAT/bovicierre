@@ -2,7 +2,7 @@
   "estado": "PASS",
   "database": "bovicierre_release_replay",
   "sql_commands": 66,
-  "seconds": 0.221,
+  "seconds": 0.25,
   "migration": "V13",
   "tests": [
     "V13 rechaza subset/superset antes mutar original; ticket original inmutable, composición exacta y NULL individual; motivo auditado; primer DTO/replay exacto/conflicto409/contexto rechazado",
