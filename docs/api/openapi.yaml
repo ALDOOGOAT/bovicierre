@@ -595,6 +595,41 @@ paths:
     parameters:
     - $ref: '#/components/parameters/SedeId'
     - $ref: '#/components/parameters/OperacionId'
+    get:
+      tags:
+      - pesajes
+      operationId: listarPesajesOperacion
+      summary: Listar tickets de pesaje de la operación
+      description: Tickets con su composición exacta de animales y pesos individuales sólo medidos (RN-012, RN-013). DIV-11.
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Pesaje'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       tags:
       - pesajes
@@ -3251,6 +3286,246 @@ paths:
                       enum:
                       - DISPONIBLE
                       - NO_DISPONIBLE
+  /sedes/{sedeId}/reportes/inventario:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - reportes
+      operationId: reporteInventario
+      summary: Reporte de posiciones de inventario con costo vigente
+      description: Mismas posiciones que el listado con `reservada` y `costo_vigente`; base del CSV `/reportes/inventario/csv`. DIV-11.
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      - name: q
+        in: query
+        schema:
+          type: string
+          maxLength: 200
+        description: Filtro de búsqueda acotado.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        allOf:
+                        - $ref: '#/components/schemas/Posicion'
+                        - type: object
+                          properties:
+                            reservada:
+                              type: boolean
+                            costo_vigente:
+                              $ref: '#/components/schemas/Dinero'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sedes/{sedeId}/auditoria:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    get:
+      tags:
+      - auditoria
+      operationId: listarAuditoria
+      summary: Bitácora de comandos y eventos auditados de la sede
+      description: Hechos de `auditoria_evento` (inmutables, RN-023/RN-044). DIV-11.
+      parameters:
+      - $ref: '#/components/parameters/Pagina'
+      - $ref: '#/components/parameters/Tamano'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Pagina'
+                - type: object
+                  properties:
+                    elementos:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            format: uuid
+                          comando:
+                            type: string
+                          entidad:
+                            type: string
+                          entidad_id:
+                            type: string
+                            format: uuid
+                          actor_id:
+                            type: string
+                            format: uuid
+                          correlation_id:
+                            type: string
+                            format: uuid
+                          ocurrido_en:
+                            type: string
+                            format: date-time
+                          nodo_origen:
+                            type: string
+                          cambio:
+                            type: object
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sedes/{sedeId}/operaciones/{operacionId}/revisiones:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - $ref: '#/components/parameters/OperacionId'
+    post:
+      tags:
+      - operaciones
+      operationId: registrarRevisionOperacion
+      summary: Registrar revisión administrativa de la operación
+      description: Sólo ADMIN. Sin revisión, el margen queda PROVISIONAL con faltante REVISION_ADMINISTRATIVA_PENDIENTE (RN-036). DIV-11.
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - criterio
+              - resultado
+              properties:
+                criterio:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                resultado:
+                  type: string
+                  enum:
+                  - SIN_OBSERVACIONES
+                  - CON_OBSERVACIONES
+                  - RECHAZADA
+                revision_anterior_id:
+                  type: string
+                  format: uuid
+                documentos:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - documento_id
+                    properties:
+                      documento_id:
+                        type: string
+                        format: uuid
+                      resultado:
+                        type: string
+                      observacion:
+                        type: string
+      responses:
+        '200':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /sedes/{sedeId}/periodos/{periodoId}/cerrar:
+    parameters:
+    - $ref: '#/components/parameters/SedeId'
+    - name: periodoId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    post:
+      tags:
+      - reportes
+      operationId: cerrarPeriodoAlias
+      deprecated: true
+      summary: Alias obsoleto de /periodos/{periodoId}/cierre
+      description: Mismo comando `cerrar_periodo`; se conserva por compatibilidad y ningún cliente del repositorio lo usa (DEC-22). Use `/cierre`.
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      - $ref: '#/components/parameters/CsrfToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - motivo
+              properties:
+                motivo:
+                  type: string
+                  minLength: 1
+      responses:
+        '201':
+          description: Resultado persistido del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoComando'
+        '409':
+          $ref: '#/components/responses/Conflicto'
+        '422':
+          $ref: '#/components/responses/ReglaDominio'
+        '401':
+          $ref: '#/components/responses/NoAutenticado'
+        '403':
+          $ref: '#/components/responses/SinPermiso'
+        '503':
+          $ref: '#/components/responses/DuenoNoDisponible'
+        '400':
+          description: Forma o parámetro inválido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     sesion:
@@ -4008,10 +4283,6 @@ components:
             - REGISTRADO
             - VALIDADO
             - REVERTIDO
-          aplicado:
-            $ref: '#/components/schemas/Dinero'
-          reembolsado:
-            $ref: '#/components/schemas/Dinero'
           disponible:
             $ref: '#/components/schemas/Dinero'
           naturaleza:

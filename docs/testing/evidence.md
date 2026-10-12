@@ -200,3 +200,12 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 - Manual: `docs/manual/build.py` con Tectonic 0.17.0 → 248 páginas, 318 marcadores, 319 enlaces, 0 Overfull/Missing character tras corregir 7 desbordes; portada y capítulo 23 renderizados; 0 coincidencias con 11 secretos ([verification.json](../manual/verification.json)).
 - Grafo: `/graphify --update` → 2,871 nodos, 4,758 aristas, salud OK ([graph-status](../knowledge/graph-status.md)).
 - Puerta 20261012T0807 (sin procesos concurrentes): **PASS** — frontend 14, backend 30, SQL 37, inmutabilidad 49, E2E 16 (115 s), seguridad 63; 0 omitidos ([release-gate](evidence/release-local/20261012T0807/release-gate.json)).
+
+### V18 y cierre de la matriz (12-oct-2026)
+- DIV-11: `tools/api/route_coverage.py` → 71/71 rutas Java en OpenAPI; negativo con una ruta quitada → exit 1. Añadido a `make verify-docs`.
+- DIV-13: `Pago.aplicado/reembolsado` retirados; Redocly válido; `generate:api` y build OK.
+- DIV-14: fase roja `immutability.py` (RESERVA-VENCE-MAX permitido) → V18 en A/B → verde; datos existentes ≤10 h (main) y ≤15 min (bases de prueba).
+- DIV-15/16/17: documentación corregida; `make verify-docs` PASS.
+- Puerta 20261012T0818: **PASS** — frontend 14, backend 30, SQL 37, inmutabilidad 50, E2E 16, seguridad 63; 0 omitidos ([release-gate](evidence/release-local/20261012T0818/release-gate.json)).
+- Restauración V18: 31.1 s, firma OK, 7 triggers + CHECK de reserva + TEMP revocado ([restore-v18](evidence/recovery/restore-v18.json)).
+- Manual: 249 págs., 0 Overfull/Missing character, 0 coincidencias con secretos.

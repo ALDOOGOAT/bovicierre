@@ -9,7 +9,7 @@ Estado: implementado y probado parcialmente en PostgreSQL18.6. Scripts ejecutabl
 | Identidad, no duplicación, mismo scope | PK, UNIQUE, FK compuestas (E[,S]) |
 | Una posición/reserva activa | Índices UNIQUE parciales con estado explícito (nunca con `now()`) |
 | Sumatorias (aplicaciones, asignaciones, ajustes) | Comando PL/pgSQL + `FOR UPDATE` de filas cabecera |
-| Inmutabilidad y propiedad de escritura | Privilegios + triggers `trg_inmutable_*`, `trg_guarda_propietario` |
+| Inmutabilidad y propiedad de escritura | Privilegios + triggers `hecho_inmutable`, `aprobado_inmutable`, `estado_terminal_inmutable`, `guarda_propietario` |
 | Autorización de usuario y caso de uso | Spring Security + capa application |
 | Cálculo confirmado y snapshot | `fn_calcular_liquidacion` (canónica) dentro del comando |
 | Auditoría | Insert explícito en el comando (no trigger en apply) |
@@ -42,8 +42,8 @@ Orden global de locks: **idempotencia → periodo → operaciones ordenadas → 
 | 1 | `cmd_registrar_identidad_animal` | sede_operadora, sistema, código, sexo | OPERADOR (en A) | — (UNIQUE) | animal + identificación + auditoría + outbox | 23505→BV401; nodo≠A → BV501 | RN-002..004 | TEST-13 |
 | 2a | `cmd_reservar_posiciones` | operación VENTA, posiciones, vence_en | OPERADOR | operación; posiciones FOR UPDATE ORDER BY id | reserva ACTIVA por posición | BV402; 23505 | RN-018 | TEST-10 |
 | 2b | `cmd_liberar_reserva` / `cmd_expirar_reservas` | reserva / instante | OPERADOR / SIS | reservas FOR UPDATE SKIP LOCKED (expirador) | LIBERADA / EXPIRADA | — | RN-019 | TEST-20 |
-| 3 | `cmd_confirmar_compra` | operación, version_lock | OPERADOR | periodo; operación; selecciones | posiciones, liquidación, conceptos, asignaciones, asientos ADQUISICION, auditoría, outbox | BV015, BV404, BV025 | RN-021 | TEST-01..03 |
-| 4 | `cmd_confirmar_venta` | operación, version_lock | OPERADOR | periodo; operación; posiciones; reservas | consume reservas; posiciones → VENDIDA_PENDIENTE_ENTREGA; asientos VENTA; liquidación; auditoría; outbox | BV403 (revalida); BV402 | RN-022 | TEST-10, TEST-20 |
+| 3 | `cmd_ejecutar(…,'confirmar_operacion')` COMPRA (antes llamado `cmd_confirmar_compra` en el diseño) | operación, version_lock | OPERADOR | periodo; operación; selecciones | posiciones, liquidación, conceptos, asignaciones, asientos ADQUISICION, auditoría, outbox | BV015, BV404, BV025 | RN-021 | TEST-01..03 |
+| 4 | `cmd_ejecutar(…,'confirmar_operacion')` VENTA (antes llamado `cmd_confirmar_venta` en el diseño) | operación, version_lock | OPERADOR | periodo; operación; posiciones; reservas | consume reservas; posiciones → VENDIDA_PENDIENTE_ENTREGA; asientos VENTA; liquidación; auditoría; outbox | BV403 (revalida); BV402 | RN-022 | TEST-10, TEST-20 |
 | 5 | `cmd_aprobar_pesaje` / `cmd_corregir_pesaje` | pesaje, composición | OPERADOR | pesaje | congela composición / nuevo pesaje + original CORREGIDO | BV013 | RN-012..014 | TEST-18 |
 | 6 | `cmd_distribuir_costo` / `cmd_registrar_costo_tardio` | gasto, método | OPERADOR | periodo; posiciones | asignaciones (Σ exacta) + asientos por destino | BV018, BV019 | RN-026, RN-027 | TEST-03, 06, 08 |
 | 7 | `cmd_registrar_pago` / `cmd_validar_pago` | parte, tipo, importe | CAJA | — | pago | 23514 | RN-028 | TEST-04 |
@@ -60,10 +60,10 @@ Reintento en Java: hasta 3 veces el comando completo ante 40001/40P01 con la mis
 ## 4. Triggers
 | Trigger | Tablas | Propósito |
 |---|---|---|
-| `trg_guarda_propietario` BEFORE INSERT/UPDATE | replicadas | `nodo_origen` = nodo local y, en tablas locales, = `sucursal.nodo_dueno`; maestros sólo en A |
-| `trg_inmutable_confirmado` BEFORE UPDATE/borrado | liquidacion, concepto_liquidacion, contrato_version (ACEPTADA), pesaje (APROBADO), pesaje_animal, movimiento_inventario, asiento_valoracion, aplicacion_pago, cierre_periodo_version, documento | RN-023, RN-011, RN-013 |
-| `trg_columna_inmutable` | animal.sede_operadora_id, operacion.tipo, sucursal.nodo_dueno | RN-004, RN-010 |
-| `trg_borrador_editable` | lote_operacion, seleccion_*, condicion_lote | sólo con operación BORRADOR/ACORDADA |
+| `guarda_propietario` → `trg_propietario` BEFORE INSERT/UPDATE | todas salvo `clave_idempotencia`, `mensaje_inbox` | `nodo_origen` = nodo local y, en tablas locales, = `sucursal.nodo_dueno`; maestros sólo en A |
+| `hecho_inmutable` → `trg_inmutable` BEFORE UPDATE/borrado (13 tablas: liquidacion, concepto_liquidacion, ajuste_liquidacion, asignacion_costo, asiento_valoracion, aplicacion_pago, cierre_periodo_version, movimiento_inventario, documento, auditoria_evento, evento_outbox, revision_administrativa, revision_documento); `aprobado_inmutable` → `trg_aprobado` en contrato_version (ACEPTADA) y pesaje (APROBADO/CORREGIDO); `composicion_inmutable` → `trg_pesaje_composicion` en pesaje_animal | RN-023, RN-011, RN-013 |
+| dentro de `trg_propietario` (BV010) | animal.sede_operadora_id, operacion.tipo, sucursal.nodo_dueno | RN-004, RN-010 |
+| `solo_borrador` → `trg_borrador` | lote_operacion, seleccion_*, condicion_lote | sólo con operación BORRADOR/ACORDADA |
 | `estado_terminal_inmutable` → `trg_estado_terminal` (V14) BEFORE UPDATE/borrado | operacion (CONFIRMADA, ANULADA, CANCELADA), gasto_operacion (APROBADO), pago (VALIDADO, REVERTIDO), posicion_inventario (CERRADA_VENTA, BAJA) | RN-023 (DIV-04). Permite sólo CONFIRMADA→ANULADA, `estado_entrega` en CONFIRMADA y `version_lock`; BV016 |
 
 | `liquidacion_cuadrada` → `trg_liquidacion_cuadrada` (V16/V17) CONSTRAINT AFTER INSERT DEFERRABLE INITIALLY DEFERRED | liquidacion, concepto_liquidacion | total = Σ conceptos al confirmar la transacción (DIV-05); BV015 |

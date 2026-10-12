@@ -2,7 +2,7 @@
 
 **Instrucción ejecutable:** verificar lock y checkout con `python3 tools/claude/resume-check.py --owner <sesión>`
 (exit 0 requerido); comprobar `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:15180/api/v1/salud` = 200;
-correr `make verify-release-local` (≈3 min, debe dar PASS); después continuar con las divergencias bajas DIV-11, 13–17 (siguiente migración libre: V18).
+correr `make verify-release-local` (≈3 min, debe dar PASS); las 17 DIV están cerradas; siguen decisión humana SF-09, escáneres SCA/DAST, carga sostenida y revisión humana (siguiente migración libre: V19).
 
 Estado: **S1_DONE**, **S2_SAFE_PARTIAL** (rama local `feature/uiux-qa-claude`, base `38ccdc3`, sin push). Informe: `docs/quality/final-report.md`.
 

@@ -1,10 +1,10 @@
 {
-  "pages": 248,
+  "pages": 249,
   "bookmarks": 318,
   "links": 319,
-  "text_words": 87612,
-  "bytes": 3245626,
-  "sha256": "217d9f3a97e7c7e5f234a46df7abe3feea59f2d88e836bdbbc95446836631ffe",
+  "text_words": 87978,
+  "bytes": 3248942,
+  "sha256": "1ece4c78b317a9bc66cec81682b61c8debe3a6a81075f553bce5c7f2e96ae4b9",
   "rendered_pages": "239 en el corte previo; en esta actualización, portada y capítulo 23",
   "secret_hits": 0,
   "outside_page_spans": [],
@@ -25,13 +25,13 @@
     "API",
     "FDW"
   ],
-  "source_revision": "feature/uiux-qa-claude (base 38ccdc3; código y migraciones V14–V17 del 12-oct-2026)",
+  "source_revision": "feature/uiux-qa-claude (base 38ccdc3; código y migraciones V14–V18 del 12-oct-2026)",
   "artifact": "docs/pdf/BoviCierre_Manual_Integral.pdf",
-  "generated_utc": "2026-10-12T14:06:51.353639+00:00",
+  "generated_utc": "2026-10-12T14:22:10.619432+00:00",
   "latex_source": "docs/manual/source/manual.tex",
   "layout": "Compilación sin Overfull/Missing character; todas las239páginas renderizadas, contactos completos y páginas detalladas inspeccionadas.",
   "packaged_utc": "2026-10-12T07:34:44.114730+00:00",
-  "latex_source_sha256": "1f4153d11f562733cf04c44fd13d1daa332c9c7bdb25ca2de7dd28b9273f2e6f",
+  "latex_source_sha256": "76f36de54d716244fbdf39e05a22227ca0db381851974a08936dc0e2aeb3ddd2",
   "tooling": {
     "tectonic": "0.17.0",
     "pandoc": "fuente LaTeX generada desde Markdown; no necesario para recompilar",
@@ -60,9 +60,9 @@
     "generated_utc": "2026-10-12T07:19:20.186174+00:00"
   },
   "campaign_update": {
-    "chapter": "Capítulo 23 «Actualización de la campaña UI/UX y QA del 12 de octubre de 2026», páginas 229–237",
+    "chapter": "Capítulo 23 «Actualización de la campaña UI/UX y QA del 12 de octubre de 2026», páginas 229–238",
     "layout": "Compilación sin Overfull/Missing character tras corregir 7 desbordes del capítulo nuevo; páginas 229–237 y portada renderizadas e inspeccionadas; resto del documento sin cambios de fuente.",
     "secret_scan": "Texto extraído comparado con las 11 credenciales privadas locales: 0 coincidencias; no se guardan valores.",
-    "rendered_pages": "1, 229–237"
+    "rendered_pages": "1, 229–238"
   }
 }

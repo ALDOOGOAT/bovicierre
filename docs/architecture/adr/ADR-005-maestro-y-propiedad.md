@@ -7,6 +7,6 @@ Dos escritores independientes podrían dar dos UUID al mismo arete; la replicaci
 2. Escritura libre en ambos + resolución de conflictos — no existe resolución de negocio segura para inventario/dinero.
 3. **Maestros sólo en A; agregados locales sólo en el nodo de su sede; sede del animal inmutable.**
 ## Decisión
-Opción 3, con `nodo_origen` en cada fila y `trg_guarda_propietario`. Sin failover automático de dueño. Transferir un animal de sede queda fuera (requiere fencing y otro ADR).
+Opción 3, con `nodo_origen` en cada fila y el trigger de propiedad (implementado como `guarda_propietario` → `trg_propietario`; nombre corregido el 12-oct-2026, DIV-15). Sin failover automático de dueño. Transferir un animal de sede queda fuera (requiere fencing y otro ADR).
 ## Consecuencias
 + Sin conflictos de negocio por diseño. − Si A cae no hay maestros nuevos ni login nuevo.

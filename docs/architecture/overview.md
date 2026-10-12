@@ -43,7 +43,7 @@ Cada módulo: `domain/` (value objects, estados), `application/` (casos de uso +
 
 ## 4. Enrutamiento por propietario
 1. El controlador recibe la sede solicitada; `application` verifica membresía.
-2. `OwnerDatabaseRouter.resolver(tipoAgregado, empresa, sede)` → `Nodo.A | Nodo.B` (maestros siempre A; locales según `sucursal.nodo_dueno`).
+2. Diseño: `OwnerDatabaseRouter.resolver(tipoAgregado, empresa, sede)`. **Implementado** en `CommandService` (DIV-15): `AccessService.authorize` devuelve `scope.owner()` y los maestros van a A; se usa `transactions.get(nodo)` → `Nodo.A | Nodo.B` (maestros siempre A; locales según `sucursal.nodo_dueno`).
 3. `BranchTransactionRunner.ejecutar(nodo, callback)` usa el `TransactionTemplate` + `JdbcTemplate` del DataSource de ese nodo durante todo el caso de uso. No hay `AbstractRoutingDataSource` que cambie a mitad de transacción ni `ChainedTransactionManager`.
 4. Si el nodo no responde → 503 `BV501`. No hay failover al otro nodo.
 5. Alta de identidad para B: comando en A → estado PENDIENTE_CONVERGENCIA → el cliente reintenta la operación en B cuando la identidad es visible.
@@ -60,7 +60,7 @@ sequenceDiagram
     API->>R: resolver(VENTA, E, S)
     R-->>API: Nodo B
     API->>DB: BEGIN
-    API->>DB: SELECT cmd_confirmar_venta(...)
+    API->>DB: SELECT cmd_ejecutar(..., 'confirmar_operacion', ...)
     DB->>DB: reclamar clave idempotente
     DB->>DB: FOR UPDATE periodo → operación → posiciones(id asc) → reservas
     DB->>DB: validar version_lock, condiciones, pesajes, reservas vigentes

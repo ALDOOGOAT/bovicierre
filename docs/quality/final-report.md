@@ -61,7 +61,7 @@ Recuperación **repetida tras V14**: respaldo previo y posterior; el primer `res
 
 ## 9. Qué falta (separado)
 - **Profesor / entrega 31-oct:** revisión humana de Aldo y Jared de S1/S2; revisar los MER/relacional contra la matriz (no se tocaron diagramas en esta campaña); `/graphify . --update` semántico de los documentos nuevos.
-- **Piloto:** decidir SF-09 (RLS/contexto de actor o ADR de riesgo aceptado); divergencias bajas DIV-11, 13–17 (DIV-02/05/09/10 resueltas) (DIV-10 cubierto con pruebas BRUTO_TARA); SF-06/07; escáneres SCA/DAST; carga sostenida 15–20 min y dataset grande.
+- **Piloto:** decidir SF-09 (RLS/contexto de actor o ADR de riesgo aceptado); ninguna divergencia de la matriz pendiente (DIV-01..17 corregidas, cubiertas o resueltas con razón) (DIV-10 cubierto con pruebas BRUTO_TARA); SF-06/07; escáneres SCA/DAST; carga sostenida 15–20 min y dataset grande.
 - **Despliegue:** staging/TLS, backup fuera del host, PITR, HA — fuera del alcance local.
 
 ## 10. Comandos
@@ -77,3 +77,5 @@ Siguiente tarea concreta: ver [NEXT_SESSION](../continuity/NEXT_SESSION.md).
 **Actualización V15 (12-oct-2026):** puerta local PASS 204 casos sin omitidos ([release-gate](../testing/evidence/release-local/20261012T0702/release-gate.json)); restauración V15 conciliada en 31.6 s con 5 triggers de inmutabilidad y TEMP revocado ([restore-v15](../testing/evidence/recovery/restore-v15.json)).
 
 **Actualización V16/V17 (12-oct-2026):** DIV-05 corregido. V16 tenía un defecto (`NEW.id` en conceptos) que la fase verde detectó antes de cualquier commit; se corrigió hacia delante con V17 sin tocar el historial de Flyway. Puerta con carga PASS ([release-gate](../testing/evidence/release-local/20261012T0732/release-gate.json)); restauración V17 conciliada en 30.8 s ([restore-v17](../testing/evidence/recovery/restore-v17.json)).
+
+**Actualización V18 y cierre de la matriz (12-oct-2026):** V18 limita el vencimiento de reservas a 30 días (DIV-14, DEC-24); OpenAPI cubre las 71 rutas Java con comprobación automática (DIV-11, DEC-22); `Pago` sin campos fantasma (DIV-13, DEC-23); nombres, ENT-42, retención y alcance de BV402 corregidos en la documentación (DIV-15/16/17, DEC-25). Puerta PASS 210 casos ([release-gate](../testing/evidence/release-local/20261012T0818/release-gate.json)); restauración V18 conciliada en 31.1 s. Manual: capítulo 23 (págs. 229–238) documenta todos los cambios y las decisiones DEC-12..25. El bloque S2 superó los 300 min previstos por continuar a petición explícita del usuario.

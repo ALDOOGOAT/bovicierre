@@ -71,3 +71,7 @@ Al registro inicial del10-oct no existían entrevistas, clientes, pilotos ni pru
 | DEC-19 | `motivo` en anulación condicional o siempre — DIV-12 | Siempre obligatorio en el contrato (sin pantalla; contrato condicional opaco) | openapi.yaml |
 | DEC-20 | ACL de base perdido al restaurar — SF-08 | Reaplicar y afirmar `REVOKE TEMPORARY` en restore-check (no `--create`) | scripts/recovery.py |
 | DEC-21 | Extraer semánticamente 151 capturas de evidencia | No en esta pasada: un agente por imagen y redundante con los documentos; quedan sin sellar | graph-status |
+| DEC-22 | Rutas Java sin contrato y alias `/periodos/{id}/cerrar` — DIV-11 | Documentar las 4 rutas usadas; alias marcado `deprecated` sin retirarlo (ningún cliente lo usa; retirar rompería compatibilidad sin beneficio); comprobación automática de cobertura | openapi.yaml, route_coverage.py |
+| DEC-23 | `Pago.aplicado/reembolsado` declarados y nunca devueltos — DIV-13 | Retirarlos del contrato; calcularlos sería función nueva no pedida | openapi.yaml |
+| DEC-24 | Reserva sin tope de vencimiento — DIV-14 | CHECK ≤30 días desde creación: holgado frente a reservas reales (≤10 h) y cumple 'no retener indefinidamente'; parámetro revisable por negocio | V18, RN-019 |
+| DEC-25 | BV402 compartido por posición y lease de outbox — DIV-17 | Sólo documentar: el lease nunca sale por HTTP y su prueba (`outages.py`) es de caída real fuera de la puerta; renombrar dejaría código sin verificar | business-rules, RN-044 |

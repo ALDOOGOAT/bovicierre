@@ -2,7 +2,7 @@
 
 Convenciones comunes (no se repiten por tabla):
 - `empresa_id uuid NOT NULL`, `sucursal_id uuid NOT NULL` en tablas locales; `id uuid NOT NULL DEFAULT uuidv7()`.
-- `nodo_origen char(1) NOT NULL CHECK (nodo_origen IN ('A','B'))`, lo deriva el comando; trigger `trg_guarda_propietario` rechaza INSERT/UPDATE cuando `nodo_origen` ≠ `infra.nodo_config.nodo` (no corre en apply porque `session_replication_role = replica`).
+- `nodo_origen char(1) NOT NULL CHECK (nodo_origen IN ('A','B'))`, lo deriva el comando; trigger `guarda_propietario` (función `trg_propietario`) rechaza INSERT/UPDATE cuando `nodo_origen` ≠ `infra.nodo_config.nodo` (no corre en apply porque `session_replication_role = replica`).
 - Importes `numeric(18,2)`, kg `numeric(14,3)`, tarifas `numeric(14,4)`, tasas `numeric(9,6)`; todos con `CHECK (x NOT IN ('NaN','Infinity','-Infinity'))` como defensa explícita (comportamiento de NaN/∞ con typmod a verificar en TASK-A-009 con prueba negativa).
 - Instantes `timestamptz`; fechas civiles `date`; presentación en America/Mexico_City.
 - Hechos comprometidos: `ON UPDATE RESTRICT ON DELETE RESTRICT`; la app no tiene privilegio DELETE en tablas de hechos.
@@ -274,6 +274,12 @@ PK(E,S,revision_id,documento_id); resultado; observacion varchar(500).
 
 ## Soporte: folio_contador (local del dueño, L↔)
 PK(E,S,tipo,anio); ultimo integer. Bloqueado FOR UPDATE al asignar folio.
+
+## ENT-42 infra.tarifa_snapshot
+Captura de tarifa externa vía FDW (V4), sólo nodo propietario. PK(id uuid). empresa_id, sucursal_id NOT NULL con FK (E,S) → sucursal; actor_id NOT NULL con FK (E,actor) → usuario; ruta text; precio numeric NOT NULL CHECK (> 0 y no NaN); capturado_en timestamptz; hash_sha256 char(64); snapshot jsonb con la fila externa exacta; aceptada_en timestamptz NULL (se fija al usarla en una captura). El precio aceptado se copia a la operación; un cambio posterior de la tarifa externa no altera lo capturado (RN-024). Añadida al diccionario el 12-oct-2026 (DIV-15).
+
+## Soporte técnico: infra.spring_session e infra.spring_session_attributes
+Tablas estándar de Spring Session JDBC en el nodo A, no del dominio. `spring_session`: PK(primary_id), session_id, creation_time, last_access_time, max_inactive_interval, expiry_time (epoch ms), principal_name NULL. `spring_session_attributes`: PK(session_primary_id, attribute_name), attribute_bytes bytea, FK → spring_session ON DELETE CASCADE. TTL 1800 s autenticada y 300 s anónima con tope por origen (SF-03). Se excluyen del respaldo (`--exclude-table-data`) y la restauración invalida sesiones (DIV-15).
 
 ## Concordancia física durante implementación
 

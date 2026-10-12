@@ -198,7 +198,11 @@ export interface paths {
             };
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Listar tickets de pesaje de la operación
+         * @description Tickets con su composición exacta de animales y pesos individuales sólo medidos (RN-012, RN-013). DIV-11.
+         */
+        get: operations["listarPesajesOperacion"];
         put?: never;
         /** Proponer pesaje */
         post: operations["proponerPesaje"];
@@ -1195,6 +1199,97 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sedes/{sedeId}/reportes/inventario": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+            };
+            cookie?: never;
+        };
+        /**
+         * Reporte de posiciones de inventario con costo vigente
+         * @description Mismas posiciones que el listado con `reservada` y `costo_vigente`; base del CSV `/reportes/inventario/csv`. DIV-11.
+         */
+        get: operations["reporteInventario"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sedes/{sedeId}/auditoria": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+            };
+            cookie?: never;
+        };
+        /**
+         * Bitácora de comandos y eventos auditados de la sede
+         * @description Hechos de `auditoria_evento` (inmutables, RN-023/RN-044). DIV-11.
+         */
+        get: operations["listarAuditoria"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sedes/{sedeId}/operaciones/{operacionId}/revisiones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+                operacionId: components["parameters"]["OperacionId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Registrar revisión administrativa de la operación
+         * @description Sólo ADMIN. Sin revisión, el margen queda PROVISIONAL con faltante REVISION_ADMINISTRATIVA_PENDIENTE (RN-036). DIV-11.
+         */
+        post: operations["registrarRevisionOperacion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sedes/{sedeId}/periodos/{periodoId}/cerrar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+                periodoId: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Alias obsoleto de /periodos/{periodoId}/cierre
+         * @deprecated
+         * @description Mismo comando `cerrar_periodo`; se conserva por compatibilidad y ningún cliente del repositorio lo usa (DEC-22). Use `/cierre`.
+         */
+        post: operations["cerrarPeriodoAlias"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1455,8 +1550,6 @@ export interface components {
             id?: string;
             /** @enum {string} */
             estado?: "REGISTRADO" | "VALIDADO" | "REVERTIDO";
-            aplicado?: components["schemas"]["Dinero"];
-            reembolsado?: components["schemas"]["Dinero"];
             disponible?: components["schemas"]["Dinero"];
             /** @enum {string} */
             naturaleza?: "NORMAL" | "REEMBOLSO";
@@ -2348,6 +2441,46 @@ export interface operations {
             412: components["responses"]["VersionObsoleta"];
             422: components["responses"]["ReglaDominio"];
             428: components["responses"]["VersionRequerida"];
+            503: components["responses"]["DuenoNoDisponible"];
+        };
+    };
+    listarPesajesOperacion: {
+        parameters: {
+            query?: {
+                pagina?: components["parameters"]["Pagina"];
+                tamano?: components["parameters"]["Tamano"];
+            };
+            header?: never;
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+                operacionId: components["parameters"]["OperacionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pagina"] & {
+                        elementos?: components["schemas"]["Pesaje"][];
+                    };
+                };
+            };
+            /** @description Forma o parámetro inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["NoAutenticado"];
+            403: components["responses"]["SinPermiso"];
             503: components["responses"]["DuenoNoDisponible"];
         };
     };
@@ -4843,6 +4976,206 @@ export interface operations {
                     };
                 };
             };
+        };
+    };
+    reporteInventario: {
+        parameters: {
+            query?: {
+                pagina?: components["parameters"]["Pagina"];
+                tamano?: components["parameters"]["Tamano"];
+                /** @description Filtro de búsqueda acotado. */
+                q?: string;
+            };
+            header?: never;
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pagina"] & {
+                        elementos?: (components["schemas"]["Posicion"] & {
+                            reservada?: boolean;
+                            costo_vigente?: components["schemas"]["Dinero"];
+                        })[];
+                    };
+                };
+            };
+            /** @description Forma o parámetro inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["NoAutenticado"];
+            403: components["responses"]["SinPermiso"];
+            503: components["responses"]["DuenoNoDisponible"];
+        };
+    };
+    listarAuditoria: {
+        parameters: {
+            query?: {
+                pagina?: components["parameters"]["Pagina"];
+                tamano?: components["parameters"]["Tamano"];
+            };
+            header?: never;
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pagina"] & {
+                        elementos?: {
+                            /** Format: uuid */
+                            id?: string;
+                            comando?: string;
+                            entidad?: string;
+                            /** Format: uuid */
+                            entidad_id?: string;
+                            /** Format: uuid */
+                            actor_id?: string;
+                            /** Format: uuid */
+                            correlation_id?: string;
+                            /** Format: date-time */
+                            ocurrido_en?: string;
+                            nodo_origen?: string;
+                            cambio?: Record<string, never>;
+                        }[];
+                    };
+                };
+            };
+            /** @description Forma o parámetro inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["NoAutenticado"];
+            403: components["responses"]["SinPermiso"];
+            503: components["responses"]["DuenoNoDisponible"];
+        };
+    };
+    registrarRevisionOperacion: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+                "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+            };
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+                operacionId: components["parameters"]["OperacionId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    criterio: string;
+                    /** @enum {string} */
+                    resultado: "SIN_OBSERVACIONES" | "CON_OBSERVACIONES" | "RECHAZADA";
+                    /** Format: uuid */
+                    revision_anterior_id?: string;
+                    documentos?: {
+                        /** Format: uuid */
+                        documento_id: string;
+                        resultado?: string;
+                        observacion?: string;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Resultado persistido del servidor */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResultadoComando"];
+                };
+            };
+            /** @description Forma o parámetro inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["NoAutenticado"];
+            403: components["responses"]["SinPermiso"];
+            409: components["responses"]["Conflicto"];
+            422: components["responses"]["ReglaDominio"];
+            503: components["responses"]["DuenoNoDisponible"];
+        };
+    };
+    cerrarPeriodoAlias: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+                "X-XSRF-TOKEN": components["parameters"]["CsrfToken"];
+            };
+            path: {
+                sedeId: components["parameters"]["SedeId"];
+                periodoId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    motivo: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Resultado persistido del servidor */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResultadoComando"];
+                };
+            };
+            /** @description Forma o parámetro inválido */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Error"];
+                };
+            };
+            401: components["responses"]["NoAutenticado"];
+            403: components["responses"]["SinPermiso"];
+            409: components["responses"]["Conflicto"];
+            422: components["responses"]["ReglaDominio"];
+            503: components["responses"]["DuenoNoDisponible"];
         };
     };
 }

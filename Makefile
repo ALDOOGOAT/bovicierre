@@ -54,6 +54,7 @@ verify-docs:
 	python3 tools/esquema/esquema.py
 	python3 -m unittest discover -s tools/diagramas -p 'test_*.py'
 	npx -y @redocly/cli@1.34.5 lint docs/api/openapi.yaml
+	python3 tools/api/route_coverage.py
 
 stop:
 	docker compose -p bovicierre-academic -f infra/compose/compose.academic.yml -f infra/compose/application.yml stop

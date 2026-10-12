@@ -1,0 +1,450 @@
+{
+  "base": "http://127.0.0.1:15180/api/v1",
+  "run": "20261012082044",
+  "ejecutados": 63,
+  "pass": 63,
+  "fail": 0,
+  "casos": [
+    {
+      "sec": "SEC-01",
+      "caso": "q=\"' OR '1'='1\"",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, total 0 ≤ 1078",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "q=\"%' OR 1=1 --\"",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, total 0 ≤ 1078",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "q=\"'; DROP TABLE bovi.parte; --\"",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, total 0 ≤ 1078",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "q=\"x' UNION SELECT usuario_id,login,hash FROM bovi.usuario --\"",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, total 0 ≤ 1078",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "q='\\\\'",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, total 0 ≤ 1078",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "q='%_%'",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, total 0 ≤ 1078",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "filtro estado=CONFIRMADA%27%20OR%201%3D1--",
+      "resultado": "PASS",
+      "evidencia": "HTTP 422 (422 = valor de enum rechazado por validación)",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "filtro tipo=COMPRA%27--",
+      "resultado": "PASS",
+      "evidencia": "HTTP 422 (422 = valor de enum rechazado por validación)",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "filtro pagina=1%20OR%201=1",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400 (422 = valor de enum rechazado por validación)",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "filtro tamano=20;DROP",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400 (422 = valor de enum rechazado por validación)",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "tabla intacta tras payloads",
+      "resultado": "PASS",
+      "evidencia": "total antes 1078, después 1078",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-01",
+      "caso": "apóstrofe legítimo",
+      "resultado": "PASS",
+      "evidencia": "alta HTTP 201, búsqueda total 1",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "paginación tamano=100000",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "paginación tamano=0",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "paginación tamano=-5",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "paginación pagina=0",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "paginación pagina=-1",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "paginación pagina=99999999999999999999",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "paginación tamano=abc",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "cuerpo JSON de 3 MB rechazado antes de procesarse",
+      "resultado": "PASS",
+      "evidencia": "HTTP 413",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "servicio sano tras cuerpo grande",
+      "resultado": "PASS",
+      "evidencia": "/salud HTTP 200",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-05",
+      "caso": "comando sin token",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-05",
+      "caso": "comando con token falso",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-05",
+      "caso": "sin efecto persistido",
+      "resultado": "PASS",
+      "evidencia": "coincidencias 0",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-05",
+      "caso": "login sin token CSRF",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-06",
+      "caso": "rotación de sesión en login",
+      "resultado": "PASS",
+      "evidencia": "cookie cambia",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-06",
+      "caso": "cookie tras logout no sirve",
+      "resultado": "PASS",
+      "evidencia": "logout HTTP 204, reuso HTTP 401",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-06",
+      "caso": "error de login uniforme",
+      "resultado": "PASS",
+      "evidencia": "401 vs 401",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "limitación de intentos de login (10 fallos/15 min)",
+      "resultado": "PASS",
+      "evidencia": "secuencia: [401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 429, 429]",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "bloqueo acotado al usuario atacado (sin bloqueo global)",
+      "resultado": "PASS",
+      "evidencia": "otro usuario HTTP 204",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "usuario limitado ve sólo su sede",
+      "resultado": "PASS",
+      "evidencia": "sedes visibles ['DEMO-A']",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{B}/operaciones?pagina=1&tamano=5",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403, 133 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{B}/reportes/cartera",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403, 133 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{B}/reportes/inventario/csv",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403, 133 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{B}/operaciones/01a12ca9-ec63-7c2c-84a5-181133da9891",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403, 133 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{A}/operaciones/01a12ca9-ec63-7c2c-84a5-181133da9891",
+      "resultado": "PASS",
+      "evidencia": "HTTP 404, 175 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{B}/operaciones/01a12ca9-ec63-7c2c-84a5-181133da9891/expediente",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403, 133 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{B}/animales/01a12f0a-b32b-76bb-ae4e-971fadf1aa17/qr",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403, 133 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "GET /sedes/{A}/animales/01a12f0a-b32b-76bb-ae4e-971fadf1aa17",
+      "resultado": "PASS",
+      "evidencia": "HTTP 404, 175 bytes",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "escritura en sede ajena",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403, persistidos 0",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-04",
+      "caso": "operador crea usuario",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-04",
+      "caso": "operador se asigna ADMIN",
+      "resultado": "PASS",
+      "evidencia": "HTTP 403",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-06",
+      "caso": "membresía revocada en sesión viva",
+      "resultado": "PASS",
+      "evidencia": "revocar HTTP 200, acceso HTTP 403",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-03",
+      "caso": "SF-01 ADMIN de B bloquea usuario sólo de A",
+      "resultado": "PASS",
+      "evidencia": "PATCH HTTP 404; login del usuario de A HTTP 204",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-04",
+      "caso": "ADMIN no puede bloquearse a sí mismo",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-04",
+      "caso": "ADMIN sí administra usuarios de su sede (sin regresión)",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-10",
+      "caso": "SF-03 sesión anónima de /sesion/csrf caduca en ≤5 min",
+      "resultado": "PASS",
+      "evidencia": "filas spring_session 89 → 189 (+100); TTL anónimo 300 s",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-06",
+      "caso": "sesión autenticada conserva 30 min",
+      "resultado": "PASS",
+      "evidencia": "TTL autenticado 1800 s",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "DIV-01 identificación duplicada → 409 sin detalle SQL",
+      "resultado": "PASS",
+      "evidencia": "primera HTTP 201, duplicada HTTP 409 BV401",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "DIV-01 login duplicado → 409",
+      "resultado": "PASS",
+      "evidencia": "HTTP 409 BV401",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-04",
+      "caso": "campos protegidos en cuerpo",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400; visible en B: 0",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-07",
+      "caso": "API devuelve JSON (no HTML) para nombre con etiqueta",
+      "resultado": "PASS",
+      "evidencia": "Content-Type application/json",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-09",
+      "caso": "CSV cartera descargable con tipo y disposición",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, text/csv;charset=UTF-8, attachment; filename=\"cartera.csv\"",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-09",
+      "caso": "fórmulas neutralizadas en CSV",
+      "resultado": "PASS",
+      "evidencia": "celdas peligrosas: 0 (sólo cuentan si la contraparte aparece en este reporte)",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-09",
+      "caso": "QR anónimo rechazado",
+      "resultado": "PASS",
+      "evidencia": "HTTP 401",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "cabecera content-security-policy en /",
+      "resultado": "PASS",
+      "evidencia": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "cabecera x-content-type-options en /",
+      "resultado": "PASS",
+      "evidencia": "nosniff",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "cabecera referrer-policy en /",
+      "resultado": "PASS",
+      "evidencia": "same-origin",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "cabecera x-frame-options en /",
+      "resultado": "PASS",
+      "evidencia": "DENY",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "sin cabecera Server",
+      "resultado": "PASS",
+      "evidencia": "ausente",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "error sin stack/SQL",
+      "resultado": "PASS",
+      "evidencia": "HTTP 400, fuga=False",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "cookie de sesión HttpOnly + SameSite",
+      "resultado": "PASS",
+      "evidencia": "HttpOnly, SameSite, Secure no aplica en HTTP local",
+      "severidad_si_falla": null
+    },
+    {
+      "sec": "SEC-11",
+      "caso": "CORS no refleja origen ajeno",
+      "resultado": "PASS",
+      "evidencia": "HTTP 200, ACAO=None",
+      "severidad_si_falla": null
+    }
+  ]
+}

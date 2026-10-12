@@ -1,6 +1,6 @@
 # Manual técnico integral de BoviCierre
 
-[Descargar el PDF completo](../pdf/BoviCierre_Manual_Integral.pdf): **248 páginas**, 24 capítulos, 318 marcadores y 319 enlaces. Manual preparado el 12-oct-2026 para Aldo y Jared sobre la revisión `92d3d41`, con el **capítulo 23 (págs. 229–237)** que documenta la campaña UI/UX y QA del mismo día: rediseño S1, endurecimiento SF-01..21, migraciones V14–V17, contrato DIV-12, decisiones semánticas DEC-12..21, pruebas nuevas, puerta local y recuperación. Si el capítulo 23 difiere de uno anterior, prevalece el 23.
+[Descargar el PDF completo](../pdf/BoviCierre_Manual_Integral.pdf): **249 páginas**, 24 capítulos, 318 marcadores y 319 enlaces. Manual preparado el 12-oct-2026 para Aldo y Jared sobre la revisión `92d3d41`, con el **capítulo 23 (págs. 229–238)** que documenta la campaña UI/UX y QA del mismo día: rediseño S1, endurecimiento SF-01..21, migraciones V14–V18, contrato DIV-11/12/13, decisiones semánticas DEC-12..25, pruebas nuevas, puerta local y recuperación. Si el capítulo 23 difiere de uno anterior, prevalece el 23.
 
 ## Qué explica
 

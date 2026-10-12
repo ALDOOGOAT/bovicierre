@@ -3,6 +3,7 @@
 DIV-04 (V14): estados terminales de operacion, gasto_operacion, pago y posicion_inventario también fallan, y las
 transiciones legítimas de cmd_ejecutar (anular, estado_entrega, aprobar, validar, liberar) siguen permitidas.
 DIV-02: sede operadora/tipo inmutables (BV010) y una posición activa por animal.
+DIV-14 (V18): reserva con vencimiento mayor a 30 días.
 DIV-05 (V16): una liquidación descuadrada respecto a sus conceptos y un segundo periodo ABIERTO por sede se rechazan.
 
 No muta datos: cada intento corre en BEGIN … ROLLBACK sobre una fila existente de pg-a local.
@@ -44,6 +45,12 @@ INVARIANTS = [
      "(SELECT o.id FROM bovi.operacion o WHERE (o.empresa_id,o.sucursal_id)=(p.empresa_id,p.sucursal_id) AND o.tipo='COMPRA' AND o.id<>p.compra_operacion_id ORDER BY o.id LIMIT 1),"
      "p.compra_numero_lote,'DISPONIBLE',now(),p.nodo_origen FROM bovi.posicion_inventario p WHERE p.estado='DISPONIBLE' AND p.nodo_origen='A' ORDER BY p.ctid LIMIT 1;",
      'uk_posicion_inventario_activo'),
+    # DIV-14 / RN-019 (V18): una reserva no puede vencer más de 30 días después de crearse.
+    ('RESERVA-VENCE-MAX', None,
+     "INSERT INTO bovi.reserva_venta(empresa_id,sucursal_id,id,operacion_id,numero_lote,posicion_id,estado,creada_en,vence_en,cerrada_en,nodo_origen) "
+     "SELECT empresa_id,sucursal_id,uuidv7(),operacion_id,numero_lote,posicion_id,'LIBERADA',now(),now()+interval '31 days',now(),nodo_origen "
+     "FROM bovi.reserva_venta WHERE nodo_origen='A' ORDER BY ctid LIMIT 1;",
+     'reserva_venta_vence_max_check'),
 ]
 TOGGLE_ENTREGA = "estado_entrega=CASE WHEN estado_entrega='COMPLETA' THEN 'PENDIENTE' ELSE 'COMPLETA' END"
 # (id, tabla, filtro de la fila, preparación legítima opcional, sentencia, esperado)

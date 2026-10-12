@@ -160,7 +160,7 @@
 {\sffamily\normalsize Preparado para Aldo y Jared\par}
 \vspace{5mm}
 {\normalsize Revisión del repositorio 92d3d41\par
-Actualización de campaña UI/UX y QA (V14--V17)\par
+Actualización de campaña UI/UX y QA (V14--V18)\par
 12 de octubre de 2026\par}
 \vspace{13mm}
 {\small PostgreSQL · Java · React · Docker Compose\par}
@@ -21301,7 +21301,7 @@ cambió en el software durante la campaña del 12 de octubre de 2026,
 ejecutada en la rama local \texttt{feature/uiux-qa-claude} a partir de
 la revisión \texttt{38ccdc3}. Los capítulos previos describen el corte
 \texttt{92d3d41} con migraciones V1--V13; aquí se explica qué se añadió
-encima (migraciones V14--V17, endurecimiento de seguridad, rediseño
+encima (migraciones V14--V18, endurecimiento de seguridad, rediseño
 visual, contrato y pruebas), por qué se decidió así y cómo se
 comprueba. Cuando este capítulo y uno anterior difieran, prevalece este
 capítulo para el estado actual.
@@ -21330,13 +21330,13 @@ Borde HTTP & Cabeceras CSP, \texttt{X-Frame-Options},
 SF-04, SF-05 \\
 Base de datos & V14 estados terminales inmutables y
 \texttt{search\_path} con \texttt{pg\_temp}; V15 segundo reverso con
-BV022; V16/V17 liquidación cuadrada y un solo periodo abierto. &
-DIV-04, SF-08, DIV-08, DIV-05 \\
+BV022; V16/V17 liquidación cuadrada y un solo periodo abierto; V18 vencimiento máximo de reserva. &
+DIV-04, SF-08, DIV-08, DIV-05, DIV-14 \\
 Contrato & OpenAPI de movimientos y anulación con los campos que la
-base exige; tipos TypeScript regenerados. & DIV-12 \\
+base exige; cuatro rutas reales documentadas y alias obsoleto marcado; campos de \texttt{Pago} que nunca se devolvían retirados; tipos TypeScript regenerados; comprobación automática de cobertura de rutas. & DIV-11, DIV-12, DIV-13 \\
 Documentación & Catálogo de códigos BV regenerado desde el código;
-fórmula canónica de margen; RN-034 y ADR-002 corregidos. & DIV-06,
-DIV-07, DIV-12b \\
+fórmula canónica de margen; RN-034 y ADR-002 corregidos; nombres reales de triggers, enrutamiento y comandos; ENT-42; retención de idempotencia; alcance de BV402. & DIV-06,
+DIV-07, DIV-12b, DIV-15, DIV-16, DIV-17 \\
 Pruebas & Puerta local en serie, inmutabilidad ampliada, seguridad
 dinámica, carga k6, lint de tipos monetarios, pesaje BRUTO\_TARA,
 BV021, BV010 y posición activa única. & DIV-02, DIV-03, DIV-09,
@@ -21558,6 +21558,23 @@ se corrigió hacia delante con V17 (\texttt{CREATE OR REPLACE}, leyendo
 la columna mediante \texttt{to\_jsonb(NEW)}) en lugar de editar una
 migración aplicada y reescribir el historial de Flyway.
 
+\subsection{V18: vencimiento máximo de una reserva}
+
+\textbf{Qué hace.} Añade el CHECK
+\texttt{reserva\_venta\_vence\_max\_check}:
+\texttt{vence\_en <= creada\_en + 30 días}. Una violación sale como 23514
+y la API la traduce a 422 BV015.
+
+\textbf{Por qué.} RN-019 justifica el vencimiento con «no retener
+inventario indefinidamente», pero \texttt{vence\_en} lo escribe el
+usuario en la pantalla de reserva sin ningún tope. Las reservas reales
+del sistema duran como máximo unas 10 horas, así que 30 días es un tope
+holgado que no bloquea el uso actual. Es un parámetro de negocio que Aldo
+y Jared pueden ajustar (DEC-24). RN-019 se reescribió para describir la
+expiración real: no existe un comando \texttt{ExpirarReserva}; reservar,
+liberar y confirmar marcan EXPIRADA las reservas vencidas antes de
+operar.
+
 \section{Contrato HTTP y backend}\label{campana-contrato}
 
 \begin{itemize}
@@ -21574,6 +21591,15 @@ ajuste de anulación escribe \texttt{ajuste\_liquidacion.motivo NOT NULL}.
 \item \texttt{frontend/src/generated/api-schema.ts} se regeneró con
 \texttt{npm --prefix frontend run generate:api}; Redocly valida el
 documento.
+\item \textbf{Cobertura de rutas} (DIV-11): se documentaron
+\texttt{GET /operaciones/\{id\}/pesajes}, \texttt{GET /reportes/inventario},
+\texttt{GET /auditoria} y \texttt{POST /operaciones/\{id\}/revisiones}, y
+el alias \texttt{POST /periodos/\{id\}/cerrar} quedó marcado como
+\texttt{deprecated}. \texttt{tools/api/route\_coverage.py}, dentro de
+\texttt{make verify-docs}, falla si una ruta de un controlador Java no
+está en el contrato; hoy cubre las 71 rutas.
+\item \textbf{Pago} (DIV-13): se retiraron \texttt{aplicado} y
+\texttt{reembolsado}, que ninguna consulta devolvía.
 \item \textbf{RN-034} se cumple con una prueba real:
 \texttt{MoneyTypesLintTest} falla si aparece \texttt{double},
 \texttt{float}, \texttt{Double} o \texttt{Float} en
@@ -21585,7 +21611,7 @@ no pasar en vacío.
 \section{Decisiones semánticas razonadas}\label{campana-decisiones}
 
 Las decisiones siguientes resolvieron divergencias entre reglas,
-modelo, SQL, API y documentación. Se registran como DEC-12 a DEC-21 en
+modelo, SQL, API y documentación. Se registran como DEC-12 a DEC-25 en
 \texttt{docs/research/evidence-register.md}. Cada una indica la
 alternativa descartada y la razón.
 
@@ -21643,6 +21669,18 @@ contenedor ya creó.
 capturas de \texttt{docs/testing/evidence} no se extrajeron
 semánticamente: costarían un agente por imagen y repiten lo que ya
 describen los documentos. Quedan sin sellar para una pasada posterior.
+\item[DEC-22.] \textbf{Rutas sin contrato (DIV-11).} Documentar las
+cuatro rutas que la aplicación usa y marcar el alias \texttt{/cerrar}
+como obsoleto en lugar de retirarlo: ningún cliente lo usa, pero
+retirarlo rompería la compatibilidad sin beneficio.
+\item[DEC-23.] \textbf{Campos fantasma de Pago (DIV-13).} Quitarlos del
+contrato. Calcularlos sería una función nueva que nadie pidió.
+\item[DEC-24.] \textbf{Tope de vencimiento de reserva (DIV-14).} 30 días,
+explicado en la sección de V18.
+\item[DEC-25.] \textbf{BV402 compartido (DIV-17).} Sólo documentar. El
+lease del outbox nunca sale por HTTP y su única prueba es una caída real
+de nodos fuera de la puerta; renombrar el código dejaría un cambio sin
+verificar.
 \end{description}
 
 \section{Pruebas nuevas y puerta local}\label{campana-pruebas}
@@ -21664,7 +21702,7 @@ Prueba & Qué demuestra \\
 tablas con \texttt{hecho\_inmutable}; 13 bloqueos y 5 transiciones
 legítimas de DIV-04; liquidación descuadrada y segundo periodo abierto
 (DIV-05); sede operadora y tipo de operación inmutables (BV010) y una
-sola posición activa por animal (DIV-02). Todo en BEGIN…ROLLBACK y con
+sola posición activa por animal (DIV-02); reserva con vencimiento mayor a 30 días (DIV-14). Todo en BEGIN…ROLLBACK y con
 conteos intactos. \\
 \softcode{db/tests/gold.py} & Además de las cifras GOLD: segundo reverso
 → BV022 (DIV-08); cobro aplicado a una obligación por pagar y cobro de
@@ -21700,10 +21738,11 @@ buscaba la posición nueva sólo en la primera página de 100; ahora
 filtra con \texttt{q}.
 
 \textbf{Recuperación.} Se tomó un respaldo antes de V14 y se repitió
-\texttt{make backup} y \texttt{make restore-check} después de V14, V15 y
-V17. El último ensayo concilió firma, hashes y sesiones en 30.8 s, con 7
-triggers de inmutabilidad, \texttt{uk\_periodo\_un\_abierto} y TEMP
-revocado en la base restaurada. No acredita PITR ni pérdida del host.
+\texttt{make backup} y \texttt{make restore-check} después de V14, V15,
+V17 y V18. El último ensayo concilió firma, hashes y sesiones en 31.1 s,
+con 7 triggers de inmutabilidad, \texttt{uk\_periodo\_un\_abierto},
+\texttt{reserva\_venta\_vence\_max\_check} y TEMP revocado en la base
+restaurada. No acredita PITR ni pérdida del host.
 
 \section{Herramientas de campaña}\label{campana-herramientas}
 
@@ -21728,12 +21767,12 @@ extracción AST del código y semántica de los documentos de la campaña:
 \begin{itemize}
 \item Decisión humana sobre SF-09: protección por fila o contexto de
 actor en la base, o un ADR que acepte el riesgo por escrito.
-\item Divergencias bajas restantes: DIV-11, DIV-13 a DIV-17.
+\item Las 17 divergencias de la matriz quedaron corregidas, cubiertas o resueltas; las que se resolvieron sólo en documentación (DIV-16, DIV-17) lo indican con su razón.
 \item Escáneres SCA y DAST, carga sostenida de 15 a 20 minutos y dataset
 de 10,000 posiciones.
 \item Revisión de los diagramas MER y relacional contra la matriz de
-coherencia; las migraciones V14--V17 no añaden tablas ni columnas, sólo
-triggers, un índice y privilegios.
+coherencia; las migraciones V14--V18 no añaden tablas ni columnas, sólo
+triggers, un índice, un CHECK y privilegios.
 \item Lector de pantalla, axe y teléfono físico para el rediseño.
 \item Revisión humana de Aldo y Jared de todo lo anterior.
 \end{itemize}
