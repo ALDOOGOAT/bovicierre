@@ -2648,6 +2648,21 @@ export interface operations {
                     ocurrido_en: string;
                     /** Format: uuid */
                     documento_id?: string;
+                    /**
+                     * Format: uuid
+                     * @description Operación de venta cuya entrega se registra (ENTREGA).
+                     */
+                    operacion_id?: string;
+                    /**
+                     * Format: uuid
+                     * @description Periodo ABIERTO de reconocimiento; obligatorio en BAJA (RN-039, BV025).
+                     */
+                    periodo_id?: string;
+                    /**
+                     * Format: date
+                     * @description Fecha dentro del periodo; obligatoria en BAJA (RN-039, BV025).
+                     */
+                    fecha_reconocimiento?: string;
                 };
             };
         };
@@ -4296,7 +4311,10 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Reconocimiento"];
+                "application/json": components["schemas"]["Reconocimiento"] & {
+                    /** @description Motivo del abono de anulación (ajuste_liquidacion.motivo, RN-020/RN-029). */
+                    motivo: string;
+                };
             };
         };
         responses: {

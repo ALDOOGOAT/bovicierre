@@ -2,14 +2,14 @@
 
 **Instrucción ejecutable:** verificar lock y checkout con `python3 tools/claude/resume-check.py --owner <sesión>`
 (exit 0 requerido); comprobar `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:15180/api/v1/salud` = 200;
-correr `make verify-release-local` (≈3 min, debe dar PASS); después continuar con DIV-06/07/08/12.
+correr `make verify-release-local` (≈3 min, debe dar PASS); después correr la puerta completa (V15 aún no la ha pasado entera) y continuar con DIV-07 y DIV-06.
 
 Estado: **S1_DONE**, **S2_SAFE_PARTIAL** (rama local `feature/uiux-qa-claude`, base `38ccdc3`, sin push). Informe: `docs/quality/final-report.md`.
 
 ## Próximos pasos priorizados (S2 restante, presupuesto ≈170 min activos)
 1. ~~DIV-04~~ y ~~SF-08~~: hechos en V14 (12-oct-2026), puerta con carga PASS y restauración V14 conciliada. Siguiente migración libre: V15.
 2. —
-3. **DIV-06/07/08/12**: decidir fórmula canónica de margen; catálogo de códigos BV; OpenAPI de BAJA/anular (`periodo_id`, `fecha_reconocimiento`, `motivo`) + `npm --prefix frontend run generate:api`.
+3. Hecho sin puerta completa: DIV-08 (V15 `reverso_unico` → BV022; `gold.py` + `verify-sql` 37/37) y DIV-12 (OpenAPI BAJA/anular, tipos regenerados, `MoneyTypesLintTest` 2/2). Pendiente: **DIV-07** (regenerar tabla de códigos de `business-rules.md`), **DIV-06** (margen), y actualizar matriz/hallazgos/status para DIV-08/12. Original:: decidir fórmula canónica de margen; catálogo de códigos BV; OpenAPI de BAJA/anular (`periodo_id`, `fecha_reconocimiento`, `motivo`) + `npm --prefix frontend run generate:api`.
 4. Decisión humana: SF-09 (RLS/contexto de actor vs ADR de riesgo aceptado).
 5. `/graphify . --update` (documentos nuevos) y registrar en `docs/knowledge/graph-status.md`.
 6. ~~Mod~~: carga verificada por el usuario con `/bovi-status` (UQ-003 cerrada).

@@ -80,6 +80,7 @@ try:
  # Economic correction preserves original, restores available funds and refunds only available.
  ap=str(q('select id from bovi.aplicacion_pago where pago_id=%s',(pay,)))
  cmd('revertir_aplicacion',{'aplicacion_id':ap})
+ negative('revertir_aplicacion',{'aplicacion_id':ap},'BV022')  # DIV-08: segundo reverso, otra clave
  cmd('ajustar_liquidacion',{'liquidacion_id':sale['id'],'naturaleza':'ABONO','monto':money(100),'motivo':'DEMO GOLD-07','fuente':'BONIFICACION_COMERCIAL'})
  cmd('aplicar_pago',{'pago_id':pay,'liquidacion_id':sale['id'],'importe':money(900)})
  cmd('reembolsar_pago',{'pago_id':pay,'importe':money(300),'metodo':'EFECTIVO'})

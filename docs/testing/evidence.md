@@ -179,3 +179,8 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 | Puerta local con carga | `python3 scripts/verify_release_local.py --with-load` | **PASS** — docs; frontend 14; backend 28 (Testcontainers limpio V1–V14); SQL 37; inmutabilidad 44; E2E 16; seguridad 63; k6 8,194 peticiones, 0 fallidas, 8,114/8,114 checks, p95 21.2 ms ([release-gate](evidence/release-local/20261012T0544/release-gate.json)) |
 | Recuperación tras V14 | `make backup` / `make restore-check` (BACKUP_DIR privado) | Primer ensayo: firma y hashes OK, pero la base restaurada **recuperaba TEMP para PUBLIC** (ACL de base fuera de `pg_dump`). Corregido en `scripts/recovery.py`; segundo ensayo conciliado en 29.7 s con 4 triggers V14, TEMP revocado y `security.sql` PASS en la base restaurada ([restore-v14](evidence/recovery/restore-v14.json)) |
 | No ejecutado | dataset 10k/100k, carga sostenida 15–20 min, `provider.spec.ts`, PITR | Pendiente |
+
+### V15 y contrato (parcial, 12-oct-2026)
+- DIV-08: fase roja `gold.py` (23505 en el segundo reverso) → V15 `reverso_unico` → `make verify-sql` 37/37 PASS con negativo BV022. V15 aplicada en A/B.
+- DIV-12: OpenAPI con `periodo_id`/`fecha_reconocimiento`/`operacion_id` en movimientos (`if tipo=BAJA`) y `motivo` en anular; Redocly válido; `generate:api` regenerado; build frontend OK. DIV-12b: `MoneyTypesLintTest` 2/2 (sin float/double en backend, sin parseFloat/toFixed en frontend).
+- Puerta completa `make verify-release-local` **no repetida** tras V15; recuperación no repetida tras V15.

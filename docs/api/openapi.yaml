@@ -916,6 +916,28 @@ paths:
                 documento_id:
                   type: string
                   format: uuid
+                operacion_id:
+                  type: string
+                  format: uuid
+                  description: Operación de venta cuya entrega se registra (ENTREGA).
+                periodo_id:
+                  type: string
+                  format: uuid
+                  description: Periodo ABIERTO de reconocimiento; obligatorio en BAJA (RN-039, BV025).
+                fecha_reconocimiento:
+                  type: string
+                  format: date
+                  description: Fecha dentro del periodo; obligatoria en BAJA (RN-039, BV025).
+              if:
+                properties:
+                  tipo:
+                    const: BAJA
+              then:
+                required:
+                - motivo_baja
+                - documento_id
+                - periodo_id
+                - fecha_reconocimiento
       responses:
         '201':
           description: Registrado
@@ -2681,7 +2703,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Reconocimiento'
+              allOf:
+              - $ref: '#/components/schemas/Reconocimiento'
+              - type: object
+                required:
+                - motivo
+                properties:
+                  motivo:
+                    type: string
+                    minLength: 1
+                    description: Motivo del abono de anulación (ajuste_liquidacion.motivo, RN-020/RN-029).
   /sedes/{sedeId}/operaciones/{operacionId}/simulador:
     parameters:
     - $ref: '#/components/parameters/SedeId'
