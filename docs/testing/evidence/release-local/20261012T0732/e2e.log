@@ -1,0 +1,96 @@
+
+> bovicierre-frontend@0.1.0 test:e2e
+> playwright test closure.spec.ts additional.spec.ts keyboard.spec.ts visual.spec.ts
+
+
+Running 16 tests using 1 worker
+
+  ✓   1 tests_e2e/additional.spec.ts:21:1 › predios: validación, alta, búsqueda, paginación y persistencia real (3.2s)
+  ✓   2 tests_e2e/additional.spec.ts:27:1 › historia animal: entrega física y recompra conservan los dos ciclos (2.9s)
+  ✓   3 tests_e2e/additional.spec.ts:32:1 › pesajes: corrección de versión aprobada, original conservado y comparación incompatible (2.2s)
+  ✓   4 tests_e2e/additional.spec.ts:37:1 › reportes reales: cartera y margen muestran corte y cifras canónicas disponibles (1.8s)
+  ✓   5 tests_e2e/additional.spec.ts:42:1 › reservas: dos usuarios compiten y una reserva UI futura vence realmente (55.9s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a13051-fde0-7083-a1d7-8cd4c1897958
+UI command POST /operaciones/01a13051-fde0-7083-a1d7-8cd4c1897958/acordar
+UI command POST /operaciones/01a13051-fde0-7083-a1d7-8cd4c1897958/confirmar
+UI command POST /inventario/movimientos
+UI command POST /operaciones
+UI command PATCH /operaciones/01a13052-0349-7b1f-9c50-27bc6013787d
+UI command POST /operaciones/01a13052-0349-7b1f-9c50-27bc6013787d/acordar
+UI command POST /operaciones/01a13052-0349-7b1f-9c50-27bc6013787d/reservas
+UI command POST /operaciones/01a13052-0349-7b1f-9c50-27bc6013787d/confirmar
+UI command POST /pagos
+UI command POST /pagos/01a13052-0749-765b-9ee4-5641f1442736/validar
+UI command POST /pagos/01a13052-0749-765b-9ee4-5641f1442736/aplicaciones
+UI command POST /liquidaciones/01a13052-05dd-71df-9e22-b445c8e8134f/ajustes
+UI command POST /pagos/01a13052-0749-765b-9ee4-5641f1442736/reembolsos
+UI command POST /documentos
+UI command POST /documentos/01a13052-0c16-78ab-86f5-e6385f54cb22/revisiones
+  ✓   6 tests_e2e/closure.spec.ts:27:1 › formularios reales: compra, inventario, venta, cobro, ajuste atómico, reembolso, documentos y QR (6.5s)
+  ✓   7 tests_e2e/closure.spec.ts:48:1 › respuesta perdida: conserva intento tras recarga y consulta resultado sin duplicar (1.2s)
+UI command POST /usuarios
+UI command POST /usuarios/01a13052-1b8e-7bf0-b703-081ed364f4e0/membresias
+  ✓   8 tests_e2e/closure.spec.ts:57:1 › usuario auditor real: lectura, permisos vigentes y ausencia de credenciales persistidas (2.0s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a13052-249f-743f-88a3-70396d40cd0c
+UI command POST /operaciones/01a13052-249f-743f-88a3-70396d40cd0c/pesajes
+UI command POST /pesajes/01a13052-2662-77ac-b7d8-a2db83a0b131/aprobar
+UI command POST /operaciones/01a13052-249f-743f-88a3-70396d40cd0c/acordar
+UI command POST /operaciones/01a13052-249f-743f-88a3-70396d40cd0c/confirmar
+UI command POST /gastos
+UI command POST /gastos/01a13052-2908-7d14-b130-3a46c39d517b/reparto
+UI command POST /gastos
+UI command POST /gastos/01a13052-2a28-790c-bec3-17827436b76b/reparto
+UI command POST /gastos
+UI command POST /gastos/01a13052-2c07-77eb-b0de-eb72a3975936/reparto
+UI command POST /integraciones/proveedor/tarifas/aceptaciones
+UI command POST /gastos
+  ✓   9 tests_e2e/closure.spec.ts:63:1 › gastos: tarifa consultada y aceptada, pesos medidos y tres métodos canónicos (4.1s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a13052-3422-72f8-98f7-0decfacc4587
+UI command POST /operaciones/01a13052-3422-72f8-98f7-0decfacc4587/acordar
+UI command POST /operaciones/01a13052-3422-72f8-98f7-0decfacc4587/reabrir
+UI command PATCH /operaciones/01a13052-3422-72f8-98f7-0decfacc4587
+UI command POST /operaciones/01a13052-3422-72f8-98f7-0decfacc4587/acordar
+  ✓  10 tests_e2e/closure.spec.ts:73:1 › acuerdos versionados: aceptar, reabrir, editar y conservar el original (2.2s)
+UI command POST /cierre
+UI command POST /reabrir
+  ✓  11 tests_e2e/closure.spec.ts:76:1 › periodo actual: cierre y reapertura con versiones inmutables, sin desplazar el calendario DEMO (1.1s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a13052-40ee-7266-872b-e07306786d44
+UI command PATCH /operaciones/01a13052-40ee-7266-872b-e07306786d44
+UI command PATCH /operaciones/01a13052-40ee-7266-872b-e07306786d44
+UI command POST /operaciones/01a13052-40ee-7266-872b-e07306786d44/pesajes
+UI command POST /pesajes/01a13052-4428-71ed-9c7a-65328ed7c33a/aprobar
+UI command PATCH /operaciones/01a13052-40ee-7266-872b-e07306786d44
+UI command POST /operaciones/01a13052-40ee-7266-872b-e07306786d44/acordar
+UI command POST /operaciones/01a13052-40ee-7266-872b-e07306786d44/confirmar
+UI command POST /inventario/movimientos
+UI command POST /operaciones
+UI command PATCH /operaciones/01a13052-48b5-7537-96ac-58fd2765a40d
+UI command POST /operaciones/01a13052-48b5-7537-96ac-58fd2765a40d/pesajes
+UI command POST /pesajes/01a13052-4ad6-7add-b484-f3c29d7d0b46/aprobar
+UI command POST /operaciones/01a13052-48b5-7537-96ac-58fd2765a40d/acordar
+UI command POST /operaciones/01a13052-48b5-7537-96ac-58fd2765a40d/reservas
+UI command POST /operaciones/01a13052-48b5-7537-96ac-58fd2765a40d/confirmar
+  ✓  12 tests_e2e/closure.spec.ts:81:1 › regresión integrada: dos lotes conservan identidad y venta KG conserva composición medida (4.6s)
+  ✓  13 tests_e2e/closure.spec.ts:90:1 › regresión HTTP502: respuesta de POST comprometido conserva clave y se recupera por lookup (1.3s)
+  ✓  14 tests_e2e/closure.spec.ts:94:1 › cambiar sede B a A cancela GET pendiente y no presenta expediente ni animales de B (934ms)
+  ✓  15 tests_e2e/visual.spec.ts:17:1 › capturas del recorrido principal (19.3s)
+  ✓  16 tests_e2e/keyboard.spec.ts:23:1 › 390px sólo teclado: acceso, compra, recepción, reserva, venta, cobro y aplicación (9.3s)
+
+  16 passed (2.0m)
+
+--- stderr ---

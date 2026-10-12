@@ -186,3 +186,9 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 - Puerta completa tras V15: **PASS** — frontend 14, backend 30 (incluye `MoneyTypesLintTest`), SQL 37, inmutabilidad 44, E2E 16, seguridad 63, 0 omitidos ([release-gate](evidence/release-local/20261012T0702/release-gate.json)). Restauración V15 conciliada en 31.6 s, 5 triggers y TEMP revocado ([restore-v15](evidence/recovery/restore-v15.json)).
 - DIV-06: `gold.py same_margin` vista = `consultar('reportes_margen')` en GOLD-02/07 y GOLD-01; `gold.py` PASS (158 llamadas, rollback). DIV-07: catálogo regenerado en business-rules.
 - DIV-10 (RN-012): `db/tests/weighing_reports.py` BRUTO_TARA neto calculado en servidor (300.250, ignora neto enviado) y tara>bruto → 23514; `make verify-sql` 37 PASS / 0 FAIL.
+
+### V16/V17 DIV-05 (12-oct-2026)
+- Fase roja `immutability.py`: concepto que descuadra una liquidación y segundo periodo ABIERTO aceptados (2 fallos) ([antes](evidence/coherence/20261012-v16/immutability-antes-v16.json)).
+- V16 aplicada en A/B; la fase verde falló con `record "new" has no field "id"` en `concepto_liquidacion` (defecto de V16). V17 `CREATE OR REPLACE` corrige; `immutability.py` 46/46 ([después](evidence/coherence/20261012-v16/immutability.json)); `security.sql` PASS en A/B.
+- Puerta con carga: **PASS** — backend 30, SQL 37, inmutabilidad 46, E2E 16, seguridad 63; k6 8,214 peticiones, 0 fallidas, 8,134/8,134 checks, p95 22.9 ms; 125 operaciones confirmadas tras V17, 0 liquidaciones descuadradas ([release-gate](evidence/release-local/20261012T0732/release-gate.json)).
+- Restauración V17: 30.8 s, firma OK, 7 triggers + `uk_periodo_un_abierto` + TEMP revocado en la base restaurada ([restore-v17](evidence/recovery/restore-v17.json)).

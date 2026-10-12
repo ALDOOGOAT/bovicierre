@@ -1,0 +1,10 @@
+{
+  "project": "bovicierre-restore-20261012134305",
+  "seconds": 30.799,
+  "signature_match": true,
+  "document_hashes_match": true,
+  "sessions_invalidated": true,
+  "idempotency_inbox_preserved": true,
+  "publications_recreated": true,
+  "limitations": "A\u00fan requiere prueba de nueva operaci\u00f3n/idempotencia y descarga HTTP restauradas; no acredita PITR ni p\u00e9rdida del host."
+}

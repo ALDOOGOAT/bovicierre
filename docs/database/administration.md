@@ -66,6 +66,10 @@ Reintento en Java: hasta 3 veces el comando completo ante 40001/40P01 con la mis
 | `trg_borrador_editable` | lote_operacion, seleccion_*, condicion_lote | sólo con operación BORRADOR/ACORDADA |
 | `estado_terminal_inmutable` → `trg_estado_terminal` (V14) BEFORE UPDATE/borrado | operacion (CONFIRMADA, ANULADA, CANCELADA), gasto_operacion (APROBADO), pago (VALIDADO, REVERTIDO), posicion_inventario (CERRADA_VENTA, BAJA) | RN-023 (DIV-04). Permite sólo CONFIRMADA→ANULADA, `estado_entrega` en CONFIRMADA y `version_lock`; BV016 |
 
+| `liquidacion_cuadrada` → `trg_liquidacion_cuadrada` (V16/V17) CONSTRAINT AFTER INSERT DEFERRABLE INITIALLY DEFERRED | liquidacion, concepto_liquidacion | total = Σ conceptos al confirmar la transacción (DIV-05); BV015 |
+
+Índice `uk_periodo_un_abierto` (V16): un solo periodo ABIERTO por sede, respaldo del advisory lock de `crear_periodo`.
+
 Desde V14 toda función de `bovi`/`infra` fija `search_path = pg_catalog, pg_temp` y PUBLIC no tiene TEMP sobre la base (SF-08). El ACL de base no viaja en `pg_dump`: `restore-check` lo reaplica y lo comprueba.
 Los triggers ordinarios no se disparan en el apply (F24–F25): validación en origen + conciliación (TEST-23).
 

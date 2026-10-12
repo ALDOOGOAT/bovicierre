@@ -2,6 +2,7 @@
 """DIV-03 / RN-023: UPDATE y DELETE deben fallar (BV016) en las 13 tablas de hechos con trigger hecho_inmutable.
 DIV-04 (V14): estados terminales de operacion, gasto_operacion, pago y posicion_inventario también fallan, y las
 transiciones legítimas de cmd_ejecutar (anular, estado_entrega, aprobar, validar, liberar) siguen permitidas.
+DIV-05 (V16): una liquidación descuadrada respecto a sus conceptos y un segundo periodo ABIERTO por sede se rechazan.
 
 No muta datos: cada intento corre en BEGIN … ROLLBACK sobre una fila existente de pg-a local.
 Se ejecuta como superusuario para que sólo el trigger (no los GRANT) pueda impedir el cambio.
@@ -16,6 +17,18 @@ TABLES = ['liquidacion', 'concepto_liquidacion', 'ajuste_liquidacion', 'asignaci
           'aplicacion_pago', 'cierre_periodo_version', 'movimiento_inventario', 'documento', 'auditoria_evento',
           'evento_outbox', 'revision_administrativa', 'revision_documento']
 CONTAINER = 'bovicierre-academic-pg-a-1'
+# (id, preparación, sentencia que debe fallar, texto esperado en el error); todo dentro de BEGIN … ROLLBACK.
+INVARIANTS = [
+    ('LIQ-DESCUADRE', None,
+     "INSERT INTO bovi.concepto_liquidacion(empresa_id,sucursal_id,liquidacion_id,numero_concepto,tipo,descripcion,cantidad,unidad,precio_unitario,importe,nodo_origen) "
+     "SELECT c.empresa_id,c.sucursal_id,c.liquidacion_id,(SELECT max(numero_concepto)+1 FROM bovi.concepto_liquidacion x WHERE (x.empresa_id,x.sucursal_id,x.liquidacion_id)=(c.empresa_id,c.sucursal_id,c.liquidacion_id)),"
+     "'CARGO','DEMO QA descuadre',c.cantidad,c.unidad,c.precio_unitario,1,c.nodo_origen FROM bovi.concepto_liquidacion c WHERE c.nodo_origen='A' ORDER BY ctid LIMIT 1;\nSET CONSTRAINTS ALL IMMEDIATE;",
+     'BV015'),
+    ('PERIODO-DOS-ABIERTOS', None,
+     "INSERT INTO bovi.periodo_cierre(empresa_id,sucursal_id,id,desde,hasta,estado,nodo_origen) "
+     "SELECT empresa_id,sucursal_id,uuidv7(),'2099-01-01','2099-01-31','ABIERTO',nodo_origen FROM bovi.periodo_cierre WHERE estado='ABIERTO' AND nodo_origen='A' LIMIT 1;",
+     'uk_periodo_un_abierto'),
+]
 TOGGLE_ENTREGA = "estado_entrega=CASE WHEN estado_entrega='COMPLETA' THEN 'PENDIENTE' ELSE 'COMPLETA' END"
 # (id, tabla, filtro de la fila, preparación legítima opcional, sentencia, esperado)
 TERMINAL = [
@@ -85,12 +98,19 @@ def main():
             got = 'PERMITIDO'
         terminal[cid] = {'tabla': t, 'esperado': expected, 'obtenido': got}
         failures += got != expected
+    invariants = {}
+    for cid, _, stmt, expected in INVARIANTS:
+        _, stderr = psql(f'BEGIN;\n{stmt}\nROLLBACK;\n')
+        got = 'BLOQUEADO' if expected in stderr else ('ERROR_OTRO: ' + stderr[:200] if 'ERROR' in stderr else 'PERMITIDO')
+        invariants[cid] = {'esperado': 'BLOQUEADO', 'obtenido': got}
+        failures += got != 'BLOQUEADO'
     counts_after = {t: psql(f'select count(*) from bovi.{t};')[0] for t in counts_before}
     after = {t: psql(f'select count(*) from bovi.{t};')[0] for t in TABLES}
     unchanged = all(str(results[t]['filas']) == after[t] for t in TABLES) and counts_before == counts_after
     summary = {'regla': 'RN-023', 'divergencia': 'DIV-03', 'tablas_con_trigger_en_catalogo': declared.split(','),
                'ejecutados': sum(1 for r in results.values() for op in ('update', 'delete') if r[op] != 'SIN_FIXTURE')
-               + sum(1 for r in terminal.values() if r['obtenido'] != 'SIN_FIXTURE'),
+               + sum(1 for r in terminal.values() if r['obtenido'] != 'SIN_FIXTURE') + len(invariants),
+               'invariantes_div05': invariants,
                'resultados': results, 'estados_terminales_div04': terminal, 'filas_sin_cambio_tras_rollback': unchanged, 'fallos': failures,
                'sin_fixture': [t for t, r in results.items() if r['filas'] == 0] + [c for c, r in terminal.items() if r['obtenido'] == 'SIN_FIXTURE']}
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -99,6 +119,8 @@ def main():
         print(f"{t:26} filas={r['filas']:<6} update={r['update']:<18} delete={r['delete']}")
     for cid, r in terminal.items():
         print(f"{cid:26} {r['tabla']:20} esperado={r['esperado']:<10} obtenido={r['obtenido']}")
+    for cid, r in invariants.items():
+        print(f"{cid:26} {'invariante':20} esperado=BLOQUEADO  obtenido={r['obtenido']}")
     print(f"fallos={failures} sin_fixture={summary['sin_fixture']} filas_intactas={unchanged}")
     return 1 if failures or not unchanged else 0
 
