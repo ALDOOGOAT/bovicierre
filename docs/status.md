@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Actualizado: 2026-10-11 · rama `feature/mvp-local`, base `af223fb`, implementación local sin publicar.
+Actualizado: 2026-10-12 · rama `main`; código MVP publicado en `9282b75`, normalización de wrapper en `92d3d41`. La aplicación se ejecuta en local; publicar código no equivale a desplegarla.
 
 ## Disponible hoy
 
@@ -20,6 +20,10 @@ Compra→inventario→reserva/venta→liquidación→pago/aplicación→cartera/
 
 ## Pendientes y límites
 
-Revisión humana de Aldo/Jared, rúbrica original, interpretación M–M del profesor y entrevistas/precio/piloto siguen pendientes. Las55casillas originales permanecen sin marcarHecho por agentes. OCR A-031/J-020 diferido; A-028 sólo preparación local, sin staging/TLS público. CI manual preparado, no ejecutado remoto. Graphify: AST local y relectura semántica de los53documentos canónicos cambiados; integración final y rutas verificadas en graph-status. Los documentos históricos sin cambios conservan su extracción anterior.
+Revisión humana de Aldo/Jared, rúbrica original, interpretación M–M del profesor y entrevistas/precio/piloto siguen pendientes. Las 52 casillas técnicas verificadas están marcadas por petición del usuario; las 55 revisiones humanas siguen pendientes y Kanban Hecho no se atribuye a agentes. OCR A-031/J-020 diferido; A-028 sólo preparación local, sin staging/TLS público. CI manual preparado, no ejecutado remoto. Graphify: AST local y relectura semántica de los53documentos canónicos cambiados; integración final y rutas verificadas en graph-status. Los documentos históricos sin cambios conservan su extracción anterior.
 
 Una empresa por despliegue; A centraliza sesiones y su caída causa503 en nuevas solicitudes autenticadas de ambas sedes. Mismo host no alta disponibilidad. Sin PITR, backup externo ni prueba de pérdida de laptop. Configuración de piloto requiere bootstrap real sinDEMO, revisión de secretos/redes/TLS, inventario inicial conciliado y ensayos sobre el servidor elegido. No hay aprobación del profesor ni cliente contratado.
+
+## Documentación y acceso del 12-oct
+
+[Manual técnico integral](manual/README.md): PDF de 239 páginas, fuente LaTeX y compilación reconstruible. [Guía de primera sesión](runbooks/local-use.md). [Evidencia de acceso](testing/evidence/local-access-2026-10-12.json): ocho servicios activos, login ADMIN204, A/B/autenticación disponibles y periodos abiertos observados. La apertura se envió al navegador, sin comprobación visual de esa pestaña; no se repitieron las suites del 11-oct ni se modificaron hechos económicos.

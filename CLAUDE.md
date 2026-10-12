@@ -12,7 +12,7 @@ Especificación maestra: `docs/spec/megaprompt.md` (no resumirla; las reglas can
 - Pruebas de BD con PostgreSQL real (Testcontainers), nunca H2. Las pruebas comparan contra cifras GOLD fijas.
 - No inventar entrevistas, clientes, resultados, firmas ni URLs. No atribuir trabajo a Aldo/Jared que no hicieron.
 - Datos de ejemplo sintéticos (prefijo DEMO); sin secretos en repo, logs ni grafo.
-- Casillas del backlog `[x]` sólo con revisión humana y evidencia en `docs/testing/evidence.md`; README y `docs/project/backlog.md` deben coincidir.
+- Casillas `[x]`: verificación técnica local con evidencia, por instrucción del usuario del 12-oct-2026. La revisión humana se registra por separado; no declarar Kanban Hecho ni aprobación humana por agentes. README y backlog deben coincidir.
 
 ## Mapa de lectura por tarea
 | Si la tarea toca… | Lee primero |

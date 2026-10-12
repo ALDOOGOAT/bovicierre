@@ -37,3 +37,7 @@ Mejora UI/UX del 2026-10-11: RN-029/030/032 → UC-09/10 → pantallas 8/9 → G
 | Pantalla8 → liquidación | `evidencia/SettlementController.java`, `CoreController` + consultaSQL | GETliquidaciones/id + comprobante | API compra/venta/saldoPDF y UI | Contrato OpenAPI no demuestra por sí solo ejecución |
 
 Los archivos y logs se enlazan desde `docs/testing/evidence.md`; diagramas desde `docs/diagrams/README.md`. Graphify debe reextraer estas relaciones semánticas después de cerrar el incremento.
+
+## Entrega documental y verificación local · 12-oct-2026
+
+Manual239páginas → [fuente y QA](manual/README.md) → código92d3d41, reglasRN/GOLD,24unidadesJava,75funcionesfrontend,70operacionesHTTP/49schemas,32funcionesSQL ydiagramas. Primeruso → [runbook](runbooks/local-use.md) → [CSRF/login/sedes/periodos/salud reales](testing/evidence/local-access-2026-10-12.json). Casilla técnica[x] → estadoverificado_local → evidencia propia de cadaTASK; revisiónhumana permaneceindependiente. PublicaciónGitHub no equivale a despliegue público.

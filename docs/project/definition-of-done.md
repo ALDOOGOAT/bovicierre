@@ -18,4 +18,6 @@ Una tarea está **Hecha** cuando:
 | Recuperación | Restauración ejecutada y conciliada, con tiempo medido |
 | Documento | Contenido sustantivo (decisiones, ejemplos, enlaces) o faltante declarado |
 
-La casilla `[x]` del README sólo se marca con enlace a evidencia.
+## Casillas técnicas y aceptación humana
+
+Por instrucción del usuario del 12-oct-2026, la casilla `[x]` del backlog y README indica **verificado local**, con enlace a evidencia. No equivale al estado formal Hecha definido arriba. La columna Revisión humana y el Kanban conservan la aceptación pendiente; no se atribuye aprobación a Aldo, Jared o el profesor. Se marcan 52 tareas técnicas; A-028 permanece pendiente externa y A-031/J-020 diferidas.

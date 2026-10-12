@@ -1,0 +1,52 @@
+{
+  "pages": 239,
+  "bookmarks": 308,
+  "links": 309,
+  "text_words": 84441,
+  "bytes": 2827036,
+  "sha256": "3b2eeba4e261e0093ea26cb7a66fb1d1a90221abddbb43251ea42e5193a5ca4e",
+  "rendered_pages": 239,
+  "secret_hits": 0,
+  "outside_page_spans": [],
+  "mandatory_coverage": [
+    "CoreController",
+    "CommandService",
+    "DocumentStorage",
+    "PrivateDocuments",
+    "OutboxWorker",
+    "canonicalDecimal",
+    "posicion_inventario",
+    "Idempotency-Key",
+    "GOLD-01",
+    "GOLD-10",
+    "make academic",
+    "make backup",
+    "make stop",
+    "API",
+    "FDW"
+  ],
+  "source_revision": "92d3d4103a174eb11f4ccf21eff2deed8cc77682",
+  "artifact": "docs/pdf/BoviCierre_Manual_Integral.pdf",
+  "generated_utc": "2026-10-12T07:19:20.186174+00:00",
+  "latex_source": "docs/manual/source/manual.tex",
+  "layout": "Compilación sin Overfull/Missing character; todas las239páginas renderizadas, contactos completos y páginas detalladas inspeccionadas.",
+  "packaged_utc": "2026-10-12T07:34:44.114730+00:00",
+  "latex_source_sha256": "fafc9b55d0945ff9c685993b02d6341d46a8f14c036565c4c3856a43d1721199",
+  "tooling": {
+    "tectonic": "0.17.0",
+    "pandoc": "fuente LaTeX generada desde Markdown; no necesario para recompilar",
+    "fonts": [
+      "DejaVu Serif",
+      "DejaVu Sans",
+      "DejaVu Sans Mono"
+    ]
+  },
+  "rebuild_check": {
+    "command": "python3 docs/manual/build.py --output /tmp/BoviCierre_Manual_Rebuild_Check.pdf",
+    "exit_code": 0,
+    "pages": 239,
+    "bookmarks": 308,
+    "links": 309,
+    "note": "Fuente portable compilada desde checkout; artefacto temporal fuera de Git. No se sustituyó el PDF final revisado."
+  }
+}

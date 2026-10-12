@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-12T07:46:16.972895+00:00",
+  "source_revision": "92d3d4103a174eb11f4ccf21eff2deed8cc77682",
+  "dirty": true,
+  "nodes": 2537,
+  "edges": 4911,
+  "communities": 262,
+  "graph_sha256": "72fed69cbf4d9c3c9db06a4ddb9ecebdde1c33cc0f2c0bce8ea6209b437dce51",
+  "ast_command": "graphify update .",
+  "semantic_command": "python3 tools/dev/update_implementation_graph.py graphify-out/publication-20261012-semantic.json",
+  "cluster_command": "graphify cluster-only . --no-label",
+  "semantic_new_guides": 2,
+  "new_semantic_nodes": 13,
+  "new_semantic_edges": 16,
+  "previous_critical_edges_preserved": true,
+  "scope": "Incremento AST de scripts y semántica de dos guías. PDF y fuente TeX duplicada excluidos. No reextracción de todo el corpus ni renovación de hashes documentales históricos cambiados por casillas.",
+  "external_llm_api": false,
+  "host_tokens": "no medido"
+}

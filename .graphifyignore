@@ -15,3 +15,7 @@ docs/diagrams/exports/
 
 # Dependencias de skills ajenas al producto
 .agents/skills/
+
+# Manual compilado y fuente duplicada; indexar su guía, no repetir el corpus
+/docs/pdf/BoviCierre_Manual_Integral.pdf
+/docs/manual/source/

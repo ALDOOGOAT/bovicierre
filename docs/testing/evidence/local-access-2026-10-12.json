@@ -1,0 +1,105 @@
+{
+  "utc": "2026-10-12T07:37:17.953947+00:00",
+  "source_revision": "92d3d4103a174eb11f4ccf21eff2deed8cc77682",
+  "base_url": "http://localhost:15180/api/v1",
+  "checks": [
+    {
+      "method": "GET",
+      "path": "/salud",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sesion/csrf",
+      "http": 200
+    },
+    {
+      "method": "POST",
+      "path": "/sesion/login",
+      "http": 204
+    },
+    {
+      "method": "GET",
+      "path": "/sesion/actual",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/periodos",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sedes/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/periodos",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sesion/csrf",
+      "http": 200
+    },
+    {
+      "method": "POST",
+      "path": "/sesion/logout",
+      "http": 204
+    }
+  ],
+  "health": {
+    "nodos": {
+      "AUTORIZACION_A": "DISPONIBLE",
+      "B": "DISPONIBLE",
+      "A": "DISPONIBLE"
+    },
+    "estado": "ACTIVO"
+  },
+  "containers": [
+    "bovicierre-academic-frontend-1",
+    "bovicierre-academic-backend-1",
+    "bovicierre-academic-pgpool-a-1",
+    "bovicierre-academic-pgpool-b-1",
+    "bovicierre-academic-caddy-1",
+    "bovicierre-academic-pg-a-1",
+    "bovicierre-academic-pg-prov-1",
+    "bovicierre-academic-pg-b-1"
+  ],
+  "login": "demo.admin",
+  "password": "OMITIDA: archivo privado externo",
+  "sedes": [
+    {
+      "sede": "DEMO-A",
+      "rol": [
+        "ADMIN"
+      ],
+      "periodos": [
+        {
+          "desde": "2026-10-01",
+          "hasta": "2026-10-31",
+          "estado": "ABIERTO"
+        }
+      ]
+    },
+    {
+      "sede": "DEMO-B",
+      "rol": [
+        "ADMIN"
+      ],
+      "periodos": [
+        {
+          "desde": "2026-10-01",
+          "hasta": "2026-10-31",
+          "estado": "ABIERTO"
+        }
+      ]
+    }
+  ],
+  "browser_open_previous_turn": {
+    "command": "xdg-open http://localhost:15180",
+    "exit_code": 0,
+    "visual_tab_verified": false,
+    "limitations": [
+      "Chrome DevTools MCP sin acceso a X server",
+      "Cua no expuso navegador"
+    ]
+  },
+  "scope": "Arranque ya activo, salud y sesión/lecturas/logout reales. Sin comandos económicos ni reinicio de datos. No repite suites completas."
+}

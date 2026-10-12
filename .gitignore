@@ -42,3 +42,7 @@ artifacts/private/
 .codex/config.toml
 
 **/var/private-documents/
+
+# Configuración local privada y copias de entregables
+/.aws
+/output/

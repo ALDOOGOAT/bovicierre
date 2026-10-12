@@ -1,6 +1,6 @@
 # Continuidad del MVP local
 
-2026-10-11 · rama `feature/mvp-local` desde `af223fb`. Implementación propia local, sin push. Coordinador y agentes BD/backend/frontend (`gpt-6.1-sol`, high) compartieron checkout con rutas exclusivas; no hubo worktrees aislados ni revisión humana.
+Actualización 2026-10-12 · rama `main`. MVP publicado en `9282b75`, seguido de `92d3d41`; ejecución del producto local. El desarrollo inicial partió de `feature/mvp-local`/`af223fb`. Coordinador y agentes BD/backend/frontend (`gpt-6.1-sol`, high) compartieron checkout con rutas exclusivas; no hubo worktrees aislados ni revisión humana.
 
 ## Estado utilizable y evidencia
 
@@ -22,9 +22,13 @@ Ensayos `bovicierre-restore-20261011201119` (V6) y `bovicierre-restore-202610112
 
 ## Siguiente paso y límites
 
-1. Aldo/Jared: revisar `docs/academic/dossier.md`, demo/manual y filas de backlog; conservar revisión humana separada, no marcar casillas por agentes.
+1. Aldo/Jared: revisar `docs/academic/dossier.md`, demo/manual y filas de backlog; conservar revisión humana separada. Por instrucción del usuario, las casillas técnicas verificadas llevan [x]; esto no convierte revisión pendiente en aprobación humana.
 2. Profesor: confirmar rúbrica, interpretación M–M por escritores disjuntos y formato. No hay aprobación inventada.
 3. Investigación: entrevistas y precio3000/sede siguen hipótesis. Para piloto hace falta bootstrap noDEMO, datos iniciales conciliados, servidor/DNS/TLS autorizados, backup fuerahost/PITR y ensayo de capacidad con dataset del negocio. Producción bloquea scriptsDEMO.
 4. Herramientas: memoriaautomática allowance agotado; no reiniciar observer. MCP de esta conversación aún puede carecer Xserver: Playwright instalado con sesión gráfica funcionó. Graphify usa fragmentos/manifiestos de los53documentos cambiados; conservar el método de relectura y validar huellas antes de reutilizar caché.
 
 No hay despliegue público, publicación de imágenes, entrevistas realizadas ni revisión humana. No se prometen HA, RPO/RTO, capacidad comercial ni autenticidad sanitaria.
+
+## Última entrega documental
+
+Manual integral de 239 páginas en `docs/manual/`, con fuente LaTeX y build. Guía `docs/runbooks/local-use.md`, acceso/salud comprobados en `docs/testing/evidence/local-access-2026-10-12.json`. Credenciales sólo en archivos privados: no trasladar la contraseña entregada al usuario a Git. Casillas técnicas52/55 y revisión humana55pendientes. OCR2diferidas y staging/TLSexterno pendiente. La copia de entrega `output/` y el archivo privado `.aws` quedan ignorados; no eliminarlos al publicar.

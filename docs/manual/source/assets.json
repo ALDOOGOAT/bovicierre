@@ -1,0 +1,14 @@
+{
+  "diagram-01.pdf": "docs/diagrams/exports/mer-completo.pdf",
+  "diagram-02.pdf": "docs/diagrams/exports/relacional-completo.pdf",
+  "diagram-03.pdf": "docs/diagrams/exports/mer-02-identidad-02-Identidad,-contrapartes-y-sedes.pdf",
+  "diagram-04.pdf": "docs/diagrams/exports/mer-03-operaciones-03-Operaciones,-lotes,-condiciones-y-pesajes.pdf",
+  "diagram-05.pdf": "docs/diagrams/exports/mer-04-inventario-04-Inventario,-selección,-reserva-y-movimientos.pdf",
+  "diagram-06.pdf": "docs/diagrams/exports/mer-05-liquidaciones-05-Liquidaciones,-costos,-pagos-y-aplicaciones.pdf",
+  "diagram-07.pdf": "docs/diagrams/exports/mer-06-evidencia-06-Evidencia,-revisiones,-periodos-y-auditoría.pdf",
+  "diagram-08.pdf": "docs/diagrams/exports/mer-07-relacional-p1-Organización-e-identidad-(nodo-A).pdf",
+  "diagram-09.pdf": "docs/diagrams/exports/mer-07-relacional-p2-Operaciones,-contratos-y-pesajes.pdf",
+  "diagram-10.pdf": "docs/diagrams/exports/mer-07-relacional-p3-Inventario.pdf",
+  "diagram-11.pdf": "docs/diagrams/exports/mer-07-relacional-p4-Liquidaciones,-costos-y-pagos.pdf",
+  "diagram-12.pdf": "docs/diagrams/exports/mer-07-relacional-p5-Evidencia,-periodos,-auditoría-y-soporte-técnico.pdf"
+}
