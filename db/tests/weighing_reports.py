@@ -4,6 +4,7 @@ import calendar,hashlib,json,time,uuid
 from pathlib import Path
 from datetime import date,timedelta
 import psycopg
+from decimal import Decimal
 from psycopg.types.json import Jsonb
 DB='bovicierre_release_replay';E='11111111-1111-4111-8111-111111111111';S='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';U='99999999-9999-4999-8999-999999999999';calls=0;checks=[];start=time.monotonic()
 secret=Path.home()/'.local/share/bovicierre-academic/secrets'
@@ -35,6 +36,16 @@ with conn() as c:
  name='DEMO-V12-'+uuid.uuid4().hex;party=command(c,'crear_contraparte',{'nombre':name})['id'];a1=animal(c);a2=animal(c)
  op=command(c,'crear_operacion',{'tipo':'COMPRA','parte_id':party,'lotes':[{'animales':[a1,a2],'unidad_precio':'KG','precio_unitario':'10','base_pesaje':'NETO'}]})['id']
  ticket=command(c,'registrar_pesaje',{'operacion_id':op,'numero_lote':1,'modo':'NETO_REPORTADO','neto':{'kg':'300.000'},'animales':[{'animal_id':a1,'peso_individual':{'kg':'100.000'}},{'animal_id':a2}]})['id'];command(c,'aprobar_pesaje',{'pesaje_id':ticket})
+ # DIV-10 / RN-012: BRUTO_TARA calcula neto en servidor (ignora neto enviado) y rechaza tara>bruto; sin persistir.
+ c.execute('SAVEPOINT bruto_tara')
+ bt=command(c,'registrar_pesaje',{'operacion_id':op,'numero_lote':1,'modo':'BRUTO_TARA','bruto':{'kg':'1250.500'},'tara':{'kg':'950.250'},'neto':{'kg':'999.000'},'animales':[{'animal_id':a1},{'animal_id':a2}]})['id']
+ assert c.execute('SELECT bruto_kg,tara_kg,neto_kg FROM bovi.pesaje WHERE id=%s',(bt,)).fetchone()==(Decimal('1250.500'),Decimal('950.250'),Decimal('300.250'))
+ c.execute('ROLLBACK TO bruto_tara');c.execute('SAVEPOINT bruto_tara')
+ try:command(c,'registrar_pesaje',{'operacion_id':op,'numero_lote':1,'modo':'BRUTO_TARA','bruto':{'kg':'100.000'},'tara':{'kg':'100.001'},'animales':[{'animal_id':a1},{'animal_id':a2}]})
+ except psycopg.Error as ex:assert ex.sqlstate=='23514' and ex.diag.constraint_name.endswith('check'),(ex.sqlstate,ex.diag.constraint_name)
+ else:raise AssertionError('tara>bruto aceptada')
+ c.execute('ROLLBACK TO bruto_tara');c.execute('RELEASE bruto_tara')
+ checks.append('DIV-10 BRUTO_TARA: neto=bruto-tara en servidor ignorando neto enviado; tara>bruto → 23514 *_check (API BV015 422)')
  body={'corrige_a_id':ticket,'operacion_id':op,'numero_lote':1,'modo':'NETO_REPORTADO','neto':{'kg':'301.000'},'animales':[{'animal_id':a1,'peso_individual':{'kg':'101.000'}},{'animal_id':a2}],'motivo':'DEMO corrección de lectura'}
  for invalid in ({**body,'animales':[{'animal_id':a1}]},{**body,'animales':body['animales']+[{'animal_id':str(uuid.uuid4())}]},{**body,'motivo':' '},{**body,'numero_lote':2},{**body,'operacion_id':str(uuid.uuid4())}):reject(c,'corregir_pesaje',invalid,'BV015' if invalid['motivo']==' ' else 'BV013')
  assert c.execute('SELECT estado FROM bovi.pesaje WHERE id=%s',(ticket,)).fetchone()[0]=='APROBADO'

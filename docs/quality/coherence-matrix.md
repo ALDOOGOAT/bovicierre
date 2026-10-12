@@ -137,4 +137,5 @@ Las filas RN-003 y RN-023 se actualizaron con evidencia **ejecutada** (no sólo 
 | DIV-07 | **Resuelto (doc).** Catálogo regenerado desde `pg_proc` V15 y `ApiException` en [business-rules](../domain/business-rules.md); convención corregida (404/412/428); BV012/014/017/019 marcados reservados no emitidos | `make verify-docs` |
 | DIV-08 | **Corregido (V15).** Trigger `reverso_unico` → BV022 (RN-033) antes de la UNIQUE | Fase roja `gold.py` 23505 → verde; `verify-sql` 37/37; puerta V15 PASS |
 | DIV-12 | **Corregido.** OpenAPI: movimientos declaran `operacion_id`, `periodo_id`, `fecha_reconocimiento` (obligatorios en BAJA con `if/then`); anular exige `motivo`; tipos regenerados. DIV-12b: RN-034/ADR-002 reescritos y `MoneyTypesLintTest` | Redocly válido; build; backend 30/30 |
-| DIV-02, 05, 09–11, 13–17 | Pendientes (media DIV-05, DIV-09, DIV-10; resto bajas). Ninguno se marca resuelto sin prueba. | — |
+| DIV-10 | **Cubierto.** `weighing_reports.py`: BRUTO_TARA 1250.500−950.250 guarda neto 300.250 ignorando un neto enviado de 999.000; tara>bruto → 23514 `*_check` (API BV015 422); todo en SAVEPOINT revertido | `make verify-sql` 37 PASS / 0 FAIL |
+| DIV-02, 05, 09, 11, 13–17 | Pendientes (media DIV-05, DIV-09; resto bajas). Ninguno se marca resuelto sin prueba. | — |

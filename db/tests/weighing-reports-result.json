@@ -1,10 +1,11 @@
 {
   "estado": "PASS",
   "database": "bovicierre_release_replay",
-  "sql_commands": 66,
-  "seconds": 0.218,
+  "sql_commands": 68,
+  "seconds": 0.227,
   "migration": "V13",
   "tests": [
+    "DIV-10 BRUTO_TARA: neto=bruto-tara en servidor ignorando neto enviado; tara>bruto → 23514 *_check (API BV015 422)",
     "V13 rechaza subset/superset antes mutar original; ticket original inmutable, composición exacta y NULL individual; motivo auditado; primer DTO/replay exacto/conflicto409/contexto rechazado",
     "Cartera wrapper paginado/dirección/vencida; margen total completo y costo tardío filtrado por venta",
     "GOLD06 margen canónico por venta: tardío500→1600 y bonificación200→1680, sin dobleconteo",
