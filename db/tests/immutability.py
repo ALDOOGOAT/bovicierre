@@ -2,6 +2,7 @@
 """DIV-03 / RN-023: UPDATE y DELETE deben fallar (BV016) en las 13 tablas de hechos con trigger hecho_inmutable.
 DIV-04 (V14): estados terminales de operacion, gasto_operacion, pago y posicion_inventario también fallan, y las
 transiciones legítimas de cmd_ejecutar (anular, estado_entrega, aprobar, validar, liberar) siguen permitidas.
+DIV-02: sede operadora/tipo inmutables (BV010) y una posición activa por animal.
 DIV-05 (V16): una liquidación descuadrada respecto a sus conceptos y un segundo periodo ABIERTO por sede se rechazan.
 
 No muta datos: cada intento corre en BEGIN … ROLLBACK sobre una fila existente de pg-a local.
@@ -28,6 +29,21 @@ INVARIANTS = [
      "INSERT INTO bovi.periodo_cierre(empresa_id,sucursal_id,id,desde,hasta,estado,nodo_origen) "
      "SELECT empresa_id,sucursal_id,uuidv7(),'2099-01-01','2099-01-31','ABIERTO',nodo_origen FROM bovi.periodo_cierre WHERE estado='ABIERTO' AND nodo_origen='A' LIMIT 1;",
      'uk_periodo_un_abierto'),
+    # DIV-02: RN-004 sede operadora y RN-010 tipo de operación inmutables (BV010); RN-006 una posición activa por animal.
+    ('ANIMAL-SEDE-INMUTABLE', None,
+     "UPDATE bovi.animal a SET sede_operadora_id=(SELECT s.id FROM bovi.sucursal s WHERE s.empresa_id=a.empresa_id AND s.id<>a.sede_operadora_id LIMIT 1) "
+     "WHERE ctid=(SELECT ctid FROM bovi.animal WHERE nodo_origen='A' ORDER BY ctid LIMIT 1);",
+     'BV010'),
+    ('OPERACION-TIPO-INMUTABLE', None,
+     "UPDATE bovi.operacion SET tipo=CASE tipo WHEN 'COMPRA' THEN 'VENTA' ELSE 'COMPRA' END "
+     "WHERE ctid=(SELECT ctid FROM bovi.operacion WHERE estado='BORRADOR' AND nodo_origen='A' ORDER BY ctid LIMIT 1);",
+     'BV010'),
+    ('POSICION-ACTIVA-DUPLICADA', None,
+     "INSERT INTO bovi.posicion_inventario(empresa_id,sucursal_id,id,animal_id,numero_ciclo,compra_operacion_id,compra_numero_lote,estado,abierta_en,nodo_origen) "
+     "SELECT p.empresa_id,p.sucursal_id,uuidv7(),p.animal_id,p.numero_ciclo+100,"
+     "(SELECT o.id FROM bovi.operacion o WHERE (o.empresa_id,o.sucursal_id)=(p.empresa_id,p.sucursal_id) AND o.tipo='COMPRA' AND o.id<>p.compra_operacion_id ORDER BY o.id LIMIT 1),"
+     "p.compra_numero_lote,'DISPONIBLE',now(),p.nodo_origen FROM bovi.posicion_inventario p WHERE p.estado='DISPONIBLE' AND p.nodo_origen='A' ORDER BY p.ctid LIMIT 1;",
+     'uk_posicion_inventario_activo'),
 ]
 TOGGLE_ENTREGA = "estado_entrega=CASE WHEN estado_entrega='COMPLETA' THEN 'PENDIENTE' ELSE 'COMPLETA' END"
 # (id, tabla, filtro de la fila, preparación legítima opcional, sentencia, esperado)

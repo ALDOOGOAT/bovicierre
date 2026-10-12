@@ -192,3 +192,11 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 - V16 aplicada en A/B; la fase verde falló con `record "new" has no field "id"` en `concepto_liquidacion` (defecto de V16). V17 `CREATE OR REPLACE` corrige; `immutability.py` 46/46 ([después](evidence/coherence/20261012-v16/immutability.json)); `security.sql` PASS en A/B.
 - Puerta con carga: **PASS** — backend 30, SQL 37, inmutabilidad 46, E2E 16, seguridad 63; k6 8,214 peticiones, 0 fallidas, 8,134/8,134 checks, p95 22.9 ms; 125 operaciones confirmadas tras V17, 0 liquidaciones descuadradas ([release-gate](evidence/release-local/20261012T0732/release-gate.json)).
 - Restauración V17: 30.8 s, firma OK, 7 triggers + `uk_periodo_un_abierto` + TEMP revocado en la base restaurada ([restore-v17](evidence/recovery/restore-v17.json)).
+
+### DIV-02/09, manual y grafo (12-oct-2026)
+- DIV-02: `immutability.py` 49/49 — BV010 en `animal.sede_operadora_id` y `operacion.tipo`; segunda posición activa → `uk_posicion_inventario_activo` (el primer intento chocó con otra UNIQUE y se ajustó el caso).
+- DIV-09: `gold.py` PASS — BV021 para cobro sobre obligación por pagar y para cobro de otra contraparte; disponible intacto.
+- Puerta 20261012T0754: **FALLÓ** sólo `visual.spec.ts` (clic sobre «Abrir» agotó 15 s mientras Tectonic compilaba en paralelo; la prueba tardó 3.0 min). Aislada pasó 2/2. Se endureció la espera (visible, 45 s) y la puerta se repitió sin procesos concurrentes (ver entrada siguiente).
+- Manual: `docs/manual/build.py` con Tectonic 0.17.0 → 248 páginas, 318 marcadores, 319 enlaces, 0 Overfull/Missing character tras corregir 7 desbordes; portada y capítulo 23 renderizados; 0 coincidencias con 11 secretos ([verification.json](../manual/verification.json)).
+- Grafo: `/graphify --update` → 2,871 nodos, 4,758 aristas, salud OK ([graph-status](../knowledge/graph-status.md)).
+- Puerta 20261012T0807 (sin procesos concurrentes): **PASS** — frontend 14, backend 30, SQL 37, inmutabilidad 49, E2E 16 (115 s), seguridad 63; 0 omitidos ([release-gate](evidence/release-local/20261012T0807/release-gate.json)).

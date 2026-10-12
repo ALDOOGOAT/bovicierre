@@ -61,7 +61,7 @@ Recuperación **repetida tras V14**: respaldo previo y posterior; el primer `res
 
 ## 9. Qué falta (separado)
 - **Profesor / entrega 31-oct:** revisión humana de Aldo y Jared de S1/S2; revisar los MER/relacional contra la matriz (no se tocaron diagramas en esta campaña); `/graphify . --update` semántico de los documentos nuevos.
-- **Piloto:** decidir SF-09 (RLS/contexto de actor o ADR de riesgo aceptado); DIV-09 y bajas restantes (DIV-05 corregido en V16/V17) (DIV-10 cubierto con pruebas BRUTO_TARA); SF-06/07; escáneres SCA/DAST; carga sostenida 15–20 min y dataset grande.
+- **Piloto:** decidir SF-09 (RLS/contexto de actor o ADR de riesgo aceptado); divergencias bajas DIV-11, 13–17 (DIV-02/05/09/10 resueltas) (DIV-10 cubierto con pruebas BRUTO_TARA); SF-06/07; escáneres SCA/DAST; carga sostenida 15–20 min y dataset grande.
 - **Despliegue:** staging/TLS, backup fuera del host, PITR, HA — fuera del alcance local.
 
 ## 10. Comandos

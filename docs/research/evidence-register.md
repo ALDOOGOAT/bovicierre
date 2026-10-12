@@ -61,3 +61,13 @@ Al registro inicial del10-oct no existían entrevistas, clientes, pilotos ni pru
 | DECISIÓN | SesionesA, muerteB→inboxA, reconocimiento mensual, SQLautoridad y desplieguelocal | ADR-013..017; resultados por criterio en docs/testing/evidence.md |
 | HIPÓTESIS | HIP-PRICE-01 3,000MXN/sede/mes5usuarios5GB2hsoporte | business-model/pilot-proposal; no precio validado |
 | PENDIENTE EXTERNO | Entrevistas, rúbricaoriginal/profesor, piloto, TLS/staging | Sin aprobación/revisión humana atribuida |
+| DEC-12 | Dos fórmulas de margen (vista vs `fn_reporte`) — DIV-06 | Canónica `fn_reporte`/`consultar('reportes_margen')` (periodo, pérdidas, etiqueta); vista auxiliar comprobada igual en GOLD | RN-035/036, gold.py |
+| DEC-13 | Qué transiciones admite un estado terminal — DIV-04 | Las de las sentencias UPDATE vigentes de `cmd_ejecutar` V13: CONFIRMADA→ANULADA sin entregas, `estado_entrega`, `version_lock`; resto inmutable | V14, immutability.py |
+| DEC-14 | Inmutabilidad sólo en el comando o también en la base | También en la base (defensa en profundidad ante grants, definer nuevos o intervención manual) | V14 |
+| DEC-15 | BV022 para segundo reverso: reescribir `cmd_ejecutar` o trigger — DIV-08 | Trigger BEFORE INSERT; el FOR UPDATE del pago serializa la carrera; UNIQUE como respaldo | V15 |
+| DEC-16 | Cómo imponer total = Σ conceptos — DIV-05 | Constraint trigger diferido, BV015/RN-023, misma expresión que la conciliación V3; índice parcial de un periodo abierto | V16/V17 |
+| DEC-17 | Defecto en migración ya aplicada (V16) | Corregir hacia delante con V17; no editar checksum ni historial | V17 |
+| DEC-18 | Códigos documentados nunca emitidos — DIV-07 | Catálogo regenerado desde el código; BV012/014/017/019 reservados, no reasignados; convención 404/412/428 | business-rules |
+| DEC-19 | `motivo` en anulación condicional o siempre — DIV-12 | Siempre obligatorio en el contrato (sin pantalla; contrato condicional opaco) | openapi.yaml |
+| DEC-20 | ACL de base perdido al restaurar — SF-08 | Reaplicar y afirmar `REVOKE TEMPORARY` en restore-check (no `--create`) | scripts/recovery.py |
+| DEC-21 | Extraer semánticamente 151 capturas de evidencia | No en esta pasada: un agente por imagen y redundante con los documentos; quedan sin sellar | graph-status |

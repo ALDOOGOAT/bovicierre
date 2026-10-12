@@ -83,6 +83,11 @@ try:
  pay=payment(party,1200);cmd('aplicar_pago',{'pago_id':pay,'liquidacion_id':sale['id'],'importe':money(1000)})
  assert q('select disponible from bovi.v_disponible_pago where id=%s',(pay,))==D('200')
  negative('aplicar_pago',{'pago_id':pay,'liquidacion_id':sale['id'],'importe':money('200.01')},'BV020')
+ # DIV-09 / RN-030: cobro sobre obligación por pagar (compra) y cobro de otra contraparte → BV021, sin efectos.
+ negative('aplicar_pago',{'pago_id':pay,'liquidacion_id':settle['id'],'importe':money(100)},'BV021')
+ otherparty=cmd('crear_contraparte',{'nombre':'DEMO GOLD otra contraparte'})['id'];otherpay=payment(otherparty,100)
+ negative('aplicar_pago',{'pago_id':otherpay,'liquidacion_id':sale['id'],'importe':money(100)},'BV021')
+ assert q('select disponible from bovi.v_disponible_pago where id=%s',(otherpay,))==D('100')
  print('PASS GOLD-04B advance200 and overapplication rejected')
  # Economic correction preserves original, restores available funds and refunds only available.
  ap=str(q('select id from bovi.aplicacion_pago where pago_id=%s',(pay,)))

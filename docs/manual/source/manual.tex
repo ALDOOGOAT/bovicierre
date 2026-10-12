@@ -160,6 +160,7 @@
 {\sffamily\normalsize Preparado para Aldo y Jared\par}
 \vspace{5mm}
 {\normalsize Revisión del repositorio 92d3d41\par
+Actualización de campaña UI/UX y QA (V14--V17)\par
 12 de octubre de 2026\par}
 \vspace{13mm}
 {\small PostgreSQL · Java · React · Docker Compose\par}
@@ -21291,6 +21292,451 @@ aceptación del profesor siguen
 \includepdf[pages=-,landscape=true,scale=0.89,pagecommand={\thispagestyle{fancy}}]{\detokenize{@@BOVI_BUILD@@/assets/diagram-11.pdf}}
 
 \includepdf[pages=-,landscape=true,scale=0.89,pagecommand={\thispagestyle{fancy}}]{\detokenize{@@BOVI_BUILD@@/assets/diagram-12.pdf}}
+
+\chapter{Actualización de la campaña UI/UX y QA del 12 de octubre de
+2026}\label{actualizacion-campana-uiux-qa}
+
+Este capítulo documenta, sin reescribir los anteriores, todo lo que
+cambió en el software durante la campaña del 12 de octubre de 2026,
+ejecutada en la rama local \texttt{feature/uiux-qa-claude} a partir de
+la revisión \texttt{38ccdc3}. Los capítulos previos describen el corte
+\texttt{92d3d41} con migraciones V1--V13; aquí se explica qué se añadió
+encima (migraciones V14--V17, endurecimiento de seguridad, rediseño
+visual, contrato y pruebas), por qué se decidió así y cómo se
+comprueba. Cuando este capítulo y uno anterior difieran, prevalece este
+capítulo para el estado actual.
+
+Alcance honesto: todo lo descrito es verificación técnica local con
+evidencia reproducible. No es aceptación humana, despliegue ni
+certificación de seguridad. La revisión de Aldo y Jared sigue
+pendiente. Nada se publicó en un remoto.
+
+\section{Resumen de cambios por capa}\label{campana-resumen}
+
+\begin{longtable}[]{@{}>{\raggedright\arraybackslash}p{0.17\linewidth}>{\raggedright\arraybackslash}p{0.48\linewidth}>{\raggedright\arraybackslash}p{0.29\linewidth}@{}}
+\toprule
+Capa & Cambio & Identificadores \\
+\midrule
+\endhead
+Interfaz & Identidad visual bovina con tokens, fuente Inter local,
+marca e iconos SVG propios, dos fotografías de dominio público,
+insignias de estado con color y forma, saldo destacado, UUID en
+monoespaciado y tablas legibles en móvil. & S1, UXD-01..11 \\
+Backend & Autorización de administración por sede, límite de intentos
+de inicio de sesión, tope de sesiones anónimas, UNIQUE
+\texttt{*\_key} traducido a 409. & SF-01, SF-02, SF-03, DIV-01/SF-20 \\
+Borde HTTP & Cabeceras CSP, \texttt{X-Frame-Options},
+\texttt{Permissions-Policy} y límites de tamaño de cuerpo en Caddy. &
+SF-04, SF-05 \\
+Base de datos & V14 estados terminales inmutables y
+\texttt{search\_path} con \texttt{pg\_temp}; V15 segundo reverso con
+BV022; V16/V17 liquidación cuadrada y un solo periodo abierto. &
+DIV-04, SF-08, DIV-08, DIV-05 \\
+Contrato & OpenAPI de movimientos y anulación con los campos que la
+base exige; tipos TypeScript regenerados. & DIV-12 \\
+Documentación & Catálogo de códigos BV regenerado desde el código;
+fórmula canónica de margen; RN-034 y ADR-002 corregidos. & DIV-06,
+DIV-07, DIV-12b \\
+Pruebas & Puerta local en serie, inmutabilidad ampliada, seguridad
+dinámica, carga k6, lint de tipos monetarios, pesaje BRUTO\_TARA,
+BV021, BV010 y posición activa única. & DIV-02, DIV-03, DIV-09,
+DIV-10 \\
+Recuperación & \texttt{restore-check} reaplica el ACL de base que
+\texttt{pg\_dump} no transporta. & SF-08 \\
+\bottomrule
+\end{longtable}
+
+\section{Rediseño visual (S1)}\label{campana-rediseno}
+
+El rediseño se aplicó sobre la aplicación real, sin maquetas paralelas
+ni cambios de flujo. Sus piezas son:
+
+\begin{itemize}
+\item \textbf{Tokens} en \texttt{frontend/src/styles.css}: escalas
+\texttt{--green-*} y \texttt{--earth-*}, espaciado \texttt{--s*},
+radios \texttt{--r-*} y tipografía \texttt{--fs-*}. Se conservaron
+todas las clases existentes para no romper componentes.
+\item \textbf{Fuente Inter Variable} servida localmente
+(\texttt{@fontsource-variable/inter}, licencia OFL). No hay
+peticiones a CDN, lo que también permite la CSP estricta.
+\item \textbf{Marca e iconos} en \texttt{frontend/src/brand.tsx}
+(\texttt{BrandMark}, \texttt{Brand}, \texttt{NavIcon},
+\texttt{initials}), dibujados como SVG originales.
+\item \textbf{Fotografías} de Wikimedia Commons en dominio público, sólo
+en acceso y selección de sede. Licencia, autor y SHA-256 constan en
+\texttt{docs/ui/asset-register.md}.
+\item \textbf{Insignias de estado} en \texttt{frontend/src/tone.ts}:
+\texttt{toneOf} clasifica cada valor como positivo, en curso, atención,
+crítico o neutro, y \texttt{statusColumns} decide qué columnas se
+pintan. Cada tono combina color \emph{y} forma, de modo que no depende
+sólo del color (WCAG 1.4.1). Estado comercial, estado de entrega y
+estado de pago aparecen como insignias separadas.
+\item \textbf{Contraste}: \texttt{tools/ui/contrast.py} comprueba 20
+pares de tokens. El borde de controles se subió de 2.07:1 a 3.69:1
+(\texttt{\#8A8574}).
+\item \textbf{Móvil}: tablas con ancho mínimo de 680 px dentro de un
+contenedor desplazable y \texttt{overflow-wrap:break-word}; objetivos
+de navegación de 44 px. Un primer intento partía las palabras de las
+tablas y se corrigió.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.95\linewidth,height=.42\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/after/1440-login.jpg}}
+\caption{Acceso rediseñado a 1440 px, con la fotografía de dominio
+público y su crédito.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.95\linewidth,height=.42\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/after/1440-operaciones.jpg}}
+\caption{Bandeja de operaciones con insignias de estado comercial, de
+entrega y de pago separadas.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.95\linewidth,height=.45\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/compare/1440-liquidacion-detalle.jpg}}
+\caption{Detalle de liquidación antes y después del rediseño: el saldo
+pasa a ser el dato dominante.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.40\linewidth,height=.55\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/after/390-operaciones.jpg}}
+\caption{La misma bandeja a 390 px: la tabla se desplaza dentro de su
+contenedor y la página no tiene desbordamiento horizontal.}
+\end{figure}
+\clearpage
+
+Las 45 capturas posteriores (15 vistas a 390, 768 y 1440 px), las previas y las comparaciones están en
+\texttt{docs/testing/evidence/ui-redesign/20261012T0214/}. La prueba
+\texttt{frontend/tests\_e2e/visual.spec.ts} recorre esas vistas sin
+mutar datos y falla si \texttt{scrollWidth} supera \texttt{clientWidth}.
+No se ejecutaron lector de pantalla, axe ni teléfono físico.
+
+\section{Seguridad endurecida}\label{campana-seguridad}
+
+La revisión combinó un modelo de amenazas
+(\texttt{docs/security/threat-model.md}), revisión estática y 63 casos
+dinámicos (\softcode{tests/security/sec\_dynamic.py}) contra la instancia
+local con datos DEMO. La primera ejecución dio 48/56: cuatro fallos eran
+defectos del propio test y cuatro eran hallazgos reales.
+
+\begin{longtable}[]{@{}>{\raggedright\arraybackslash}p{0.10\linewidth}>{\raggedright\arraybackslash}p{0.40\linewidth}>{\raggedright\arraybackslash}p{0.44\linewidth}@{}}
+\toprule
+ID & Problema & Corrección \\
+\midrule
+\endhead
+SF-01 & Un ADMIN de una sede podía bloquear usuarios de otra. &
+\texttt{AccessService.member} y \texttt{UserController}: 404 si el
+usuario no pertenece a la sede activa; 400 ante autobloqueo. \\
+SF-02 & El inicio de sesión no tenía límite de intentos. &
+\texttt{LoginThrottle}: 10 fallos por login y 50 por origen en 15
+minutos con ventana deslizante; responde 429 \texttt{AUTH429} con
+\texttt{Retry-After}. El éxito reinicia el contador del login. \\
+SF-03 & Pedir el token CSRF sin sesión creaba una sesión de 30 minutos,
+lo que permitía llenar \texttt{infra.spring\_session}. & Las sesiones
+anónimas duran 300 s y hay un tope de 600 nuevas por origen; la sesión
+autenticada vuelve a 1800 s tras rotar su identificador. \\
+SF-04 & Faltaban CSP y protección contra incrustación. & Caddy envía
+\texttt{default-src 'self'}, \texttt{frame-ancestors 'none'},
+\texttt{X-Frame-Options DENY} y \texttt{Permissions-Policy}. \\
+SF-05 & Cuerpos JSON sin límite. & 1 MB para JSON y 22 MB para subida
+de documentos. \\
+SF-08 & \texttt{search\_path=pg\_catalog} sin \texttt{pg\_temp} y TEMP
+para PUBLIC. & V14 (sección siguiente). \\
+SF-17 & Las expresiones del mod de campaña podían marcar como
+verificado un comando que sólo contenía la palabra. & Expresiones
+ancladas al inicio del comando. \\
+SF-20 & UNIQUE autogenerada \texttt{*\_key} respondía 500. &
+\texttt{ApiErrors}: \texttt{uk\_*} o \texttt{*\_key} → 409 BV401. \\
+SF-21 & \texttt{vite} 8.0.3 con avisos de seguridad en el servidor de
+desarrollo. & \texttt{vite} 8.0.16 exacto. \\
+\bottomrule
+\end{longtable}
+
+Riesgos que siguen abiertos: SF-09 (media) requiere decisión humana,
+porque la credencial \texttt{bovi\_app\_*} lee todo el esquema
+\texttt{bovi} y \texttt{p\_actor} lo envía el llamador; SF-19 se aceptó
+porque purgar intentos pendientes al cerrar sesión podría duplicar
+comandos económicos; SF-06, SF-07, SF-10 y SF-11 son bajas estáticas.
+No se ejecutaron ZAP, Semgrep, Gitleaks, Trivy ni un escáner de Maven.
+
+\section{Cambios en la base de datos: V14 a V17}\label{campana-migraciones}
+
+Ninguna migración V1--V13 se reescribió. Cada cambio se probó primero en
+rojo (la prueba nueva fallaba contra el esquema anterior), después se
+aplicó con Flyway en los nodos A y B mediante
+\texttt{db/bootstrap/migrate.sh}, y finalmente se repitió la puerta
+local y el ensayo de restauración.
+
+\subsection{V14: estados terminales inmutables y search\_path seguro}
+
+\textbf{Qué hace.} Crea \texttt{bovi.trg\_estado\_terminal} y el trigger
+\texttt{estado\_terminal\_inmutable} BEFORE UPDATE OR DELETE en
+\texttt{operacion}, \texttt{gasto\_operacion}, \texttt{pago} y
+\texttt{posicion\_inventario}. Además fija
+\texttt{search\_path = pg\_catalog, pg\_temp} en las 32 funciones de
+\texttt{bovi} e \texttt{infra} y revoca TEMP a PUBLIC sobre la base.
+
+\textbf{Por qué.} RN-023 exige que los hechos confirmados no se
+reescriban. Antes de V14, esos cuatro agregados sólo estaban protegidos
+por el código de \texttt{cmd\_ejecutar} y por la falta de DML del rol de
+aplicación. La fase roja demostró la brecha: los 13 intentos sobre
+estados terminales pasaban o sólo los frenaba una FK, y borrar un pago
+VALIDADO se permitía porque ninguna FK lo referenciaba. Para SF-08, si
+\texttt{pg\_temp} no aparece explícitamente en el
+\texttt{search\_path}, PostgreSQL lo busca \emph{primero}, de modo que
+una tabla temporal del llamador puede sombrear un catálogo no
+calificado.
+
+\begin{longtable}[]{@{}>{\raggedright\arraybackslash}p{0.22\linewidth}>{\raggedright\arraybackslash}p{0.30\linewidth}>{\raggedright\arraybackslash}p{0.42\linewidth}@{}}
+\toprule
+Tabla & Estados terminales & Únicos cambios permitidos \\
+\midrule
+\endhead
+\texttt{operacion} & CONFIRMADA, ANULADA, CANCELADA &
+CONFIRMADA→ANULADA (\texttt{anular\_venta}, sólo sin entregas);
+\texttt{estado\_entrega} mientras está CONFIRMADA; avance de
+\texttt{version\_lock}. Todo lo demás exige reverso o ajuste. \\
+\texttt{gasto\_operacion} & APROBADO & Ninguno. \\
+\texttt{pago} & VALIDADO, REVERTIDO & Ninguno; el reembolso es otra
+fila. \\
+\softcode{posicion\_inventario} & CERRADA\_VENTA, BAJA & Ninguno; una
+recompra abre un ciclo nuevo. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Hallazgo de recuperación.} El primer \texttt{restore-check}
+posterior a V14 concilió datos y hashes, pero la base restaurada
+recuperaba TEMP para PUBLIC: el ACL de la base no viaja en
+\texttt{pg\_dump} sin \texttt{--create}. \texttt{scripts/recovery.py}
+ahora reaplica \texttt{REVOKE TEMPORARY} tras \texttt{pg\_restore} y lo
+afirma con \texttt{has\_database\_privilege}.
+
+\subsection{V15: un segundo reverso responde BV022}
+
+\textbf{Qué hace.} \texttt{bovi.trg\_reverso\_unico} (BEFORE INSERT en
+\texttt{aplicacion\_pago} cuando \texttt{reverso\_de\_id} no es nulo)
+lanza BV022 (RN-033) si la aplicación ya fue revertida.
+
+\textbf{Por qué.} RN-033 documenta BV022 como «original no revertido»,
+pero un segundo reverso chocaba con
+\texttt{uk\_aplicacion\_pago\_reverso\_de\_id} y salía como 409 BV401
+genérico. \texttt{cmd\_ejecutar} bloquea el pago con
+\texttt{FOR UPDATE} antes de insertar, así que dos reversos simultáneos
+se serializan y el segundo ve el primero ya confirmado. La UNIQUE queda
+como respaldo.
+
+\subsection{V16 y V17: liquidación cuadrada y un solo periodo abierto}
+
+\textbf{Qué hace.} V16 crea el constraint trigger
+\texttt{liquidacion\_cuadrada}, DEFERRABLE INITIALLY DEFERRED, en
+\texttt{liquidacion} y \texttt{concepto\_liquidacion}: al confirmar la
+transacción comprueba
+\[
+\texttt{liquidacion.total} \;=\; \sum \texttt{concepto\_liquidacion.importe}
+\]
+y responde BV015 (RN-023) si no se cumple. También crea el índice único
+parcial \texttt{uk\_periodo\_un\_abierto} sobre
+\texttt{periodo\_cierre (empresa\_id, sucursal\_id)} donde
+\texttt{estado = 'ABIERTO'}.
+
+\textbf{Por qué.} Antes la igualdad sólo se detectaba después, en
+\texttt{fn\_validar\_conciliacion\_propietario} (V3), y la unicidad del
+periodo abierto dependía de un advisory lock dentro del comando. Ahora
+la base impide ambos estados inválidos aunque alguien escriba fuera del
+comando.
+
+\textbf{V17.} V16 tenía un defecto: en PL/pgSQL, \texttt{NEW.id} se
+resuelve aunque la rama del \texttt{CASE} no se ejecute, y
+\texttt{concepto\_liquidacion} no tiene columna \texttt{id}, así que
+cualquier concepto nuevo habría fallado al confirmar. La fase verde lo
+detectó antes de cualquier commit. Como V16 ya estaba aplicada en A y B,
+se corrigió hacia delante con V17 (\texttt{CREATE OR REPLACE}, leyendo
+la columna mediante \texttt{to\_jsonb(NEW)}) en lugar de editar una
+migración aplicada y reescribir el historial de Flyway.
+
+\section{Contrato HTTP y backend}\label{campana-contrato}
+
+\begin{itemize}
+\item \textbf{Movimientos de inventario}
+(\texttt{registrarMovimiento}): el esquema declara ahora
+\texttt{operacion\_id}, \texttt{periodo\_id} y
+\texttt{fecha\_reconocimiento}, y con \texttt{if/then} de OpenAPI 3.1
+exige \texttt{motivo\_baja}, \texttt{documento\_id}, \texttt{periodo\_id}
+y \texttt{fecha\_reconocimiento} cuando \texttt{tipo = BAJA}, igual que
+la función SQL (BV025 si faltan).
+\item \textbf{Anulación} (\texttt{anularOperacion}): el cuerpo combina
+\texttt{Reconocimiento} con \texttt{motivo} obligatorio, porque el
+ajuste de anulación escribe \texttt{ajuste\_liquidacion.motivo NOT NULL}.
+\item \texttt{frontend/src/generated/api-schema.ts} se regeneró con
+\texttt{npm --prefix frontend run generate:api}; Redocly valida el
+documento.
+\item \textbf{RN-034} se cumple con una prueba real:
+\texttt{MoneyTypesLintTest} falla si aparece \texttt{double},
+\texttt{float}, \texttt{Double} o \texttt{Float} en
+\texttt{backend/src/main/java}, o \texttt{parseFloat}/\texttt{toFixed}
+en \texttt{frontend/src}, y comprueba que recorrió archivos reales para
+no pasar en vacío.
+\end{itemize}
+
+\section{Decisiones semánticas razonadas}\label{campana-decisiones}
+
+Las decisiones siguientes resolvieron divergencias entre reglas,
+modelo, SQL, API y documentación. Se registran como DEC-12 a DEC-21 en
+\texttt{docs/research/evidence-register.md}. Cada una indica la
+alternativa descartada y la razón.
+
+\begin{description}
+\item[DEC-12.] \textbf{Margen canónico (DIV-06).} La fórmula oficial es
+\texttt{fn\_reporte} con el recurso \texttt{reportes\_margen}, la que consume el
+endpoint vía \texttt{consultar}. Se descartó declarar canónica la vista
+\texttt{v\_margen\_operacion} porque fija \texttt{estado\_margen} a
+PROVISIONAL, ignora el periodo de reconocimiento y las pérdidas, y sólo
+la usaban las pruebas. Se descartó eliminar la vista porque romper las
+cifras GOLD no aporta valor; en su lugar \texttt{gold.py} afirma que
+vista y reporte dan las mismas cifras en los escenarios GOLD.
+\item[DEC-13.] \textbf{Transiciones permitidas en estados terminales (DIV-04).}
+Se derivaron literalmente de las sentencias \texttt{UPDATE} vigentes en
+\texttt{cmd\_ejecutar} V13, no de la documentación, para no romper un
+flujo real. CANCELADA es terminal porque cancelar sólo procede desde
+BORRADOR o ACORDADA. REVERTIDO es terminal porque la reversión crea
+filas nuevas. La anulación conserva \texttt{estado\_entrega} porque sólo
+procede sin entregas.
+\item[DEC-14.] \textbf{Inmutabilidad en la base y no sólo en el comando.} Se
+eligieron triggers aunque el rol de aplicación ya no tenga DML, porque
+la defensa en profundidad debe resistir un error futuro de grants, una
+función SECURITY DEFINER nueva o una intervención manual. El costo es
+una comparación de \texttt{jsonb} por fila modificada.
+\item[DEC-15.] \textbf{BV022 por trigger y no reescribiendo
+\texttt{cmd\_ejecutar} (DIV-08).} Reescribir la función completa para
+añadir una línea habría copiado unas 350 líneas y elevado el riesgo de
+regresión. El trigger es localizado y el bloqueo del pago ya serializa
+la carrera.
+\item[DEC-16.] \textbf{Liquidación cuadrada diferida con BV015 y RN-023
+(DIV-05).} Diferida porque el comando inserta la liquidación antes que
+sus conceptos. BV015 porque es una violación de forma de los datos y no
+un conflicto de concurrencia. RN-023 porque protege la integridad de la
+liquidación confirmada. Se reutilizó la expresión exacta de la
+conciliación V3 para que detección y prevención no diverjan.
+\item[DEC-17.] \textbf{Corregir hacia delante (V17).} Una migración aplicada no
+se edita: cambiar su checksum rompe \texttt{flyway validate} y oculta
+historia. Corregir con V17 deja el defecto y su arreglo trazables.
+\item[DEC-18.] \textbf{Catálogo de códigos (DIV-07).} El catálogo se regeneró a
+partir de lo que emiten \texttt{pg\_proc} y \texttt{ApiException}. Los
+códigos documentados y nunca emitidos (BV012, BV014, BV017, BV019)
+quedan reservados y no se reasignan, para que un cliente antiguo no
+interprete un significado distinto. La convención se corrigió:
+BV404→404, BV412→412 y BV428→428 son excepciones a BV4xx→409.
+\item[DEC-19.] \textbf{\texttt{motivo} obligatorio en la anulación (DIV-12).}
+La base sólo lo necesita si \texttt{total\_ajustado > 0}, pero un
+contrato condicional por saldo sería opaco para el cliente. Como no hay
+pantalla que anule y las pruebas siempre lo envían, exigirlo siempre es
+más simple y seguro.
+\item[DEC-20.] \textbf{ACL de base reaplicado al restaurar (SF-08).} Se prefirió
+reaplicar y afirmar el \texttt{REVOKE} en \texttt{restore-check} antes
+que volcar con \texttt{--create}, que intentaría recrear la base que el
+contenedor ya creó.
+\item[DEC-21.] \textbf{Grafo semántico sin capturas de evidencia.} Las 151
+capturas de \texttt{docs/testing/evidence} no se extrajeron
+semánticamente: costarían un agente por imagen y repiten lo que ya
+describen los documentos. Quedan sin sellar para una pasada posterior.
+\end{description}
+
+\section{Pruebas nuevas y puerta local}\label{campana-pruebas}
+
+\texttt{make verify-release-local} (\texttt{scripts/verify\_release\_local.py})
+ejecuta en serie docs, frontend, backend con HTTP real y Testcontainers,
+harness SQL, inmutabilidad, E2E y seguridad dinámica, y opcionalmente
+carga k6. Falla si una etapa obligatoria falla, se omite, reporta casos
+omitidos o declara cero casos ejecutados. Su primera ejecución fue
+rechazada por la propia puerta (la etapa de inmutabilidad no declaraba
+casos), y ese rechazo se conserva como evidencia.
+
+\begin{longtable}[]{@{}>{\raggedright\arraybackslash}p{0.27\linewidth}>{\raggedright\arraybackslash}p{0.67\linewidth}@{}}
+\toprule
+Prueba & Qué demuestra \\
+\midrule
+\endhead
+\softcode{db/tests/immutability.py} & UPDATE y DELETE bloqueados en las 13
+tablas con \texttt{hecho\_inmutable}; 13 bloqueos y 5 transiciones
+legítimas de DIV-04; liquidación descuadrada y segundo periodo abierto
+(DIV-05); sede operadora y tipo de operación inmutables (BV010) y una
+sola posición activa por animal (DIV-02). Todo en BEGIN…ROLLBACK y con
+conteos intactos. \\
+\softcode{db/tests/gold.py} & Además de las cifras GOLD: segundo reverso
+→ BV022 (DIV-08); cobro aplicado a una obligación por pagar y cobro de
+otra contraparte → BV021 sin efectos (DIV-09); vista de margen igual al
+reporte canónico (DIV-06). \\
+\softcode{db/tests/weighing\_reports.py} & Pesaje BRUTO\_TARA: el neto se
+calcula en el servidor (1250.500 − 950.250 = 300.250) ignorando un neto
+falso enviado; tara mayor que bruto → 23514 (API BV015) (DIV-10). \\
+\softcode{db/tests/security.sql} & Todas las funciones con
+\texttt{pg\_catalog, pg\_temp}; PUBLIC y roles de ejecución sin TEMP;
+\texttt{CREATE TEMP TABLE pg\_tables} como \texttt{bovi\_auditor} →
+42501. \\
+\softcode{tests/security/sec\_dynamic.py} & 63 casos: inyección SQL,
+acceso horizontal, escalada, CSRF, sesión, XSS almacenado, CSV, QR,
+abuso de login, cabeceras y 409 de UNIQUE. \\
+\softcode{tests/performance/load.js} & k6 de 1 a 20 sesiones propias
+(70\% lectura, 20\% escritura, 10\% descarga). Con V16/V17: 8,214
+peticiones sin fallos, p95 22.9 ms y 125 operaciones confirmadas, todas
+con liquidación cuadrada. No satura el sistema: no prueba capacidad
+sostenida ni volumen de 10,000 posiciones. \\
+\softcode{MoneyTypesLintTest} & Ausencia de coma flotante en importes
+(RN-034). \\
+\softcode{frontend/tests/tone.test.ts}, \softcode{visual.spec.ts} &
+Clasificación de tonos y ausencia de desbordamiento a tres anchos. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Pruebas frágiles corregidas.} \texttt{keyboard.spec.ts} dependía
+del idioma del sistema (es\_ES invierte día y mes en
+\texttt{datetime-local}) y fijaba octubre de 2026; ahora fija
+\texttt{en-US} y calcula la fecha esperada. \texttt{ApiPostgresTest}
+buscaba la posición nueva sólo en la primera página de 100; ahora
+filtra con \texttt{q}.
+
+\textbf{Recuperación.} Se tomó un respaldo antes de V14 y se repitió
+\texttt{make backup} y \texttt{make restore-check} después de V14, V15 y
+V17. El último ensayo concilió firma, hashes y sesiones en 30.8 s, con 7
+triggers de inmutabilidad, \texttt{uk\_periodo\_un\_abierto} y TEMP
+revocado en la base restaurada. No acredita PITR ni pérdida del host.
+
+\section{Herramientas de campaña}\label{campana-herramientas}
+
+\begin{itemize}
+\item \texttt{tools/claude/checkpoint.py} y
+\texttt{tools/claude/resume-check.py} guardan el estado de la campaña
+fuera de Git y verifican, antes de continuar, el remoto, el marcador, la
+ausencia de \texttt{STOP}, el estado no terminal y el lock.
+\texttt{docs/continuity/NEXT\_SESSION.md} indica la siguiente tarea; un
+archivo Markdown no ejecuta nada por sí mismo.
+\item El plugin \texttt{tools/claude/bovicierre-workbench} añade el
+comando \texttt{/bovi-status}, avisos de cuota y de checkpoint, y marca
+áreas pendientes de verificación tras editar. Su carga se verificó en
+sesión.
+\item El grafo de conocimiento (\texttt{graphify-out/}) se actualizó con
+extracción AST del código y semántica de los documentos de la campaña:
+2,871 nodos, 4,758 aristas y 298 comunidades, sin aristas colgantes.
+\end{itemize}
+
+\section{Pendientes después de esta actualización}\label{campana-pendientes}
+
+\begin{itemize}
+\item Decisión humana sobre SF-09: protección por fila o contexto de
+actor en la base, o un ADR que acepte el riesgo por escrito.
+\item Divergencias bajas restantes: DIV-11, DIV-13 a DIV-17.
+\item Escáneres SCA y DAST, carga sostenida de 15 a 20 minutos y dataset
+de 10,000 posiciones.
+\item Revisión de los diagramas MER y relacional contra la matriz de
+coherencia; las migraciones V14--V17 no añaden tablas ni columnas, sólo
+triggers, un índice y privilegios.
+\item Lector de pantalla, axe y teléfono físico para el rediseño.
+\item Revisión humana de Aldo y Jared de todo lo anterior.
+\end{itemize}
 
 \chapter{Fuentes y trazabilidad del
 manual}\label{fuentes-y-trazabilidad-del-manual}

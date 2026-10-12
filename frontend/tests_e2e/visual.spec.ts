@@ -29,7 +29,7 @@ test('capturas del recorrido principal',async({page})=>{
         // Detalles de solo lectura: primera liquidación y primer expediente con datos.
         for(const [screen,label] of [['liquidaciones','liquidacion-detalle'],['expediente','expediente-detalle']]){
             await page.goto(`/?sede=${site}#${screen}`);await settle(page);const open=page.getByRole('button',{name:/Abrir/}).first();
-            if(await open.count()){await open.click();await settle(page);await page.screenshot({path:`${out}/${width}-${label}.png`,fullPage:true});report.push({width,screen:label,overflow:await overflow(page)});}
+            if(await open.count()){await open.waitFor({state:'visible',timeout:45000});await open.click({timeout:45000});await settle(page);await page.screenshot({path:`${out}/${width}-${label}.png`,fullPage:true});report.push({width,screen:label,overflow:await overflow(page)});}
         }
     }
     await writeFile(`${out}/report.json`,JSON.stringify(report,null,2));
