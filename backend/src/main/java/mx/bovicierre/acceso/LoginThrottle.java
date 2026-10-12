@@ -1,0 +1,71 @@
+package mx.bovicierre.acceso;
+
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.stereotype.Component;
+
+/**
+ * Limita intentos fallidos de login por usuario y por origen dentro de una ventana deslizante.
+ * Estado en memoria del proceso: suficiente para el despliegue de una instancia; no se comparte entre réplicas.
+ * Se consulta antes de verificar la contraseña para no gastar bcrypt en un ataque y responde igual exista o no el usuario.
+ */
+@Component
+public class LoginThrottle {
+    static final int MAX_PER_LOGIN = 10;
+    static final int MAX_PER_ORIGIN = 50;
+    static final int MAX_ANONYMOUS_SESSIONS = 600;
+    static final Duration WINDOW = Duration.ofMinutes(15);
+    private static final int MAX_KEYS = 50_000;
+    private final ConcurrentHashMap<String, Deque<Instant>> failures = new ConcurrentHashMap<>();
+    private final Clock clock;
+
+    public LoginThrottle() { this(Clock.systemUTC()); }
+    LoginThrottle(Clock clock) { this.clock = clock; }
+
+    /** Segundos hasta poder reintentar; 0 si está permitido. */
+    public long retryAfter(String login, String origin) {
+        return Math.max(wait(key("u", login), MAX_PER_LOGIN), wait(key("o", origin), MAX_PER_ORIGIN));
+    }
+
+    public void failed(String login, String origin) {
+        if (failures.size() > MAX_KEYS) failures.entrySet().removeIf(e -> { synchronized (e.getValue()) { prune(e.getValue()); return e.getValue().isEmpty(); } });
+        Instant now = clock.instant();
+        for (String k : new String[]{key("u", login), key("o", origin)}) {
+            Deque<Instant> q = failures.computeIfAbsent(k, ignored -> new ArrayDeque<>());
+            synchronized (q) { prune(q); q.addLast(now); }
+        }
+    }
+
+    /** Registra una sesión anónima nueva del origen; false si superó el tope de la ventana (hallazgo SF-03). */
+    public boolean anonymousSession(String origin) {
+        String k = key("s", origin);
+        if (wait(k, MAX_ANONYMOUS_SESSIONS) > 0) return false;
+        Deque<Instant> q = failures.computeIfAbsent(k, ignored -> new ArrayDeque<>());
+        synchronized (q) { prune(q); q.addLast(clock.instant()); }
+        return true;
+    }
+
+    public void succeeded(String login) { failures.remove(key("u", login)); }
+
+    private long wait(String k, int max) {
+        Deque<Instant> q = failures.get(k);
+        if (q == null) return 0;
+        synchronized (q) {
+            prune(q);
+            if (q.size() < max) return 0;
+            return Math.max(1, Duration.between(clock.instant(), q.peekFirst().plus(WINDOW)).toSeconds());
+        }
+    }
+
+    private void prune(Deque<Instant> q) {
+        Instant limit = clock.instant().minus(WINDOW);
+        while (!q.isEmpty() && !q.peekFirst().isAfter(limit)) q.removeFirst();
+    }
+
+    private static String key(String kind, String value) { return kind + ":" + (value == null ? "" : value.trim().toLowerCase(Locale.ROOT)); }
+}

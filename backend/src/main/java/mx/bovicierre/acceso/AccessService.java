@@ -31,6 +31,11 @@ public class AccessService {
     public List<Map<String,Object>> sites(UUID user) {
         return auth.queryForList("select s.id,s.empresa_id,s.codigo,s.nombre,s.nodo_dueno, m.rol_codigo from bovi.membresia_usuario m join bovi.sucursal s on s.empresa_id=m.empresa_id and s.id=m.sucursal_id where m.empresa_id=(select empresa_id from infra.nodo_config) and m.usuario_id=? and m.vigente=true order by s.codigo,m.rol_codigo",user);
     }
+    /** Usuario con alguna membresía (vigente o no) en la sede: un ADMIN sólo administra usuarios de su sede. */
+    public boolean member(UUID user, UUID site) {
+        Integer n = auth.queryForObject("select count(*) from bovi.membresia_usuario where empresa_id=(select empresa_id from infra.nodo_config) and usuario_id=? and sucursal_id=?", Integer.class, user, site);
+        return n != null && n > 0;
+    }
     public Scope authorize(UUID user, UUID site, boolean mutation) {
         current(user);
         List<Map<String,Object>> rows = sites(user).stream().filter(row -> site.equals(row.get("id"))).toList();

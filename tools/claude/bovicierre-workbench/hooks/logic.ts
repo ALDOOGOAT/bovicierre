@@ -58,12 +58,15 @@ export function areasFor(relPath: string): string[] {
 }
 
 // Comando de verificación → áreas que satisface (sólo si terminó sin error).
+// Sólo cuenta si el comando EMPIEZA por la verificación (tras variables de entorno opcionales):
+// `echo verify-sql` o `grep test:e2e` no satisfacen nada (hallazgo SF-17).
+const ENV = String.raw`^\s*(?:[A-Z_][A-Z0-9_]*=\S+\s+)*`
 const CHECKS: [RegExp, string[]][] = [
-  [/test:e2e|playwright test/, ['frontend-unit-e2e', 'ui-visual']],
-  [/npm (--prefix frontend )?(run )?(test|build|typecheck)/, ['frontend-unit-e2e']],
-  [/mvnw.*verify|verify-api/, ['backend-http', 'auth-csrf-sesion']],
-  [/verify-sql/, ['sql-gold']],
-  [/redocly|verify-docs/, ['contrato-api', 'mer-relacional']],
+  [new RegExp(ENV + String.raw`(?:npm --prefix frontend run test:e2e|npx playwright test)\b`), ['frontend-unit-e2e', 'ui-visual']],
+  [new RegExp(ENV + String.raw`npm (?:--prefix frontend )?(?:run )?(?:test|build|typecheck)\b`), ['frontend-unit-e2e']],
+  [new RegExp(ENV + String.raw`(?:\./backend/mvnw\b.*\bverify\b|make verify-api\b)`), ['backend-http', 'auth-csrf-sesion']],
+  [new RegExp(ENV + String.raw`make verify-sql\b`), ['sql-gold']],
+  [new RegExp(ENV + String.raw`(?:make verify-docs\b|npx -y @redocly/cli@\S+ lint\b)`), ['contrato-api', 'mer-relacional']],
 ]
 
 export function satisfied(command: string): string[] {

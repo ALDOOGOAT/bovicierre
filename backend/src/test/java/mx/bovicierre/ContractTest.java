@@ -43,6 +43,10 @@ class ContractTest {
         ApiException conflict=ApiErrors.database(pg("23505","uk_animal_identificacion_codigo",null));
         assertEquals(409,conflict.status);
         assertFalse(conflict.getMessage().contains("private_key"));
+        // DIV-01: UNIQUE inline de V1 con nombre autogenerado por PostgreSQL también es conflicto 409, no 500.
+        assertEquals(409,ApiErrors.database(pg("23505","usuario_empresa_id_login_normalizado_key",null)).status);
+        assertEquals(409,ApiErrors.database(pg("23505","animal_identificacion_empresa_id_sistema_codigo_normalizado_key",null)).status);
+        assertEquals(500,ApiErrors.database(pg("23505","otro_indice",null)).status);
         assertEquals(422,ApiErrors.database(pg("23503","fk_operacion_2",null)).status);
         assertEquals(422,ApiErrors.database(pg("23514","sucursal_check2",null)).status);
         assertEquals(422,ApiErrors.database(new java.sql.SQLException("private SQL", "22001")).status);

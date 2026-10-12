@@ -70,7 +70,7 @@ public class ApiErrors {
             } catch (Exception ignored) { return internal(); }
         }
         String constraint=sql instanceof org.postgresql.util.PSQLException pg && pg.getServerErrorMessage()!=null ? pg.getServerErrorMessage().getConstraint() : null;
-        if ("23505".equals(state) && constraint!=null && constraint.startsWith("uk_")) return new ApiException(409,"BV401","El registro ya existe o entra en conflicto.");
+        if ("23505".equals(state) && constraint!=null && (constraint.startsWith("uk_") || constraint.endsWith("_key"))) return new ApiException(409,"BV401","El registro ya existe o entra en conflicto."); // _key: UNIQUE inline de V1 con nombre autogenerado (DIV-01)
         if ("23001".equals(state) && constraint!=null && constraint.startsWith("fk_")) return new ApiException(409,"BV401","El registro tiene referencias que impiden modificarlo.");
         if ("23503".equals(state) && constraint!=null && constraint.startsWith("fk_")) return new ApiException(422,"BV015","Las referencias no corresponden a esta empresa o sede.");
         if ("23514".equals(state) && constraint!=null && constraint.matches("[a-z_][a-z0-9_]*_check[0-9]*")) return new ApiException(422,"BV015","Los datos no cumplen las reglas del dominio.");

@@ -2,9 +2,9 @@
 
 Actualizado: 2026-10-12 · rama `main`; código MVP publicado en `9282b75`, normalización de wrapper en `92d3d41`. La aplicación se ejecuta en local; publicar código no equivale a desplegarla.
 
-## Campaña UI/UX + QA en curso (rama local `feature/uiux-qa-claude`)
+## Campaña UI/UX + QA (rama local `feature/uiux-qa-claude`, sin push)
 
-Desde `38ccdc3` (= origin/main al 12-oct-2026). **S1 rediseño UI completado técnicamente**: identidad bovina (tokens verde/tierra, Inter local, marca e iconos originales, fotos de dominio público con procedencia), insignias de estado con color y forma, liquidación con saldo destacado. Regresión con API real 15/15, unitarias 14/14, capturas antes/después 390/768/1440 ([evidencia](testing/evidence/ui-redesign/20261012T0214/), [sistema visual](ui/design-system.md)). Sin cambios de API/SQL/reglas. Sin push. S2 (coherencia/QA/seguridad/carga) en cola: [continuidad](continuity/NEXT_SESSION.md), [backlog de campaña](quality/campaign-backlog.md). Revisión humana pendiente.
+Desde `38ccdc3`. **S1 rediseño** completado técnicamente (identidad bovina, assets con procedencia, insignias por estado) y **S2** en estado seguro parcial: coherencia RN→MER→SQL→API→UI ([matriz](quality/coherence-matrix.md)), seguridad dirigida ([hallazgos](security/findings.md): SF-01/02/03/04/05/20/21 corregidos, sin críticos/altos abiertos en el alcance ejecutado), carga k6 1→20 sesiones con conciliación exacta. Puerta nueva `make verify-release-local`: **PASS** 184 casos, 0 fallos, 0 omitidos ([release-gate](testing/evidence/release-local/20261012T0302/release-gate.json)). [Informe final](quality/final-report.md) · [continuidad](continuity/NEXT_SESSION.md) · [backlog de campaña](quality/campaign-backlog.md). Revisión humana pendiente.
 
 ## Disponible hoy
 

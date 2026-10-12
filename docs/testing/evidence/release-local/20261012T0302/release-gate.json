@@ -1,0 +1,93 @@
+{
+  "head": "368e4d6e1ea7ff5b22bcbae7386be0f9c1bf204e",
+  "arbol_modificado": true,
+  "url": "http://127.0.0.1:15180",
+  "host": "aldo-911X",
+  "inicio": "2026-10-12T03:02:07-0600",
+  "etapas": [
+    {
+      "etapa": "docs",
+      "comando": "make verify-docs",
+      "exit": 0,
+      "segundos": 3.8,
+      "estado": "PASS",
+      "obligatoria": true,
+      "log": "docs.log"
+    },
+    {
+      "etapa": "frontend",
+      "comando": "sh -c npm --prefix frontend run build && npm --prefix frontend test",
+      "exit": 0,
+      "segundos": 2.7,
+      "executed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "estado": "PASS",
+      "obligatoria": true,
+      "log": "frontend.log"
+    },
+    {
+      "etapa": "backend",
+      "comando": "./backend/mvnw -q -f backend/pom.xml verify",
+      "exit": 0,
+      "segundos": 11.2,
+      "executed": 28,
+      "failed": 0,
+      "skipped": 0,
+      "estado": "PASS",
+      "obligatoria": true,
+      "log": "backend.log"
+    },
+    {
+      "etapa": "sql",
+      "comando": "make verify-sql",
+      "exit": 0,
+      "segundos": 19.2,
+      "executed": 37,
+      "failed": 0,
+      "skipped": 0,
+      "estado": "PASS",
+      "obligatoria": true,
+      "log": "sql.log"
+    },
+    {
+      "etapa": "immutability",
+      "comando": "python3 db/tests/immutability.py --out /home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/docs/testing/evidence/release-local/20261012T0302/immutability.json",
+      "exit": 0,
+      "segundos": 4.2,
+      "executed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "estado": "PASS",
+      "obligatoria": true,
+      "log": "immutability.log"
+    },
+    {
+      "etapa": "e2e",
+      "comando": "npm --prefix frontend run test:e2e -- closure.spec.ts additional.spec.ts keyboard.spec.ts visual.spec.ts",
+      "exit": 0,
+      "segundos": 115.2,
+      "executed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "estado": "PASS",
+      "obligatoria": true,
+      "log": "e2e.log"
+    },
+    {
+      "etapa": "security",
+      "comando": "python3 tests/security/sec_dynamic.py --out /home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/docs/testing/evidence/release-local/20261012T0302/security.json",
+      "exit": 0,
+      "segundos": 7.1,
+      "executed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "estado": "PASS",
+      "obligatoria": true,
+      "log": "security.log"
+    }
+  ],
+  "fin": "2026-10-12T03:04:50-0600",
+  "resultado": "PASS",
+  "nota": "Verificación técnica local; no es aceptación humana, despliegue ni certificación de seguridad."
+}

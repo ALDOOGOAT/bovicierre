@@ -45,3 +45,7 @@ Manual239páginas → [fuente y QA](manual/README.md) → código92d3d41, reglas
 ## Rediseño S1 · 12-oct-2026
 
 UQ-004..007 → [brief](ui/redesign-brief.md) / [decisiones UXD-01..11](ui/redesign-decisions.md) / [assets](ui/asset-register.md) → `frontend/src/styles.css`, `brand.tsx`, `tone.ts`, `ui.tsx` (insignias, UUID), `App.tsx` (shell, acceso, sede) → `tests/tone.test.ts`, `tests_e2e/visual.spec.ts`, regresión closure/additional/keyboard → [evidencia](testing/evidence/ui-redesign/20261012T0214/). Sin cambios de API, SQL ni reglas RN.
+
+## Coherencia y seguridad S2 · 12-oct-2026
+
+RN-001..045 → [matriz de coherencia](quality/coherence-matrix.md) (DIV-01..17). RN-003 → `ApiErrors` (`*_key`→409) → `ContractTest` + `sec_dynamic.py`. RN-023 → `hecho_inmutable` (V2) → `db/tests/immutability.py`. Autorización por sede → `AccessService.member`/`UserController` → SF-01. Sesión/login → `LoginThrottle`/`SessionController` → SF-02/03 → `LoginThrottleTest`. Cabeceras/límites → `infra/caddy/Caddyfile.local` → SF-04/05. SEC-01..16 → [test-plan](security/test-plan.md) → [findings](security/findings.md). Carga → `tests/performance/load.js`. Puerta → `scripts/verify_release_local.py` (`make verify-release-local`). Sin migraciones nuevas: V1–V13 intactas.

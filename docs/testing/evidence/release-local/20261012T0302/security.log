@@ -1,0 +1,67 @@
+PASS SEC-01 q="' OR '1'='1": HTTP 200, total 0 ≤ 580
+PASS SEC-01 q="%' OR 1=1 --": HTTP 200, total 0 ≤ 580
+PASS SEC-01 q="'; DROP TABLE bovi.parte; --": HTTP 200, total 0 ≤ 580
+PASS SEC-01 q="x' UNION SELECT usuario_id,login,hash FROM bovi.usuario --": HTTP 200, total 0 ≤ 580
+PASS SEC-01 q='\\': HTTP 200, total 0 ≤ 580
+PASS SEC-01 q='%_%': HTTP 200, total 0 ≤ 580
+PASS SEC-01 filtro estado=CONFIRMADA%27%20OR%201%3D1--: HTTP 422 (422 = valor de enum rechazado por validación)
+PASS SEC-01 filtro tipo=COMPRA%27--: HTTP 422 (422 = valor de enum rechazado por validación)
+PASS SEC-01 filtro pagina=1%20OR%201=1: HTTP 400 (422 = valor de enum rechazado por validación)
+PASS SEC-01 filtro tamano=20;DROP: HTTP 400 (422 = valor de enum rechazado por validación)
+PASS SEC-01 tabla intacta tras payloads: total antes 580, después 580
+PASS SEC-01 apóstrofe legítimo: alta HTTP 201, búsqueda total 1
+PASS SEC-10 paginación tamano=100000: HTTP 400
+PASS SEC-10 paginación tamano=0: HTTP 400
+PASS SEC-10 paginación tamano=-5: HTTP 400
+PASS SEC-10 paginación pagina=0: HTTP 400
+PASS SEC-10 paginación pagina=-1: HTTP 400
+PASS SEC-10 paginación pagina=99999999999999999999: HTTP 400
+PASS SEC-10 paginación tamano=abc: HTTP 400
+PASS SEC-10 cuerpo JSON de 3 MB rechazado antes de procesarse: HTTP 413
+PASS SEC-10 servicio sano tras cuerpo grande: /salud HTTP 200
+PASS SEC-05 comando sin token: HTTP 403
+PASS SEC-05 comando con token falso: HTTP 403
+PASS SEC-05 sin efecto persistido: coincidencias 0
+PASS SEC-05 login sin token CSRF: HTTP 403
+PASS SEC-06 rotación de sesión en login: cookie cambia
+PASS SEC-06 cookie tras logout no sirve: logout HTTP 204, reuso HTTP 401
+PASS SEC-06 error de login uniforme: 401 vs 401
+PASS SEC-10 limitación de intentos de login (10 fallos/15 min): secuencia: [401, 401, 401, 401, 401, 401, 401, 401, 401, 401, 429, 429]
+PASS SEC-10 bloqueo acotado al usuario atacado (sin bloqueo global): otro usuario HTTP 204
+PASS SEC-03 usuario limitado ve sólo su sede: sedes visibles ['DEMO-A']
+PASS SEC-03 GET /sedes/{B}/operaciones?pagina=1&tamano=5: HTTP 403, 133 bytes
+PASS SEC-03 GET /sedes/{B}/reportes/cartera: HTTP 403, 133 bytes
+PASS SEC-03 GET /sedes/{B}/reportes/inventario/csv: HTTP 403, 133 bytes
+PASS SEC-03 GET /sedes/{B}/operaciones/01a12ca9-ec63-7c2c-84a5-181133da9891: HTTP 403, 133 bytes
+PASS SEC-03 GET /sedes/{A}/operaciones/01a12ca9-ec63-7c2c-84a5-181133da9891: HTTP 404, 175 bytes
+PASS SEC-03 GET /sedes/{B}/operaciones/01a12ca9-ec63-7c2c-84a5-181133da9891/expediente: HTTP 403, 133 bytes
+PASS SEC-03 GET /sedes/{B}/animales/01a12f0a-b32b-76bb-ae4e-971fadf1aa17/qr: HTTP 403, 133 bytes
+PASS SEC-03 GET /sedes/{A}/animales/01a12f0a-b32b-76bb-ae4e-971fadf1aa17: HTTP 404, 175 bytes
+PASS SEC-03 escritura en sede ajena: HTTP 403, persistidos 0
+PASS SEC-04 operador crea usuario: HTTP 403
+PASS SEC-04 operador se asigna ADMIN: HTTP 403
+PASS SEC-06 membresía revocada en sesión viva: revocar HTTP 200, acceso HTTP 403
+PASS SEC-03 SF-01 ADMIN de B bloquea usuario sólo de A: PATCH HTTP 404; login del usuario de A HTTP 204
+PASS SEC-04 ADMIN no puede bloquearse a sí mismo: HTTP 400
+PASS SEC-04 ADMIN sí administra usuarios de su sede (sin regresión): HTTP 200
+PASS SEC-10 SF-03 sesión anónima de /sesion/csrf caduca en ≤5 min: filas spring_session 348 → 448 (+100); TTL anónimo 300 s
+PASS SEC-06 sesión autenticada conserva 30 min: TTL autenticado 1800 s
+PASS SEC-11 DIV-01 identificación duplicada → 409 sin detalle SQL: primera HTTP 201, duplicada HTTP 409 BV401
+PASS SEC-11 DIV-01 login duplicado → 409: HTTP 409 BV401
+PASS SEC-04 campos protegidos en cuerpo: HTTP 400; visible en B: 0
+PASS SEC-07 API devuelve JSON (no HTML) para nombre con etiqueta: Content-Type application/json
+PASS SEC-09 CSV cartera descargable con tipo y disposición: HTTP 200, text/csv;charset=UTF-8, attachment; filename="cartera.csv"
+PASS SEC-09 fórmulas neutralizadas en CSV: celdas peligrosas: 0 (sólo cuentan si la contraparte aparece en este reporte)
+PASS SEC-09 QR anónimo rechazado: HTTP 401
+PASS SEC-11 cabecera content-security-policy en /: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+PASS SEC-11 cabecera x-content-type-options en /: nosniff
+PASS SEC-11 cabecera referrer-policy en /: same-origin
+PASS SEC-11 cabecera x-frame-options en /: DENY
+PASS SEC-11 sin cabecera Server: ausente
+PASS SEC-11 error sin stack/SQL: HTTP 400, fuga=False
+PASS SEC-11 cookie de sesión HttpOnly + SameSite: HttpOnly, SameSite, Secure no aplica en HTTP local
+PASS SEC-11 CORS no refleja origen ajeno: HTTP 200, ACAO=None
+
+63 PASS / 0 FAIL de 63
+
+--- stderr ---

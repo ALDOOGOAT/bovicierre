@@ -1,0 +1,54 @@
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/home/aldo/.m2/repository/net/bytebuddy/byte-buddy-agent/1.18.11/byte-buddy-agent-1.18.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[ERROR] Tests run: 8, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 2.743 s <<< FAILURE! -- in mx.bovicierre.ApiPostgresTest
+[ERROR] mx.bovicierre.ApiPostgresTest.canonicalPurchaseSalePaymentAndReceiptThroughApi -- Time elapsed: 0.412 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <false> but was: <true>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:158)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertFalse.failNotFalse(AssertFalse.java:69)
+	at org.junit.jupiter.api.AssertFalse.assertFalse(AssertFalse.java:41)
+	at org.junit.jupiter.api.AssertFalse.assertFalse(AssertFalse.java:35)
+	at org.junit.jupiter.api.Assertions.assertFalse(Assertions.java:246)
+	at mx.bovicierre.ApiPostgresTest.canonicalPurchaseSalePaymentAndReceiptThroughApi(ApiPostgresTest.java:138)
+
+02:40:01.745 [main] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+02:40:01.746 [main] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+02:40:01.750 [main] INFO org.testcontainers.DockerClientFactory -- Testcontainers version: 2.0.5
+02:40:01.835 [main] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+02:40:02.016 [main] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+02:40:02.016 [main] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+02:40:02.028 [main] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 29.4.1
+  API Version: 1.54
+  Operating System: Ubuntu 24.04.4 LTS
+  Total Memory: 15724 MB
+02:40:02.104 [main] INFO tc.testcontainers/ryuk:0.14.0 -- Creating container for image: testcontainers/ryuk:0.14.0
+02:40:02.108 [main] INFO org.testcontainers.utility.RegistryAuthLocator -- Failure when attempting to lookup auth config. Please ignore if you don't have images in an authenticated registry. Details: (dockerImageName: testcontainers/ryuk:0.14.0, configFile: /home/aldo/.docker/config.json, configEnv: DOCKER_AUTH_CONFIG). Falling back to docker-java default behaviour. Exception message: Status 404: No config supplied. Checked in order: /home/aldo/.docker/config.json (file not found), DOCKER_AUTH_CONFIG (not set)
+02:40:02.229 [main] INFO tc.testcontainers/ryuk:0.14.0 -- Container testcontainers/ryuk:0.14.0 is starting: dcd0a3dfd33d7e50b4569868a130a2153c1e0ddd4995f38ec220fa56dc965107
+02:40:02.490 [main] INFO tc.testcontainers/ryuk:0.14.0 -- Container testcontainers/ryuk:0.14.0 started in PT0.385786756S
+02:40:02.493 [main] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+02:40:02.493 [main] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+02:40:02.494 [main] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+02:40:02.494 [main] INFO tc.postgres:18.6 -- Creating container for image: postgres:18.6
+02:40:02.584 [main] INFO tc.postgres:18.6 -- Container postgres:18.6 is starting: 3688cef192f82012637b4cab8cb9de44370bb713d363ce5e1969e31e1303320e
+02:40:05.194 [main] INFO tc.postgres:18.6 -- Container postgres:18.6 started in PT2.700242717S
+02:40:05.195 [main] INFO tc.postgres:18.6 -- Container is started (JDBC URL: jdbc:postgresql://localhost:32776/bovicierre?loggerLevel=OFF)
+[ERROR] Failures: 
+[ERROR]   ApiPostgresTest.canonicalPurchaseSalePaymentAndReceiptThroughApi:138 expected: <false> but was: <true>
+[ERROR] Tests run: 27, Failures: 1, Errors: 0, Skipped: 0
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project bovicierre: There are test failures.
+[ERROR] 
+[ERROR] See /home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/backend/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+exit=1

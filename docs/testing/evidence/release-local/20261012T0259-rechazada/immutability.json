@@ -1,0 +1,89 @@
+{
+  "regla": "RN-023",
+  "divergencia": "DIV-03",
+  "tablas_con_trigger_en_catalogo": [
+    "ajuste_liquidacion",
+    "aplicacion_pago",
+    "asiento_valoracion",
+    "asignacion_costo",
+    "auditoria_evento",
+    "cierre_periodo_version",
+    "concepto_liquidacion",
+    "documento",
+    "evento_outbox",
+    "liquidacion",
+    "movimiento_inventario",
+    "revision_administrativa",
+    "revision_documento"
+  ],
+  "resultados": {
+    "liquidacion": {
+      "filas": 173,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "concepto_liquidacion": {
+      "filas": 186,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "ajuste_liquidacion": {
+      "filas": 18,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "asignacion_costo": {
+      "filas": 258,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "asiento_valoracion": {
+      "filas": 356,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "aplicacion_pago": {
+      "filas": 78,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "cierre_periodo_version": {
+      "filas": 32,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "movimiento_inventario": {
+      "filas": 85,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "documento": {
+      "filas": 45,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "auditoria_evento": {
+      "filas": 4288,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "evento_outbox": {
+      "filas": 4288,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "revision_administrativa": {
+      "filas": 29,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "revision_documento": {
+      "filas": 29,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    }
+  },
+  "filas_sin_cambio_tras_rollback": true,
+  "fallos": 0,
+  "sin_fixture": []
+}

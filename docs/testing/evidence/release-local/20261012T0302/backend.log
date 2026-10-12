@@ -1,0 +1,30 @@
+03:02:20.165 [main] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+03:02:20.166 [main] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+03:02:20.170 [main] INFO org.testcontainers.DockerClientFactory -- Testcontainers version: 2.0.5
+03:02:20.265 [main] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+03:02:20.453 [main] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+03:02:20.454 [main] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+03:02:20.464 [main] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 29.4.1
+  API Version: 1.54
+  Operating System: Ubuntu 24.04.4 LTS
+  Total Memory: 15724 MB
+03:02:20.596 [main] INFO tc.testcontainers/ryuk:0.14.0 -- Creating container for image: testcontainers/ryuk:0.14.0
+03:02:20.600 [main] INFO org.testcontainers.utility.RegistryAuthLocator -- Failure when attempting to lookup auth config. Please ignore if you don't have images in an authenticated registry. Details: (dockerImageName: testcontainers/ryuk:0.14.0, configFile: /home/aldo/.docker/config.json, configEnv: DOCKER_AUTH_CONFIG). Falling back to docker-java default behaviour. Exception message: Status 404: No config supplied. Checked in order: /home/aldo/.docker/config.json (file not found), DOCKER_AUTH_CONFIG (not set)
+03:02:20.773 [main] INFO tc.testcontainers/ryuk:0.14.0 -- Container testcontainers/ryuk:0.14.0 is starting: 537f61874164bd5e62d3a3755375c000ec00d7805e51f0b24ae316dd0a174a1e
+03:02:21.082 [main] INFO tc.testcontainers/ryuk:0.14.0 -- Container testcontainers/ryuk:0.14.0 started in PT0.486270713S
+03:02:21.085 [main] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+03:02:21.085 [main] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+03:02:21.086 [main] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+03:02:21.086 [main] INFO tc.postgres:18.6 -- Creating container for image: postgres:18.6
+03:02:21.238 [main] INFO tc.postgres:18.6 -- Container postgres:18.6 is starting: 6ce403ca0a3a9863181a80b9ed57ada53b729e183669e5772dd599d424b134e9
+03:02:23.609 [main] INFO tc.postgres:18.6 -- Container postgres:18.6 started in PT2.522852623S
+03:02:23.610 [main] INFO tc.postgres:18.6 -- Container is started (JDBC URL: jdbc:postgresql://localhost:32780/bovicierre?loggerLevel=OFF)
+
+--- stderr ---
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/home/aldo/.m2/repository/net/bytebuddy/byte-buddy-agent/1.18.11/byte-buddy-agent-1.18.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release

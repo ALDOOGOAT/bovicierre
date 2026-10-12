@@ -36,8 +36,12 @@ test('cambio nuevo vuelve obsoleta la evidencia y sólo la verificación correct
   expect(areasFor('frontend/src/styles.css')).toEqual(['ui-visual', 'frontend-unit-e2e'])
   expect(areasFor('db/migrations/V14__x.sql')).toEqual(['sql-gold'])
   expect(areasFor('README.md')).toEqual([])
-  expect(satisfied('npm --prefix frontend run test:e2e -- closure.spec.ts')).toContain('ui-visual')
+  expect(satisfied('BOVI_UI_TEST_URL=http://127.0.0.1:15180 npm --prefix frontend run test:e2e -- closure.spec.ts')).toContain('ui-visual')
   expect(satisfied('git status')).toEqual([])
+  expect(satisfied('echo verify-sql')).toEqual([])
+  expect(satisfied('grep -r test:e2e .')).toEqual([])
+  expect(satisfied('BOVI_API_IT=true ./backend/mvnw -q -f backend/pom.xml verify')).toContain('backend-http')
+  expect(satisfied('make verify-sql')).toEqual(['sql-gold'])
 })
 
 test('estado y rutas', () => {

@@ -1,4 +1,4 @@
-.PHONY: doctor academic dev demo verify verify-docs verify-api verify-sql setup-tools backup restore-check stop
+.PHONY: doctor academic dev demo verify verify-docs verify-api verify-sql verify-release-local setup-tools backup restore-check stop
 
 BOVI_SECRET_DIR ?= $(HOME)/.local/share/bovicierre-academic/secrets
 export BOVI_SECRET_DIR
@@ -42,6 +42,9 @@ verify: verify-docs
 verify-sql: setup-tools
 	sh db/tests/prepare.sh
 	sh db/tests/run.sh
+
+verify-release-local: setup-tools
+	python3 scripts/verify_release_local.py
 
 verify-api:
 	BOVI_API_IT=true BOVI_API_TEST_URL="$${BOVI_API_TEST_URL:-http://localhost:15180/api/v1}" BOVI_TEST_PASSWORD_FILE="$(BOVI_SECRET_DIR)/demo_password" ./backend/mvnw -q -f backend/pom.xml verify

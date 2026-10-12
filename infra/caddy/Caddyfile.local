@@ -7,7 +7,25 @@
 	header {
 		X-Content-Type-Options nosniff
 		Referrer-Policy same-origin
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+		X-Frame-Options DENY
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
 		-Server
+	}
+	# JSON de la API: 1 MB; cargas multipart de documentos conservan el límite de Spring (20 MB) con margen.
+	@apijson {
+		path /api/*
+		header Content-Type application/json*
+	}
+	@apiupload {
+		path /api/*
+		not header Content-Type application/json*
+	}
+	request_body @apijson {
+		max_size 1MB
+	}
+	request_body @apiupload {
+		max_size 22MB
 	}
 	handle /api/* {
 		reverse_proxy backend:18080

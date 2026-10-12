@@ -155,3 +155,14 @@ Ejecutor: agente Claude Opus 5.5 (Claude Code 2.1.296), rama local `feature/uiux
 | No ejecutado | `provider.spec.ts` (detiene el proveedor; requiere ventana aislada), lector de pantalla, teléfono físico, axe | Pendiente |
 
 Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistema (es_ES invierte día/mes en `datetime-local`) y fijaba la fecha esperada a octubre de 2026. Se fijó `--lang=en-US` en ese spec y se calcula el valor esperado desde la fecha tecleada. La primera ejecución de la regresión dio 14/15 por esa causa ([log](evidence/ui-redesign/20261012T0214/e2e-regression.log)).
+
+## Campaña UI/UX + QA (Claude) · S2 coherencia, seguridad y carga · 12-oct-2026
+
+| Comprobación | Comando | Resultado |
+|---|---|---|
+| Puerta local completa | `make verify-release-local` | **PASS** — docs exit 0; frontend 14; backend 28 (8 HTTP + 1 Testcontainers); SQL 37; inmutabilidad 26; E2E 16; seguridad 63; 0 fallos/0 omitidos ([release-gate](evidence/release-local/20261012T0302/release-gate.json)). Primera corrida rechazada por la puerta (etapa sin conteo) conservada en `20261012T0259-rechazada/` |
+| Seguridad dinámica | `python3 tests/security/sec_dynamic.py` | 48/56 inicial (4 defectos del test + 4 hallazgos reales) → 63/63 tras correcciones y casos nuevos ([security/](evidence/security/20261012T0234/)) |
+| Inmutabilidad RN-023 | `python3 db/tests/immutability.py` | 13 tablas × UPDATE/DELETE → 26/26 BV016, conteos intactos ([coherence/](evidence/coherence/)) |
+| Carga HTTP | `k6 run tests/performance/load.js` (k6 v1.0.0) | 1→20 sesiones, 8,105 peticiones, p95 19.5/20.0 ms, 1 error (DIV-01, corregido), conciliación 1,185=1,185 ([report](evidence/performance/20261012T0242-ramp/report.md)) |
+| Dependencias | `npm audit` | 1 alto dev (vite 8.0.3) corregido con 8.0.16; queda 1 bajo dev. Maven/Python/imágenes: INCOMPLETO ([informe](../security/dependency-report.md)) |
+| No ejecutado | recuperación (sin cambios de esquema), `provider.spec.ts`, DAST/ZAP, Semgrep/Gitleaks/Trivy, dataset 10k/100k, carga sostenida | Pendiente |

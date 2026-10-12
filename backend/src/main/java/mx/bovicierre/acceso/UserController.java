@@ -23,6 +23,10 @@ public class UserController {
         var payload=JsonSupport.object(body);
         if (!command.equals("crear_usuario") && payload.has("contrasena")) throw new ApiException(400,"BV400","La contraseña sólo se admite al crear usuario.");
         if (payload.has("hash_contrasena") || payload.has("empresa_id") || payload.has("sucursal_id") || payload.has("actor_id")) throw new ApiException(400,"BV400","El ámbito y las credenciales se determinan en el servidor.");
+        if (command.equals("actualizar_usuario")) {
+            if (!access.member(target,site)) throw new ApiException(404,"BV404","Usuario inexistente en esta sede.");
+            if (target.equals(user) && payload.has("estado") && !"ACTIVO".equals(payload.path("estado").asText())) throw new ApiException(400,"BV400","No puedes bloquear tu propia cuenta.");
+        }
         if (target!=null) payload.put("usuario_id",target.toString());
         String fingerprint=JsonSupport.hash(command,payload);
         if (payload.has("contrasena")) {

@@ -129,7 +129,7 @@ class ApiPostgresTest {
         var settlement=JsonSupport.JSON.readTree(confirmed.body());assertEquals("1000.00",settlement.path("total").path("importe").asText());
         assertEquals(confirmed.body(),send("POST",site+"/operaciones/"+buy+"/confirmar",JsonSupport.JSON.writeValueAsString(recognition),key,version).body());
         assertEquals("COMPLETADA",get(site+"/comandos/confirmar_operacion/"+key).path("estado").asText());
-        var inventory=get(site+"/inventario/posiciones?tamano=100");
+        var inventory=get(site+"/inventario/posiciones?tamano=100&q="+animal); // filtrar por el animal: la primera página no basta cuando la sede acumula datos DEMO
         var vendible=get(site+"/inventario/posiciones?tamano=100&disponibles_para_venta=true");
         for(var row:vendible.path("elementos")) {assertEquals("DISPONIBLE",row.path("estado").asText());assertFalse(row.path("reservada").asBoolean());}
         assertEquals(200,send("GET",site+"/inventario/posiciones?disponibles_para_venta=false",null,null).statusCode());

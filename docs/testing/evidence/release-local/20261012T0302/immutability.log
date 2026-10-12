@@ -1,0 +1,16 @@
+liquidacion                filas=187    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+concepto_liquidacion       filas=201    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+ajuste_liquidacion         filas=19     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+asignacion_costo           filas=277    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+asiento_valoracion         filas=382    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+aplicacion_pago            filas=83     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+cierre_periodo_version     filas=34     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+movimiento_inventario      filas=91     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+documento                  filas=48     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+auditoria_evento           filas=4504   update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+evento_outbox              filas=4504   update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+revision_administrativa    filas=31     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+revision_documento         filas=31     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+fallos=0 sin_fixture=[] filas_intactas=True
+
+--- stderr ---
