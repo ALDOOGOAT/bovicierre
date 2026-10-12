@@ -1,0 +1,120 @@
+
+> bovicierre-frontend@0.1.0 test:e2e
+> playwright test closure.spec.ts additional.spec.ts keyboard.spec.ts
+
+
+Running 15 tests using 1 worker
+
+  ✓   1 tests_e2e/additional.spec.ts:21:1 › predios: validación, alta, búsqueda, paginación y persistencia real (2.4s)
+  ✓   2 tests_e2e/additional.spec.ts:27:1 › historia animal: entrega física y recompra conservan los dos ciclos (2.7s)
+  ✓   3 tests_e2e/additional.spec.ts:32:1 › pesajes: corrección de versión aprobada, original conservado y comparación incompatible (1.9s)
+  ✓   4 tests_e2e/additional.spec.ts:37:1 › reportes reales: cartera y margen muestran corte y cifras canónicas disponibles (1.9s)
+  ✓   5 tests_e2e/additional.spec.ts:42:1 › reservas: dos usuarios compiten y una reserva UI futura vence realmente (56.4s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a12f36-2ae4-7886-ab0d-a476f402bb5f
+UI command POST /operaciones/01a12f36-2ae4-7886-ab0d-a476f402bb5f/acordar
+UI command POST /operaciones/01a12f36-2ae4-7886-ab0d-a476f402bb5f/confirmar
+UI command POST /inventario/movimientos
+UI command POST /operaciones
+UI command PATCH /operaciones/01a12f36-3093-754e-8ed5-463cca4f8f55
+UI command POST /operaciones/01a12f36-3093-754e-8ed5-463cca4f8f55/acordar
+UI command POST /operaciones/01a12f36-3093-754e-8ed5-463cca4f8f55/reservas
+UI command POST /operaciones/01a12f36-3093-754e-8ed5-463cca4f8f55/confirmar
+UI command POST /pagos
+UI command POST /pagos/01a12f36-33fa-72e8-b88e-864ff941272b/validar
+UI command POST /pagos/01a12f36-33fa-72e8-b88e-864ff941272b/aplicaciones
+UI command POST /liquidaciones/01a12f36-334c-7ba0-b96e-2da5bd6ca16c/ajustes
+UI command POST /pagos/01a12f36-33fa-72e8-b88e-864ff941272b/reembolsos
+UI command POST /documentos
+UI command POST /documentos/01a12f36-3854-7826-baaf-2a4a30ff3a06/revisiones
+  ✓   6 tests_e2e/closure.spec.ts:27:1 › formularios reales: compra, inventario, venta, cobro, ajuste atómico, reembolso, documentos y QR (5.8s)
+  ✓   7 tests_e2e/closure.spec.ts:48:1 › respuesta perdida: conserva intento tras recarga y consulta resultado sin duplicar (1.3s)
+UI command POST /usuarios
+UI command POST /usuarios/01a12f36-4722-74b6-945d-837080d3a2bf/membresias
+  ✓   8 tests_e2e/closure.spec.ts:57:1 › usuario auditor real: lectura, permisos vigentes y ausencia de credenciales persistidas (1.8s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a12f36-4dbc-7d4f-a6a0-9c72512b6712
+UI command POST /operaciones/01a12f36-4dbc-7d4f-a6a0-9c72512b6712/pesajes
+UI command POST /pesajes/01a12f36-4f76-7312-a578-0a70bfa25c75/aprobar
+UI command POST /operaciones/01a12f36-4dbc-7d4f-a6a0-9c72512b6712/acordar
+UI command POST /operaciones/01a12f36-4dbc-7d4f-a6a0-9c72512b6712/confirmar
+UI command POST /gastos
+UI command POST /gastos/01a12f36-51b9-7c76-b288-532ccf1c0122/reparto
+UI command POST /gastos
+UI command POST /gastos/01a12f36-5382-7fa2-835a-22b9a30475f1/reparto
+UI command POST /gastos
+UI command POST /gastos/01a12f36-55ce-7d3e-b706-5ded4987c54f/reparto
+UI command POST /integraciones/proveedor/tarifas/aceptaciones
+UI command POST /gastos
+  ✓   9 tests_e2e/closure.spec.ts:63:1 › gastos: tarifa consultada y aceptada, pesos medidos y tres métodos canónicos (3.7s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a12f36-5c3f-74e4-892d-1b3d9159d190
+UI command POST /operaciones/01a12f36-5c3f-74e4-892d-1b3d9159d190/acordar
+UI command POST /operaciones/01a12f36-5c3f-74e4-892d-1b3d9159d190/reabrir
+UI command PATCH /operaciones/01a12f36-5c3f-74e4-892d-1b3d9159d190
+UI command POST /operaciones/01a12f36-5c3f-74e4-892d-1b3d9159d190/acordar
+  ✓  10 tests_e2e/closure.spec.ts:73:1 › acuerdos versionados: aceptar, reabrir, editar y conservar el original (1.6s)
+UI command POST /cierre
+UI command POST /reabrir
+  ✓  11 tests_e2e/closure.spec.ts:76:1 › periodo actual: cierre y reapertura con versiones inmutables, sin desplazar el calendario DEMO (1.1s)
+UI command POST /contrapartes
+UI command POST /animales
+UI command POST /animales
+UI command POST /operaciones
+UI command PATCH /operaciones/01a12f36-6768-730b-ad3d-a05d156a0bb7
+UI command PATCH /operaciones/01a12f36-6768-730b-ad3d-a05d156a0bb7
+UI command PATCH /operaciones/01a12f36-6768-730b-ad3d-a05d156a0bb7
+UI command POST /operaciones/01a12f36-6768-730b-ad3d-a05d156a0bb7/pesajes
+UI command POST /pesajes/01a12f36-6a63-723a-9c09-03f0a1a70121/aprobar
+UI command PATCH /operaciones/01a12f36-6768-730b-ad3d-a05d156a0bb7
+UI command POST /operaciones/01a12f36-6768-730b-ad3d-a05d156a0bb7/acordar
+UI command POST /operaciones/01a12f36-6768-730b-ad3d-a05d156a0bb7/confirmar
+UI command POST /inventario/movimientos
+UI command POST /operaciones
+UI command PATCH /operaciones/01a12f36-6e0c-7917-93e2-b13fb316ba10
+UI command POST /operaciones/01a12f36-6e0c-7917-93e2-b13fb316ba10/pesajes
+UI command POST /pesajes/01a12f36-6f65-79b7-90a7-c40f4792ac6e/aprobar
+UI command POST /operaciones/01a12f36-6e0c-7917-93e2-b13fb316ba10/acordar
+UI command POST /operaciones/01a12f36-6e0c-7917-93e2-b13fb316ba10/reservas
+UI command POST /operaciones/01a12f36-6e0c-7917-93e2-b13fb316ba10/confirmar
+  ✓  12 tests_e2e/closure.spec.ts:81:1 › regresión integrada: dos lotes conservan identidad y venta KG conserva composición medida (3.8s)
+  ✓  13 tests_e2e/closure.spec.ts:90:1 › regresión HTTP502: respuesta de POST comprometido conserva clave y se recupera por lookup (1.1s)
+  ✓  14 tests_e2e/closure.spec.ts:94:1 › cambiar sede B a A cancela GET pendiente y no presenta expediente ni animales de B (944ms)
+  ✘  15 tests_e2e/keyboard.spec.ts:21:1 › 390px sólo teclado: acceso, compra, recepción, reserva, venta, cobro y aplicación (3.8s)
+
+
+  1) tests_e2e/keyboard.spec.ts:21:1 › 390px sólo teclado: acceso, compra, recepción, reserva, venta, cobro y aplicación 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoMatch[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected pattern: [32m/^2026-10-\d\dT\d\d:\d\d$/[39m
+    Received string:  [31m"2026-11-10T10:00"[39m
+
+      11 | async function select(page:Page,target:Locator,value:string){await tabTo(page,target);const options=await target.locator('option').evaluateAll(os=>os.map(o=>(o as HTMLOptionElement).value));const index=options.indexOf(value);expect(index).toBeGreaterThanOrEqual(0);await key(page,'Alt+ArrowDown');await key(page,'Home');for(let n=0;n<index;n++)await key(page,'ArrowDown');await key(page,'Enter');}
+      12 | async function section(page:Page,value:string){await select(page,page.locator('#mobile-section'),value);await expect(page.locator('.loading')).toHaveCount(0);}
+    > 13 | async function datetime(page:Page,target:Locator,date:Date){await tabTo(page,target);for(let n=0;n<8;n++)await key(page,'ArrowLeft');for(const value of [String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0'),String(date.getFullYear())]){await page.keyboard.type(value);actions.push('typeDateSegment');}await key(page,'ArrowRight');for(const value of [String(date.getHours()%12||12).padStart(2,'0'),String(date.getMinutes()).padStart(2,'0'),date.getHours()<12?'a':'p']){await page.keyboard.type(value);actions.push('typeDateSegment');}expect(await target.inputValue()).toMatch(/^2026-10-\d\dT\d\d:\d\d$/);}
+         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^
+      14 | async function command(page:Page,suffix:string,action:()=>Promise<void>,method='POST'){const pending=page.waitForResponse(r=>r.url().split('?')[0].endsWith(suffix)&&r.request().method()===method);await action();const r=await pending;expect(r.status(),await r.text()).toBeLessThan(300);return r.json();}
+      15 | async function fixture(page:Page){return page.evaluate(async()=>{const site=new URL(location.href).searchParams.get('sede'),csrf=await fetch('/api/v1/sesion/csrf').then(r=>r.json());async function post(suffix:string,body:unknown){const r=await fetch('/api/v1/sedes/'+site+suffix,{method:'POST',headers:{'Content-Type':'application/json',[csrf.headerName]:csrf.token,'Idempotency-Key':crypto.randomUUID()},body:JSON.stringify(body)});const data=await r.json();if(!r.ok)throw new Error(JSON.stringify(data));return data;}const run=Date.now().toString(36);const party=await post('/contrapartes',{nombre:'DEMO TECLADO '+run,tipo_persona:'FISICA'}),animal=await post('/animales',{sexo:'M',identificaciones:[{sistema:'INTERNO',codigo:'DEMO-KEY-'+run}]});return {party,animal};});}
+      16 | async function party(page:Page,id:string){await input(page,page.locator('[name="buscar_parte_id"]'),id);await enter(page,page.getByRole('button',{name:'Buscar contraparte',exact:true}));await expect.poll(()=>page.locator('[name="parte_id"] option[value="'+id+'"]').count()).toBe(1);await select(page,page.locator('[name="parte_id"]'),id);}
+        at datetime (/home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/frontend/tests_e2e/keyboard.spec.ts:13:595)
+        at /home/aldo/Descargas/PROYECTO_ZACA_TOPICOS_AVANZADOS/frontend/tests_e2e/keyboard.spec.ts:23:757
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../tmp/bovicierre-playwright/keyboard-390px-sólo-teclad-517e9-va-venta-cobro-y-aplicación/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../tmp/bovicierre-playwright/keyboard-390px-sólo-teclad-517e9-va-venta-cobro-y-aplicación/error-context.md
+
+  1 failed
+    tests_e2e/keyboard.spec.ts:21:1 › 390px sólo teclado: acceso, compra, recepción, reserva, venta, cobro y aplicación 
+  14 passed (1.5m)
+exit=1

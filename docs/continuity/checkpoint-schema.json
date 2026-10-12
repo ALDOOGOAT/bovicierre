@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Checkpoint de campaña BoviCierre (estado privado en ~/.local/state/bovicierre-claude/<repo-id>/state.json)",
+  "type": "object",
+  "required": ["campaign", "status", "updated", "root", "branch", "base", "head", "active_minutes", "quota", "continuations", "transition_dispatched", "done", "pending", "verification", "next", "risks"],
+  "properties": {
+    "campaign": {"const": "uiux-qa-claude-1.0"},
+    "status": {"enum": ["BOOTSTRAP", "S1_RUNNING", "WAITING_RESET", "S1_SAFE_PARTIAL", "S1_DONE", "S2_QUEUED", "S2_RUNNING", "S2_SAFE_PARTIAL", "DONE", "BLOCKED_PERMISSION", "USER_STOPPED"]},
+    "updated": {"type": "string", "format": "date-time"},
+    "root": {"type": "string", "description": "Raíz real resuelta del checkout"},
+    "branch": {"type": "string"},
+    "base": {"type": "string", "description": "Commit de partida de la campaña"},
+    "head": {"type": "string"},
+    "active_minutes": {"type": "object", "properties": {"S1": {"type": "integer"}, "S2": {"type": "integer"}}, "description": "Tiempo activo estimado por el coordinador; excluye espera por cuota"},
+    "quota": {"type": "string", "description": "Sólo valores observados; 'desconocido' si no se expone"},
+    "continuations": {"type": "integer", "maximum": 2},
+    "transition_dispatched": {"type": "boolean"},
+    "done": {"type": "array", "items": {"type": "string"}},
+    "pending": {"type": "array", "items": {"type": "string"}},
+    "verification": {"type": "array", "items": {"type": "string"}, "description": "comando → exit/resultado"},
+    "next": {"type": "array", "items": {"type": "string"}, "maxItems": 5},
+    "risks": {"type": "array", "items": {"type": "string"}}
+  }
+}

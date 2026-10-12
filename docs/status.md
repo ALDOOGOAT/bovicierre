@@ -2,6 +2,10 @@
 
 Actualizado: 2026-10-12 · rama `main`; código MVP publicado en `9282b75`, normalización de wrapper en `92d3d41`. La aplicación se ejecuta en local; publicar código no equivale a desplegarla.
 
+## Campaña UI/UX + QA en curso (rama local `feature/uiux-qa-claude`)
+
+Desde `38ccdc3` (= origin/main al 12-oct-2026). **S1 rediseño UI completado técnicamente**: identidad bovina (tokens verde/tierra, Inter local, marca e iconos originales, fotos de dominio público con procedencia), insignias de estado con color y forma, liquidación con saldo destacado. Regresión con API real 15/15, unitarias 14/14, capturas antes/después 390/768/1440 ([evidencia](testing/evidence/ui-redesign/20261012T0214/), [sistema visual](ui/design-system.md)). Sin cambios de API/SQL/reglas. Sin push. S2 (coherencia/QA/seguridad/carga) en cola: [continuidad](continuity/NEXT_SESSION.md), [backlog de campaña](quality/campaign-backlog.md). Revisión humana pendiente.
+
 ## Disponible hoy
 
 `make academic` inicia PostgreSQL18.6 A/B/proveedor, dos Pgpool raw, Java21/SpringBoot4.1.1, React19/Vite8 y Caddy HTTP local. Interfaz: http://localhost:15180. `make demo` conserva una semilla sintética reproducible; `make stop` detiene servicios propios sin borrar volúmenes. [Manual](ui/user-manual.md), [guion](testing/demo-script.md) y [handoff](implementation/handoff.md).

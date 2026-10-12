@@ -1,0 +1,11 @@
+
+> bovicierre-frontend@0.1.0 test:e2e
+> playwright test keyboard.spec.ts
+
+
+Running 1 test using 1 worker
+
+  ✓  1 tests_e2e/keyboard.spec.ts:23:1 › 390px sólo teclado: acceso, compra, recepción, reserva, venta, cobro y aplicación (8.6s)
+
+  1 passed (9.7s)
+exit=0

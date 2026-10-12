@@ -1,0 +1,227 @@
+[
+  {
+    "width": 390,
+    "screen": "login",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "sede",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "operaciones",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "captura",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "inventario",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "animales",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "pesajes",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "liquidaciones",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "pagos",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "expediente",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "cartera",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "margen",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "periodos",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "liquidacion-detalle",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "screen": "expediente-detalle",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "login",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "sede",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "operaciones",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "captura",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "inventario",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "animales",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "pesajes",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "liquidaciones",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "pagos",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "expediente",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "cartera",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "margen",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "periodos",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "liquidacion-detalle",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "screen": "expediente-detalle",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "login",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "sede",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "operaciones",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "captura",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "inventario",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "animales",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "pesajes",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "liquidaciones",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "pagos",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "expediente",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "cartera",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "margen",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "periodos",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "liquidacion-detalle",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "screen": "expediente-detalle",
+    "overflow": false
+  }
+]

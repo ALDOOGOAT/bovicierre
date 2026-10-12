@@ -1,0 +1,258 @@
+{
+  "run": "20261012T0214",
+  "base_url": "http://127.0.0.1:15180",
+  "tests": [
+    {
+      "title": "predios: validación, alta, búsqueda, paginación y persistencia real",
+      "status": "passed",
+      "duration_ms": 2108,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "regresión integrada: dos lotes conservan identidad y venta KG conserva composición medida",
+      "status": "passed",
+      "duration_ms": 4122,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "reservas: dos usuarios compiten y una reserva UI futura vence realmente",
+      "status": "passed",
+      "duration_ms": 41529,
+      "console_errors": 2,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 409,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/operaciones/01a12f38-48ac-737d-9000-4ffcbbc6d362/confirmar"
+        }
+      ]
+    },
+    {
+      "title": "formularios reales: compra, inventario, venta, cobro, ajuste atómico, reembolso, documentos y QR",
+      "status": "passed",
+      "duration_ms": 5158,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "regresión HTTP502: respuesta de POST comprometido conserva clave y se recupera por lookup",
+      "status": "passed",
+      "duration_ms": 993,
+      "console_errors": 2,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 502,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/contrapartes"
+        }
+      ]
+    },
+    {
+      "title": "390px sólo teclado: acceso, compra, recepción, reserva, venta, cobro y aplicación",
+      "status": "passed",
+      "duration_ms": 8515,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "cambiar sede B a A cancela GET pendiente y no presenta expediente ni animales de B",
+      "status": "passed",
+      "duration_ms": 590,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "historia animal: entrega física y recompra conservan los dos ciclos",
+      "status": "passed",
+      "duration_ms": 2286,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "reportes reales: cartera y margen muestran corte y cifras canónicas disponibles",
+      "status": "passed",
+      "duration_ms": 1568,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "periodo actual: cierre y reapertura con versiones inmutables, sin desplazar el calendario DEMO",
+      "status": "passed",
+      "duration_ms": 891,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "acuerdos versionados: aceptar, reabrir, editar y conservar el original",
+      "status": "passed",
+      "duration_ms": 1880,
+      "console_errors": 1,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "pesajes: corrección de versión aprobada, original conservado y comparación incompatible",
+      "status": "passed",
+      "duration_ms": 1672,
+      "console_errors": 2,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 400,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/pesajes/01a12f38-3935-79bb-ad1c-19193038034e/correcciones"
+        }
+      ]
+    },
+    {
+      "title": "capturas del recorrido principal",
+      "status": "passed",
+      "duration_ms": 13158,
+      "console_errors": 6,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "respuesta perdida: conserva intento tras recarga y consulta resultado sin duplicar",
+      "status": "passed",
+      "duration_ms": 1015,
+      "console_errors": 2,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        }
+      ]
+    },
+    {
+      "title": "usuario auditor real: lectura, permisos vigentes y ausencia de credenciales persistidas",
+      "status": "passed",
+      "duration_ms": 1718,
+      "console_errors": 3,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 403,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/contrapartes"
+        }
+      ]
+    },
+    {
+      "title": "gastos: tarifa consultada y aceptada, pesos medidos y tres métodos canónicos",
+      "status": "passed",
+      "duration_ms": 3568,
+      "console_errors": 2,
+      "page_errors": [],
+      "http_errors": [
+        {
+          "status": 401,
+          "path": "/api/v1/sesion/actual"
+        },
+        {
+          "status": 422,
+          "path": "/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/operaciones/01a12f39-0afc-71c6-96df-3bf3383daa0a/acordar"
+        }
+      ]
+    }
+  ]
+}

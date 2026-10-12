@@ -139,3 +139,19 @@ Respaldo con pausa8,038s; API fuente reanudada y salud comprobada antes del ensa
 - PDF único de239páginas/23capítulos,308marcadores/309enlaces: [manual](../pdf/BoviCierre_Manual_Integral.pdf), [proveniencia y compilación](../manual/README.md), [QA y SHA](../manual/verification.json). Revisión de código92d3d41; no prueba nueva del comportamiento económico. 239páginas renderizadas, revisión de contactos/páginas detalladas, cero spans fuera de página y cero coincidencias con once credenciales privadas. LaTeX sin Overfull ni Missing character; PDF legible por extracción y Poppler.
 - [Acceso real](evidence/local-access-2026-10-12.json): ocho contenedores activos, saludA/B/auth disponible, CSRF/loginADMIN204, sesión de dos sedes y periodosOctABIERTO consultados, logout204. Apertura mediante xdg-openexit0; pestaña no comprobada visualmente, ChromeMCP sin Xserver/Cua sinbrowser. Sin reinicio, reseed ni escritura financiera.
 - Casillas: instrucción del usuario cambia su significado a verificación técnica local.52marcadas;A028externa,A031/J020diferidas.55revisiones humanas pendientes; no se declara aprobación del profesor ni PR revisada. README y backlog se generan desde el mismo estado.
+
+## Campaña UI/UX + QA (Claude) · S1 rediseño · 12-oct-2026
+
+Ejecutor: agente Claude Opus 5.5 (Claude Code 2.1.296), rama local `feature/uiux-qa-claude` desde `38ccdc3`. Revisión humana pendiente.
+
+| Comprobación | Comando | Resultado |
+|---|---|---|
+| Build + typecheck | `npm --prefix frontend run build` | PASS (Vite 8.0.3; CSS 23 KB, fuente 48 KB) |
+| Unitarias frontend | `npm --prefix frontend test` | 14 pass / 0 fail / 0 skip (13 previas + `tone.test.ts`) |
+| Regresión E2E con API real (Caddy 15180) | `BOVI_UI_TEST_URL=http://127.0.0.1:15180 npm --prefix frontend run test:e2e -- closure.spec.ts additional.spec.ts keyboard.spec.ts` | 15 pass / 0 fail / 0 skip, 1.3 min ([log](evidence/ui-redesign/20261012T0214/e2e-regression-final.log)) |
+| Recorrido visual 3 anchos, sin mutaciones | `… test:e2e -- visual.spec.ts` | PASS; 0 vistas con desbordamiento horizontal ([report](evidence/ui-redesign/20261012T0214/after/report.json)) |
+| Errores en tiempo de ejecución | `/tmp/bovicierre-ui-runtime-*.json` → [resumen](evidence/ui-redesign/20261012T0214/runtime-summary.json) | 0 page errors; HTTP ≥400 sólo deliberados: 401 `/sesion/actual` inicial ×22, 502 simulado ×1, 409/422/400 de validación negativa, 403 de rol auditor |
+| Contraste de tokens | `python3 tools/ui/contrast.py` | 20/20 pares OK tras corregir borde de controles (2.07→3.69:1) |
+| No ejecutado | `provider.spec.ts` (detiene el proveedor; requiere ventana aislada), lector de pantalla, teléfono físico, axe | Pendiente |
+
+Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistema (es_ES invierte día/mes en `datetime-local`) y fijaba la fecha esperada a octubre de 2026. Se fijó `--lang=en-US` en ese spec y se calcula el valor esperado desde la fecha tecleada. La primera ejecución de la regresión dio 14/15 por esa causa ([log](evidence/ui-redesign/20261012T0214/e2e-regression.log)).

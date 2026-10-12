@@ -1,0 +1,9 @@
+{
+  "name": "bovicierre-workbench",
+  "version": "0.1.0",
+  "description": "Control de sesión/continuidad y de evidencia para la campaña BoviCierre; inactivo fuera de ese repositorio.",
+  "types": "./types/index.d.ts",
+  "author": {
+    "name": "BoviCierre (Aldo; agente Claude Opus 5.5)"
+  }
+}

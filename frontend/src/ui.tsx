@@ -1,6 +1,7 @@
 import {createContext,useContext,useEffect,useId,useRef,useState,type FormEvent,type ReactNode} from 'react';
 import {ApiError,createAttempt,executeAttempt,request,readPending,rememberPending,forgetPending,keepAttempt,type Attempt} from './api';
 import {text,type Row,type Page} from './domain';
+import {toneOf,statusColumns} from './tone';
 export function useResource<T>(path:string,revision=0){
     const [state,setState]=useState<{data?:T;etag?:string;loading:boolean;error?:Error}>({loading:true});
     const [reload,setReload]=useState(0);
@@ -11,7 +12,7 @@ export function Notice({error}:{error?:Error}){return error?<div className="noti
 export function State({loading,error,empty,reload,children}:{loading:boolean;error?:Error;empty?:boolean;reload:()=>void;children:ReactNode}){
     if(loading)return <div className="loading" role="status"><span/>Consultando datos de la sede…</div>;
     if(error)return <div className="empty"><Notice error={error}/><button className="secondary" onClick={reload}>Volver a consultar</button></div>;
-    if(empty)return <div className="empty"><strong>Todo listo para empezar</strong><p>No hay registros en esta sede. Usa la acción de esta pantalla para agregar el primero.</p></div>;
+    if(empty)return <div className="empty"><span className="empty-mark" aria-hidden="true"/><strong>Todo listo para empezar</strong><p>No hay registros en esta sede. Usa la acción de esta pantalla para agregar el primero.</p></div>;
     return children;
 }
 const FieldErrors=createContext<Record<string,string>>({});
@@ -27,8 +28,11 @@ export function CommandForm({path,build,method='POST',etag,children,label,onDone
     function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();if(attempt){void execute(attempt,true);return;}try{const next=createAttempt(path,build(new FormData(e.currentTarget)),method,etag);rememberPending(next);setAttempt(next);void execute(next);}catch(e){setError(e as Error);setTimeout(()=>ref.current?.focus(),0);}}
     return <form onSubmit={submit} className="command"><div ref={ref} tabIndex={-1}>{error&&<><Notice error={error}/>{error instanceof ApiError&&error.details.campos?.map(f=><p className="field-error" key={f.campo}><a href={`#${scope}-${f.campo}`}>{f.campo}: {f.problema}</a></p>)}</>}</div><FormScope.Provider value={scope}><FieldErrors.Provider value={error instanceof ApiError?Object.fromEntries((error.details.campos||[]).map(f=>[f.campo,f.problema])):{}}><fieldset disabled={busy||unresolved}>{children}</fieldset></FieldErrors.Provider></FormScope.Provider>{success&&<p className="notice success" role="status">Registro confirmado por el servidor.</p>}{error instanceof ApiError&&error.status===409&&!busy&&<button className="secondary" type="button" onClick={()=>{forgetPending(path);setAttempt(undefined);setError(undefined);}}>Resolver conflicto y volver a capturar</button>}{unresolved&&!busy&&<p className="notice">La captura está protegida. Reintenta con el mismo contenido y la misma clave; no crees otro registro.</p>}<button disabled={busy} className="primary">{busy?'Esperando respuesta…':unresolved?'Reintentar el mismo comando':label}</button></form>;
 }
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Identificadores técnicos completos en monoespaciado; el texto no se recorta ni se sustituye.
+function Cell({value}:{value:unknown}){const shown=text(value);return UUID.test(shown)?<span className="uuid">{shown}</span>:<>{shown}</>;}
 export function DataTable({rows,columns,onSelect}:{rows:Row[];columns:{key:string;label:string;money?:boolean}[];onSelect?:(row:Row)=>void}){
-    return <div className="table-region" role="region" aria-label="Registros de la sede" tabIndex={0}><table><thead><tr>{columns.map(c=><th className={c.money?'numeric':''} key={c.key} scope="col">{c.label}</th>)}{onSelect&&<th scope="col">Detalle</th>}</tr></thead><tbody>{rows.map((row,index)=><tr key={row.id||index}>{columns.map(c=><td className={c.money?'numeric':['tipo','direccion','unidad','unidad_precio','naturaleza'].includes(c.key)?'short-value':''} key={c.key}>{c.key==='estado'?<span className="badge">{text(row[c.key])}</span>:text(row[c.key])}</td>)}{onSelect&&<td><button className="text-button" onClick={()=>onSelect(row)}>Abrir <span className="sr-only">{text(row.folio||row.nombre||row.id)}</span></button></td>}</tr>)}</tbody></table></div>;
+    return <div className="table-region" role="region" aria-label="Registros de la sede" tabIndex={0}><table><thead><tr>{columns.map(c=><th className={c.money?'numeric':''} key={c.key} scope="col">{c.label}</th>)}{onSelect&&<th scope="col">Detalle</th>}</tr></thead><tbody>{rows.map((row,index)=><tr key={row.id||index}>{columns.map(c=><td className={c.money?'numeric':['tipo','direccion','unidad','unidad_precio','naturaleza'].includes(c.key)?'short-value':''} key={c.key}>{statusColumns.has(c.key)&&typeof row[c.key]==='string'?<span className="badge" data-tone={toneOf(row[c.key])}>{text(row[c.key])}</span>:<Cell value={row[c.key]}/>}</td>)}{onSelect&&<td><button className="text-button" onClick={()=>onSelect(row)}>Abrir <span className="sr-only">{text(row.folio||row.nombre||row.id)}</span></button></td>}</tr>)}</tbody></table></div>;
 }
 export function List({path,columns,revision=0,onSelect,filters=[]}:{path:string;columns:{key:string;label:string;money?:boolean}[];revision?:number;onSelect?:(row:Row)=>void;filters?:{name:string;label:string;options:string[]}[]}){
     const [page,setPage]=useState(1);const [query,setQuery]=useState('');const [search,setSearch]=useState('');const [values,setValues]=useState<Record<string,string>>({});const qs=new URLSearchParams({pagina:String(page),tamano:'20',...(search?{q:search}:{}),...Object.fromEntries(Object.entries(values).filter(([,value])=>value))});const res=useResource<Page>(path+(path.includes('?')?'&':'?')+qs.toString(),revision);

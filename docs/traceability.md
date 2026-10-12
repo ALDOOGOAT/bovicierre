@@ -41,3 +41,7 @@ Los archivos y logs se enlazan desde `docs/testing/evidence.md`; diagramas desde
 ## Entrega documental y verificación local · 12-oct-2026
 
 Manual239páginas → [fuente y QA](manual/README.md) → código92d3d41, reglasRN/GOLD,24unidadesJava,75funcionesfrontend,70operacionesHTTP/49schemas,32funcionesSQL ydiagramas. Primeruso → [runbook](runbooks/local-use.md) → [CSRF/login/sedes/periodos/salud reales](testing/evidence/local-access-2026-10-12.json). Casilla técnica[x] → estadoverificado_local → evidencia propia de cadaTASK; revisiónhumana permaneceindependiente. PublicaciónGitHub no equivale a despliegue público.
+
+## Rediseño S1 · 12-oct-2026
+
+UQ-004..007 → [brief](ui/redesign-brief.md) / [decisiones UXD-01..11](ui/redesign-decisions.md) / [assets](ui/asset-register.md) → `frontend/src/styles.css`, `brand.tsx`, `tone.ts`, `ui.tsx` (insignias, UUID), `App.tsx` (shell, acceso, sede) → `tests/tone.test.ts`, `tests_e2e/visual.spec.ts`, regresión closure/additional/keyboard → [evidencia](testing/evidence/ui-redesign/20261012T0214/). Sin cambios de API, SQL ni reglas RN.

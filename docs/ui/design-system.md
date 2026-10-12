@@ -1,24 +1,37 @@
-# Sistema visual implementado
+# Sistema visual implementado (v2, rediseño S1 del 12-oct-2026)
 
-BoviCierre usa una identidad B2B sobria común a acceso, operación, inventario, dinero y control. Implementación: `frontend/src/styles.css`; pantallas y API: [flujos](flows-and-screens.md), [contrato](../api/openapi.yaml). Los datos provienen de la API de la sede autorizada; no hay gráficas, cifras ni historiales ficticios.
+BoviCierre es un centro de operaciones para la compraventa de bovinos en pie. Implementación: `frontend/src/styles.css` (tokens en `:root`), `frontend/src/brand.tsx` (marca e iconos), `frontend/src/tone.ts` (tono de estados). Pantallas y API: [flujos](flows-and-screens.md), [contrato](../api/openapi.yaml). Los datos provienen de la API de la sede autorizada; no hay gráficas, cifras ni historiales ficticios. Motivos y alternativas: [decisiones](redesign-decisions.md); procedencia de fotos/fuente: [registro de assets](asset-register.md).
 
-| Token | Valor | Uso |
-|---|---|---|
-| Fondo | `#F6F7F4` | Espacio de trabajo |
-| Texto | `#17211B` | Lectura principal |
-| Acción | `#1F5A43` | Confirmación y selección |
-| Superficie | `#FFFFFF` | Formularios y tablas |
-| Secundario | `#5A685F` | Contexto y etiquetas |
-| Borde | `#D8E0D8` | Separación visual |
-| Foco | `#B37710`, 3 px | Navegación por teclado |
-| Error | `#9F2922` | Mensaje textual y campo |
+## Tokens
 
-Tipografía del sistema, importes completos con dígitos tabulares y moneda explícita. Escala de espacio 4/8 px; cuerpo de 14 px en escritorio, controles de 16 px en móvil. Las tablas extensas desplazan dentro de una región identificada y enfocable. Acciones con objetivo mínimo de 44 px; encabezados y campos envuelven identificadores largos. A 767 px se apilan formularios, encabezado y bloques financieros; la navegación usa un selector nativo compacto con los cuatro grupos.
+| Grupo | Token | Valor | Uso |
+|---|---|---|---|
+| Verde | `--green-900` / `-800` / `-700` | `#123326` / `#173F2F` / `#1E4D3A` | Sidebar, resumen de saldo, acción primaria |
+| Verde claro | `--green-100` / `-50` | `#E3EEE6` / `#F1F6F2` | Selección, hover de filas |
+| Tierra | `--earth-700` / `-500` / `-200` / `-100` | `#6B4F2E` / `#9A7448` / `#E8DCC7` / `#F3EBDD` | Eyebrows, marca, avatar, línea de tiempo |
+| Neutros | `--bg` / `--surface` / `--surface-2` | `#F7F5EF` / `#FFFFFF` / `#FBFAF6` | Fondo cálido, tarjetas, encabezados de tabla y filtros |
+| Texto | `--ink` / `--muted` | `#1A231D` / `#57635A` | Lectura principal / secundaria |
+| Bordes | `--line` / `--line-strong` | `#E2DED3` / `#8A8574` | Separadores / borde de controles (3.69:1) |
+| Estados | `--ok`, `--info`, `--warn`, `--error` (+ `-bg`, `-line`) | `#1E5B3E`, `#24507A`, `#7A5300`, `#9F2922` | Insignias y avisos |
+| Foco | `--focus` | `#B37710`, 3 px (sidebar `#F2C46B`) | Navegación por teclado |
+| Espacio | `--s1`…`--s10` | 4, 8, 12, 16, 20, 24, 32, 40 px | Escala 4/8 |
+| Radios | `--r-sm` / `-md` / `-lg` | 6 / 10 / 14 px | Controles / bloques / paneles |
+| Tipografía | `--font` | Inter Variable local (OFL) → `system-ui` | Cuerpo 15 px; h1 30 px (26 px móvil); controles móviles 16 px |
 
-Las decisiones reutilizan [referencias públicas ya verificadas](references.md): mantener importe legible, reunir evidencia de operación y separar registro de pago/aplicación. Se leyó UI UX Pro Max y se ejecutaron `search.py 'B2B financial operations dashboard' --design-system -p BoviCierre --density 8` y `search.py 'accessible forms state management' --stack react`. Su patrón promocional y modo oscuro no se adoptaron porque esta interfaz sirve al trabajo operativo; se aplican sus reglas de etiquetas, foco y controles.
+Contraste comprobado con `python3 tools/ui/contrast.py` (20 pares, todos ≥4.5:1 para texto y ≥3:1 para foco y bordes de controles, referencia WCAG 2.2). Es una verificación de tokens, no una certificación WCAG de toda la aplicación.
 
-Los formularios muestran el error del servidor junto al campo mediante `aria-describedby`, enfocan el resumen tras envío fallido y preservan los valores. Reintentos de comandos preservan contenido, clave y versión en sessionStorage por principal y sede, con captura bloqueada mientras el resultado sea incierto. Cada ruta incluye la sede; al cambiar de sede se desmonta su contenido y AbortController cancela los GET pendientes. Para archivos y altas de usuario se persiste únicamente clave y huella SHA256; el contenido binario o contraseña requiere nueva selección al recargar. Sesión en cookie y CSRF en memoria; no se guardan contraseñas ni tokens en localStorage. Importes y pesos conservan cadenas decimales; el navegador no suma totales.
+## Componentes y reglas
+- **Shell:** sidebar verde oscuro con iconos lineales originales y grupo activo marcado con barra tierra; barra superior fija con sede activa ("Sede activa · cambiar") y avatar de iniciales. En ≤767 px la navegación es un selector nativo y la barra deja de ser fija.
+- **Insignias de estado:** columnas `estado`, `estado_entrega`, `estado_pago`, `situacion`, `estado_convergencia`, `estado_revision`, `resultado`. Color + forma del marcador: positivo (círculo), en curso (aro), atención (rombo), crítico (guion), neutro. El texto es el valor exacto de la API; comercial, físico y pago se muestran como insignias separadas.
+- **Tablas:** encabezado en mayúsculas pequeñas sobre `--surface-2`, filas de ~48 px, desplazamiento propio dentro de una región enfocable; en móvil `min-width:680px`. Identificadores UUID completos en monoespaciado gris. Importes a la derecha con dígitos tabulares y moneda.
+- **Formularios:** etiqueta real con `*` de requerido, ayuda y error inline (`aria-describedby`), resumen enfocable tras error, borde de error doble. Filtros de lista en un bloque `--surface-2`.
+- **Liquidación:** saldo pendiente en bloque verde con botón tierra; desglose con total en negrita; hechos (operación/entrega/contraparte) en rejilla separada del dinero.
+- **Estados de carga/vacío/error:** spinner con texto, vacío con marca bovina, error con acción "Volver a consultar"; éxito sólo tras respuesta del servidor ("Registro confirmado por el servidor."); resultado incierto bloquea la captura y ofrece reintento con la misma clave.
+- **Acceso y sede:** foto editorial de dominio público con degradado verde (texto ≥ contraste del degradado), formulario en tarjeta; selección de sede con foto de pastoreo, código, roles y disponibilidad.
+- Objetivos de 44 px en botones, enlaces de navegación y filas seleccionables; `prefers-reduced-motion` desactiva animaciones y transiciones; estilos de impresión ocultan la navegación.
 
-La compilación y las pruebas unitarias son verificaciones estructurales. La verificación visual y el recorrido con API real deben registrarse por separado en [evidencia](../testing/evidence.md); no se declara prueba de teléfono físico ni rendimiento GPU a partir de la compilación.
+## Lo que no cambió
+Comportamiento de `api.ts`, idempotencia y reintentos (sessionStorage sólo clave y huella por principal y sede), AbortController al cambiar de sede, sesión en cookie y CSRF en memoria, importes como cadenas decimales sin sumas en el navegador, textos de botones y etiquetas.
 
-La revisión en Chrome con GPU Intel confirmó ausencia de desplazamiento horizontal global en 390, 768 y 1440 px. Las tablas conservan desplazamiento propio; los textos accesibles de sus botones están anclados a cada botón para no extender el documento. Las capturas y los resultados del recorrido real se registran aparte del build.
+## Verificación registrada
+`docs/testing/evidence/ui-redesign/20261012T0214/`: capturas antes/después en 390/768/1440 px (14 vistas), comparaciones lado a lado, 15 E2E con API real PASS, recorrido visual sin desbordamiento horizontal (`clientWidth`), resumen de errores HTTP esperados. Revisión de lector de pantalla y teléfono físico: **no realizadas**.
