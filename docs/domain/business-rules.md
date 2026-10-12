@@ -3,7 +3,42 @@
 Fuente canónica de las reglas. Origen: **MP** = megaprompt §5 (propuesta del producto); **DEC-xx** = decisión registrada en `docs/research/evidence-register.md`. Línea base de diseño: 2026-10-10. Al 2026-10-11 existen implementación SQL/Java y pruebas locales por incremento; el resultado y alcance de cada ejecución se registran en [evidencia](../testing/evidence.md). La presencia de una RN o un TEST en esta tabla no acredita por sí sola su cumplimiento completo.
 
 ## Convención de errores
-Errores de dominio levantados por PL/pgSQL con `RAISE EXCEPTION ... USING ERRCODE = 'P0001', DETAIL = json` (objeto validado con `codigo`, `regla_id` y campos públicos) y mapeados por la API: `BV0xx` → 422 (regla de dominio), `BV4xx` → 409 (conflicto/concurrencia/idempotencia), `BV5xx` → 503 (dueño no disponible). Errores nativos relevantes: `23505` unique_violation → 409, `23503` foreign_key_violation → 422, `23514` check_violation → 422, `42501` insufficient_privilege → 403 (sólo pruebas de rol), `40001`/`40P01` → reintento acotado.
+Errores de dominio levantados por PL/pgSQL con `RAISE EXCEPTION ... USING ERRCODE = 'P0001', DETAIL = json` (objeto validado con `codigo`, `regla_id` y campos públicos) y mapeados por la API: `BV0xx` → 422 (regla de dominio), `BV4xx` → 409 (conflicto/concurrencia/idempotencia) salvo `BV404` → 404, `BV412` → 412 y `BV428` → 428, `BV5xx` → 503 (dueño no disponible); ver el catálogo regenerado abajo (DIV-07). Errores nativos relevantes: `23505` unique_violation → 409, `23503` foreign_key_violation → 422, `23514` check_violation → 422, `42501` insufficient_privilege → 403 (sólo pruebas de rol), `40001`/`40P01` → reintento acotado.
+
+### Catálogo de códigos emitidos (regenerado 12-oct-2026, DIV-07)
+Fuente: `regexp_matches` sobre `pg_proc.prosrc` de `bovi` en la base V15 (`'codigo','BVxxx','regla_id','RN-xxx'`) y `git grep 'ApiException(…)'` en `backend/src/main`. Si un código no aparece aquí, ningún objeto lo emite.
+
+| Código | HTTP | Origen | Reglas que lo citan al emitirlo |
+|---|---|---|---|
+| BV010 | 422 | SQL | RN-004 |
+| BV011 | 422 | SQL | RN-005, RN-017 |
+| BV013 | 422 | SQL | RN-013, RN-014 |
+| BV015 | 422 | SQL y Java (CHECK 23514, NOT NULL 23502, FK 23503, tipos) | RN-001, 013, 017, 020, 029, 034, 035, 037, 044 |
+| BV016 | 422 | SQL (triggers de inmutabilidad V2/V14 y comandos) | RN-023, RN-035 |
+| BV018 | 422 | SQL | RN-013, RN-026 |
+| BV020 | 422 | SQL | RN-029 |
+| BV021 | 422 | SQL | RN-030 |
+| BV022 | 422 | SQL (aplicación inexistente; segundo reverso, V15) | RN-033 |
+| BV023 | 409/413/422 | Java (documentos: integridad, tamaño, tipo) | RN-037 |
+| BV024 | 422 | SQL | RN-038 |
+| BV025 | 422 | SQL | RN-039 |
+| BV026 | 422 | SQL (venta no anulable / composición) | RN-020 |
+| BV400 | 400 | Java (forma, paginación, totales enviados, Idempotency-Key) | — |
+| BV401 | 409 | Java (UNIQUE `uk_*`/`*_key` 23505, referencias) | RN-003 |
+| BV402 | 409 | SQL (posición comprometida; lease de outbox, DIV-17) | RN-018, RN-044 |
+| BV403 | 409 | SQL | RN-019 |
+| BV404 | 404 | SQL y Java | RN-001, 017, 032, 035, 039 |
+| BV405 | 409 | SQL | RN-032 |
+| BV409 | 409 | Java (40001/40P01 tras reintentos) | RN-017 |
+| BV412 | 412 | SQL y Java (`version_lock`) | RN-017 |
+| BV428 | 428 | Java (falta If-Match) | RN-017 |
+| BV500 | 500 | Java (error interno sin detalle) | — |
+| BV501 | 503 | SQL y Java (dueño no disponible/no configurado) | RN-017, RN-041 |
+| BV503 | 503 | Java (almacenamiento privado) | RN-037 |
+| AUTH401 / AUTH403 / AUTH429 | 401/403/429 | Java (sesión, permiso/CSRF, límite de intentos y sesiones) | — |
+
+**Citados en esta tabla de reglas pero no emitidos:** `BV012` (RN-011), `BV014` (RN-016), `BV017` (RN-025, el CHECK de `clasificacion` sale como BV015) y `BV019` (RN-027). Quedan como reservados; no se asignan a otro significado.
+
 
 Actores: **ADM** administrador · **OPE** operador · **CAJ** caja · **AUD** auditor · **SIS** sistema (comando/trigger).
 
@@ -42,9 +77,9 @@ Actores: **ADM** administrador · **OPE** operador · **CAJ** caja · **AUD** au
 | RN-031 | Importe no aplicado queda como anticipo/saldo a favor; no es venta adicional | Separar caja y margen | SIS | — | — | saldo derivado del pago | — | Vista de saldos | TEST-04 | MP |
 | RN-032 | Misma clave + mismo payload devuelve el resultado previo; misma clave + payload distinto = conflicto | Idempotencia | SIS | — | Reclamo de clave | clave_idempotencia | `BV405`→409 | Tabla + hash SHA-256 del payload canónico | TEST-12 | MP |
 | RN-033 | Reversar conserva original y crea contramovimiento; se verifica efecto en aplicaciones relacionadas | Historia | CAJ/ADM | Original no revertido | RevertirAplicacion | aplicacion_pago.reverso_de_id UNIQUE | `BV022` | Comando | TEST-07 | MP, DEC-09 |
-| RN-034 | Importes con NUMERIC y BigDecimal; nunca float/double | Exactitud | — | — | — | todos los importes | — | Tipos; prueba de lint | TEST-03 | MP |
-| RN-035 | Margen = ventas reconocidas − costo de posiciones vendidas − gastos directos; cobros no afectan margen | Separar devengo y caja | SIS | — | — | vistas de reporte | — | Vista `v_margen_operacion` | TEST-01 | MP |
-| RN-036 | Si faltan costos o revisiones, margen PROVISIONAL; nunca "utilidad neta" | Honestidad del reporte | SIS | — | Etiqueta | vista de margen | — | Columna derivada | TEST-01 | MP |
+| RN-034 | Importes con NUMERIC y BigDecimal; nunca float/double | Exactitud | — | — | — | todos los importes | — | NUMERIC en SQL; cadena decimal exacta validada en `JsonSupport.decimals`; `MoneyTypesLintTest` (sin float/double) | TEST-03 | MP |
+| RN-035 | Margen = ventas reconocidas − costo de posiciones vendidas − gastos directos; cobros no afectan margen | Separar devengo y caja | SIS | — | — | reporte canónico | — | `bovi.fn_reporte(…,'reportes_margen',…)` (V12, vía `consultar`; endpoint `/reportes/margen`). `v_margen_operacion` queda como vista auxiliar de pruebas, comprobada igual al reporte (DIV-06) | TEST-01 | MP |
+| RN-036 | Si faltan costos o revisiones, margen PROVISIONAL; nunca "utilidad neta" | Honestidad del reporte | SIS | — | Etiqueta | `fn_reporte` | — | `etiqueta` CERRADO sólo sin `faltantes` | TEST-01 | MP |
 | RN-037 | Evidencias con versión, hash, tamaño, tipo y control de acceso; hash detecta cambios, no prueba autoría | Integridad de archivos | OPE | — | — | documento | `BV023` | SHA-256 + almacenamiento privado | TEST-34 | MP |
 | RN-038 | Cancelación, pérdida, muerte, devolución y venta son motivos distintos con evidencia y autorización; no borrar animales | Trazabilidad | ADM | — | RegistrarBajaInventario → BAJA | posicion_inventario.motivo_baja, animal.situacion | `BV024` | Comando; sin DELETE | TEST-08, TEST-33 | MP, DEC-03/04 |
 | RN-039 | Periodo cerrado impide ediciones retroactivas; reapertura con permiso y bitácora | Cierres confiables | ADM | — | Cerrar/ReabrirPeriodo | periodo_cierre, cierre_periodo_version | `BV025` | Lock de fila de periodo | TEST-09 | MP |

@@ -1,0 +1,34 @@
+liquidacion                filas=215    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+concepto_liquidacion       filas=231    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+ajuste_liquidacion         filas=21     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+asignacion_costo           filas=315    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+asiento_valoracion         filas=434    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+aplicacion_pago            filas=93     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+cierre_periodo_version     filas=38     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+movimiento_inventario      filas=103    update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+documento                  filas=54     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+auditoria_evento           filas=6171   update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+evento_outbox              filas=6171   update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+revision_administrativa    filas=35     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+revision_documento         filas=35     update=BLOQUEADO_BV016    delete=BLOQUEADO_BV016
+OP-CONF-UPD                operacion            esperado=BLOQUEADO  obtenido=BLOQUEADO
+OP-CONF-REABRIR            operacion            esperado=BLOQUEADO  obtenido=BLOQUEADO
+OP-CONF-DEL                operacion            esperado=BLOQUEADO  obtenido=BLOQUEADO
+OP-CANC-UPD                operacion            esperado=BLOQUEADO  obtenido=BLOQUEADO
+OP-CANC-DEL                operacion            esperado=BLOQUEADO  obtenido=BLOQUEADO
+OP-ANUL-REVIVIR            operacion            esperado=BLOQUEADO  obtenido=BLOQUEADO
+GASTO-APR-UPD              gasto_operacion      esperado=BLOQUEADO  obtenido=BLOQUEADO
+GASTO-APR-DEL              gasto_operacion      esperado=BLOQUEADO  obtenido=BLOQUEADO
+PAGO-VAL-UPD               pago                 esperado=BLOQUEADO  obtenido=BLOQUEADO
+PAGO-VAL-DEL               pago                 esperado=BLOQUEADO  obtenido=BLOQUEADO
+POS-CERR-REABRIR           posicion_inventario  esperado=BLOQUEADO  obtenido=BLOQUEADO
+POS-CERR-DEL               posicion_inventario  esperado=BLOQUEADO  obtenido=BLOQUEADO
+POS-BAJA-UPD               posicion_inventario  esperado=BLOQUEADO  obtenido=BLOQUEADO
+OP-CONF-ENTREGA            operacion            esperado=PERMITIDO  obtenido=PERMITIDO
+OP-CONF-ANULAR             operacion            esperado=PERMITIDO  obtenido=PERMITIDO
+GASTO-BORR-UPD             gasto_operacion      esperado=PERMITIDO  obtenido=PERMITIDO
+PAGO-REG-UPD               pago                 esperado=PERMITIDO  obtenido=PERMITIDO
+POS-VEND-LIBERAR           posicion_inventario  esperado=PERMITIDO  obtenido=PERMITIDO
+fallos=0 sin_fixture=[] filas_intactas=True
+
+--- stderr ---

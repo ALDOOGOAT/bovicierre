@@ -7,6 +7,6 @@ La materia evalúa SQL, PL/pgSQL y transacciones; los importes deben ser reprodu
 2. **JdbcTemplate + Flyway + funciones PL/pgSQL canónicas.**
 3. jOOQ — buena opción, añade generación de código.
 ## Decisión
-Opción 2. Importes confirmados se calculan en `fn_calcular_liquidacion` (SQL) y se congelan; la previsualización llama la misma función sin persistir. Java usa BigDecimal y valida; no recalcula con otra fórmula.
+Opción 2. Importes confirmados se calculan en `fn_calcular_liquidacion` (SQL) y se congelan; la previsualización llama la misma función sin persistir. Java valida importes como cadena decimal exacta (`JsonSupport.decimals`) y no recalcula con otra fórmula; no usa coma flotante (`MoneyTypesLintTest`, corrección DIV-12b del 12-oct-2026: el texto previo decía BigDecimal, que el backend no usa).
 ## Consecuencias
 + SQL visible y evaluable; una sola fórmula. − Más SQL a mano; mapeos explícitos. Pruebas con PostgreSQL real (Testcontainers), nunca H2.

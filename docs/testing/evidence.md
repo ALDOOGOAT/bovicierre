@@ -183,4 +183,5 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 ### V15 y contrato (parcial, 12-oct-2026)
 - DIV-08: fase roja `gold.py` (23505 en el segundo reverso) → V15 `reverso_unico` → `make verify-sql` 37/37 PASS con negativo BV022. V15 aplicada en A/B.
 - DIV-12: OpenAPI con `periodo_id`/`fecha_reconocimiento`/`operacion_id` en movimientos (`if tipo=BAJA`) y `motivo` en anular; Redocly válido; `generate:api` regenerado; build frontend OK. DIV-12b: `MoneyTypesLintTest` 2/2 (sin float/double en backend, sin parseFloat/toFixed en frontend).
-- Puerta completa `make verify-release-local` **no repetida** tras V15; recuperación no repetida tras V15.
+- Puerta completa tras V15: **PASS** — frontend 14, backend 30 (incluye `MoneyTypesLintTest`), SQL 37, inmutabilidad 44, E2E 16, seguridad 63, 0 omitidos ([release-gate](evidence/release-local/20261012T0702/release-gate.json)). Restauración V15 conciliada en 31.6 s, 5 triggers y TEMP revocado ([restore-v15](evidence/recovery/restore-v15.json)).
+- DIV-06: `gold.py same_margin` vista = `consultar('reportes_margen')` en GOLD-02/07 y GOLD-01; `gold.py` PASS (158 llamadas, rollback). DIV-07: catálogo regenerado en business-rules.

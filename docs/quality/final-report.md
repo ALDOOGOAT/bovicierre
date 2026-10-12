@@ -10,7 +10,7 @@
 | Bloque | Estado | Tiempo activo estimado | Notas |
 |---|---|---|---|
 | S1 UI/UX | S1_DONE (técnico) | ≈180 min (incluye ≈30 de preparación) | Dentro de 300 |
-| S2 coherencia/QA | S2_SAFE_PARTIAL | ≈175 min | Dentro de 300; incluye V14; pendientes priorizados abajo |
+| S2 coherencia/QA | S2_SAFE_PARTIAL | ≈225 min | Dentro de 300; incluye V14 y V15; pendientes priorizados abajo |
 
 Continuidad: los checkpoints (`tools/claude/checkpoint.py`, estado privado en `~/.local/state/bovicierre-claude/`) y `docs/continuity/NEXT_SESSION.md` se mantuvieron desde el inicio. **No hubo corte por cuota** en esta sesión, así que la continuación nativa al reset **no se ejercitó**; la opción *Continue automatically at usage limit* no estaba activada en la configuración de usuario y no se activó por atajo. S2 se ejecutó a continuación de S1 porque el usuario lo pidió explícitamente y no había hora de reset verificable.
 
@@ -27,6 +27,8 @@ Registrados en scope usuario: MCP `api-anything` (Connected), skills `ui-ux-pro-
 | DIV-03 | RN-023: sólo 4 de 13 tablas inmutables con prueba | Hechos confirmados no se reescriben | `db/tests/immutability.py` 26/26 BV016 |
 | SF-01 | ADMIN de una sede administraba usuarios de otra | Autorización por sede en servidor | dinámico 404, usuario de A intacto |
 | DIV-04 (V14) | Estados terminales (`operacion` CONFIRMADA/ANULADA/CANCELADA, `gasto_operacion` APROBADO, `pago` VALIDADO/REVERTIDO, `posicion_inventario` CERRADA_VENTA/BAJA) sólo protegidos por el código; borrar un pago VALIDADO se permitía | Hechos confirmados inmutables en la base | `immutability.py` 44/44 (fase roja previa 13 fallos) |
+| DIV-08 (V15) | Segundo reverso salía 409 genérico por UNIQUE | RN-033 exige BV022 | `gold.py` fase roja 23505 → verde |
+| DIV-06 / DIV-07 / DIV-12 | Dos fórmulas de margen; catálogo de códigos desalineado; OpenAPI sin campos obligatorios de BAJA/anular; RN-034 prometía BigDecimal | Contrato y documentación fieles al código | `same_margin`, Redocly, `MoneyTypesLintTest` 2/2 |
 | SF-08 (V14) | `search_path` sin `pg_temp`; TEMP para PUBLIC | Sombreado de catálogos | `security.sql` en A/B y restaurada; `CREATE TEMP` → 42501 |
 | SF-02 / SF-03 / SF-04 / SF-05 / SF-17 / SF-21 | Login sin límite; sesiones anónimas de 30 min; sin CSP/XFO; JSON sin límite; regex del mod; vite vulnerable (dev) | Ver [findings](../security/findings.md) | `LoginThrottleTest` 4/4, dinámico, E2E sin violaciones CSP |
 
@@ -58,7 +60,7 @@ Recuperación **repetida tras V14**: respaldo previo y posterior; el primer `res
 
 ## 9. Qué falta (separado)
 - **Profesor / entrega 31-oct:** revisión humana de Aldo y Jared de S1/S2; revisar los MER/relacional contra la matriz (no se tocaron diagramas en esta campaña); `/graphify . --update` semántico de los documentos nuevos.
-- **Piloto:** decidir SF-09 (RLS/contexto de actor o ADR de riesgo aceptado); DIV-06 (fórmula canónica de margen), DIV-07/08 (catálogo de códigos), DIV-12 (OpenAPI BAJA/anular); SF-06/07; escáneres SCA/DAST; carga sostenida 15–20 min y dataset grande.
+- **Piloto:** decidir SF-09 (RLS/contexto de actor o ADR de riesgo aceptado); DIV-05/09/10 y bajas restantes; SF-06/07; escáneres SCA/DAST; carga sostenida 15–20 min y dataset grande.
 - **Despliegue:** staging/TLS, backup fuera del host, PITR, HA — fuera del alcance local.
 
 ## 10. Comandos
@@ -70,3 +72,5 @@ BOVI_SECRET_DIR=$HOME/.local/share/bovicierre-academic/secrets k6 run tests/perf
 python3 tools/claude/resume-check.py --owner <sesión>   # antes de continuar la campaña
 ```
 Siguiente tarea concreta: ver [NEXT_SESSION](../continuity/NEXT_SESSION.md).
+
+**Actualización V15 (12-oct-2026):** puerta local PASS 204 casos sin omitidos ([release-gate](../testing/evidence/release-local/20261012T0702/release-gate.json)); restauración V15 conciliada en 31.6 s con 5 triggers de inmutabilidad y TEMP revocado ([restore-v15](../testing/evidence/recovery/restore-v15.json)).

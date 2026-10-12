@@ -2,7 +2,7 @@
 
 **Instrucción ejecutable:** verificar lock y checkout con `python3 tools/claude/resume-check.py --owner <sesión>`
 (exit 0 requerido); comprobar `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:15180/api/v1/salud` = 200;
-correr `make verify-release-local` (≈3 min, debe dar PASS); después correr la puerta completa (V15 aún no la ha pasado entera) y continuar con DIV-07 y DIV-06.
+correr `make verify-release-local` (≈3 min, debe dar PASS); después continuar con DIV-05/09/10 (siguiente migración libre: V16).
 
 Estado: **S1_DONE**, **S2_SAFE_PARTIAL** (rama local `feature/uiux-qa-claude`, base `38ccdc3`, sin push). Informe: `docs/quality/final-report.md`.
 

@@ -20,6 +20,12 @@ def cmd(name,body,key=None):
  return cur.fetchone()[0]
 
 def q(sql,args=()):cur.execute(sql,args);return cur.fetchone()[0]
+def same_margin(op):
+ # DIV-06: la vista de prueba y el reporte canónico (consultar → fn_reporte, ruta del endpoint) dan las mismas cifras.
+ rep=q("select bovi.consultar(%s,%s,%s,'reportes_margen',%s)",(E,S,U,Jsonb({'operacion_id':str(op)})))
+ cur.execute('select venta_neta,costo_vendido,gastos_directos from bovi.v_margen_operacion where operacion_id=%s',(op,)); v=cur.fetchone()
+ got=tuple(D(rep[k]['importe']) for k in ('venta_neta','costo_vendido','gastos_directos'))
+ assert got==tuple(v) and D(rep['margen']['importe'])==v[0]-v[1]-v[2]-D(rep['perdidas']['importe']),(got,v,rep['margen'])
 def negative(name,body,code,key=None):
  cur.execute('SAVEPOINT invalid')
  try: cmd(name,body,key)
@@ -69,6 +75,7 @@ try:
  expense(buy,200,bonus=late)
  assert q('select costo_vendido from bovi.v_margen_operacion where operacion_id=%s',(sell,))==D('4520')
  assert q('select venta_neta-costo_vendido-gastos_directos from bovi.v_margen_operacion where operacion_id=%s',(sell,))==D('1680')
+ same_margin(sell)
  assert q('select sum(delta_inventario) from bovi.asiento_valoracion')==D('6780')
  print('PASS GOLD-06 fixed: cost4520 inventory6780 margin1680; original debt unchanged')
  third=operation('COMPRA',party,[animal(i) for i in range(30,33)],10);confirm(third);thirdcost=expense(third,1);assert q('select array_agg(importe order by posicion_id) from bovi.asignacion_costo where fuente_gasto_id=%s',(thirdcost,))==[D('.34'),D('.33'),D('.33')]
@@ -106,6 +113,7 @@ try:
  # GOLD-01 gross realization and physical shrinkage remain separate.
  gold1animals=[animal(i) for i in range(140,150)];gold1buy=operation('COMPRA',party,gold1animals,48,5000);confirm(gold1buy);expense(gold1buy,12000);gold1pos=[str(x) for x in q('select array_agg(id order by id) from bovi.posicion_inventario where compra_operacion_id=%s',(gold1buy,))];gold1sell=operation('VENTA',party,gold1pos,60,4900);gold1liq=confirm(gold1sell);expense(gold1sell,8000,'DIRECTO_VENTA');gold1pay=payment(party,50000);cmd('aplicar_pago',{'pago_id':gold1pay,'liquidacion_id':gold1liq['id'],'importe':money(50000)})
  assert q('select costo_vendido from bovi.v_margen_operacion where operacion_id=%s',(gold1sell,))==252000;assert q('select venta_neta-costo_vendido-gastos_directos from bovi.v_margen_operacion where operacion_id=%s',(gold1sell,))==34000;assert q('select saldo from bovi.v_saldo_liquidacion where id=%s',(gold1liq['id'],))==244000
+ same_margin(gold1sell)
  initial=str(q('select id from bovi.pesaje where operacion_id=%s',(gold1buy,)));final=str(q('select id from bovi.pesaje where operacion_id=%s',(gold1sell,)));compare=q('select bovi.consultar(%s,%s,%s,%s,%s)',(E,S,U,'comparacion_pesajes',Jsonb({'inicial_id':initial,'final_id':final})));assert compare['estado']=='COMPARABLE' and D(compare['variacion_kg'])==100 and D(compare['variacion_pct'])==2
  print('PASS GOLD-01 cost252000 margin34000 saldo244000 shrink100kg/2% withoutautomaticdiscount')
  groupg=cmd('registrar_gasto',{'operacion_id':gold1buy,'importe':money(1),'clasificacion':'CAPITALIZABLE','concepto':'DEMO missingindividual','fecha_economica':'2026-10-01'})['id'];negative('repartir_gasto',{'gasto_id':groupg,'metodo':'POR_PESO_MEDIDO'},'BV018');assert q('select count(*) from bovi.pesaje_animal where pesaje_id=%s and peso_individual_kg is not null',(initial,))==0
