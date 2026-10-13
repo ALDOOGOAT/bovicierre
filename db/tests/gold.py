@@ -76,6 +76,12 @@ try:
  assert q('select costo_vendido from bovi.v_margen_operacion where operacion_id=%s',(sell,))==D('4520')
  assert q('select venta_neta-costo_vendido-gastos_directos from bovi.v_margen_operacion where operacion_id=%s',(sell,))==D('1680')
  same_margin(sell)
+ # TEST-36 (V19): posiciones de la compra y de la venta consultables por operación, con arete legible (sin copiar UUID).
+ inv=q("select bovi.consultar(%s,%s,%s,'inventario_posiciones',%s)",(E,S,U,Jsonb({'operacion_id':str(buy)})))
+ assert inv['total']==len(animals) and all(x.get('identificacion') for x in inv['elementos']),inv['total']
+ assert q("select bovi.consultar(%s,%s,%s,'inventario_posiciones',%s)",(E,S,U,Jsonb({'operacion_id':str(sell)})))['total']>=1
+ assert all(r.get('identificaciones') for r in q("select bovi.consultar(%s,%s,%s,'animales',%s)",(E,S,U,Jsonb({'tamano':'5'})))['elementos'])
+ print('PASS TEST-36 posiciones por operación con identificación legible')
  assert q('select sum(delta_inventario) from bovi.asiento_valoracion')==D('6780')
  print('PASS GOLD-06 fixed: cost4520 inventory6780 margin1680; original debt unchanged')
  third=operation('COMPRA',party,[animal(i) for i in range(30,33)],10);confirm(third);thirdcost=expense(third,1);assert q('select array_agg(importe order by posicion_id) from bovi.asignacion_costo where fuente_gasto_id=%s',(thirdcost,))==[D('.34'),D('.33'),D('.33')]
