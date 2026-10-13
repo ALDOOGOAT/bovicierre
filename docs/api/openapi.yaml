@@ -2341,7 +2341,10 @@ paths:
       tags:
       - reportes
       operationId: editarUsuario
-      summary: Cambiar nombre o vigencia del acceso
+      summary: Cambiar nombre, vigencia o restablecer la contraseña del acceso
+      description: Sólo ADMIN de la sede. `contrasena` restablece la credencial (recuperación administrativa,
+        sin correo); la API la convierte en bcrypt, no la incluye en la huella de idempotencia y la auditoría
+        registra únicamente `contrasena_restablecida`.
       responses:
         '200':
           description: Resultado persistido del servidor
@@ -2382,6 +2385,13 @@ paths:
                   enum:
                   - ACTIVO
                   - BLOQUEADO
+                contrasena:
+                  type: string
+                  minLength: 1
+                  maxLength: 72
+                  writeOnly: true
+                  format: password
+                  description: Nueva contraseña; máximo 72 bytes UTF-8 para bcrypt; no se devuelve.
   /sedes/{sedeId}/usuarios/{usuarioId}/membresias:
     parameters:
     - $ref: '#/components/parameters/SedeId'

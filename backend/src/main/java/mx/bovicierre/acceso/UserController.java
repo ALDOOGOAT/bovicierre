@@ -21,16 +21,17 @@ public class UserController {
         var scope=access.authorize(user,site,true);
         if (!scope.roles().contains("ADMIN")) throw new ApiException(403,"AUTH403","Se requiere rol ADMIN.");
         var payload=JsonSupport.object(body);
-        if (!command.equals("crear_usuario") && payload.has("contrasena")) throw new ApiException(400,"BV400","La contraseña sólo se admite al crear usuario.");
+        if (command.equals("asignar_membresia") && payload.has("contrasena")) throw new ApiException(400,"BV400","La contraseña se restablece desde la edición del usuario.");
         if (payload.has("hash_contrasena") || payload.has("empresa_id") || payload.has("sucursal_id") || payload.has("actor_id")) throw new ApiException(400,"BV400","El ámbito y las credenciales se determinan en el servidor.");
         if (command.equals("actualizar_usuario")) {
             if (!access.member(target,site)) throw new ApiException(404,"BV404","Usuario inexistente en esta sede.");
             if (target.equals(user) && payload.has("estado") && !"ACTIVO".equals(payload.path("estado").asText())) throw new ApiException(400,"BV400","No puedes bloquear tu propia cuenta.");
         }
         if (target!=null) payload.put("usuario_id",target.toString());
+        // La huella de idempotencia nunca incluye la contraseña en claro (ni derivada de ella).
+        var password=payload.remove("contrasena");
         String fingerprint=JsonSupport.hash(command,payload);
-        if (payload.has("contrasena")) {
-            var password=payload.remove("contrasena");
+        if (password!=null) {
             if (!password.isTextual() || password.asText().isBlank() || password.asText().getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72) throw new ApiException(400,"BV400","La contraseña debe contener entre 1 y 72 bytes UTF-8.");
             payload.put("hash_contrasena","{bcrypt}"+encoder.encode(password.asText()));
         } else if (command.equals("crear_usuario")) throw new ApiException(400,"BV400","Se requiere contraseña.");

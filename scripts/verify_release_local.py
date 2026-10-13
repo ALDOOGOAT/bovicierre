@@ -62,7 +62,7 @@ def stages(out_dir, with_load):
         ('backend', ['./backend/mvnw', '-q', '-f', 'backend/pom.xml', 'verify'], lambda _: surefire()),
         ('sql', ['make', 'verify-sql'], sql),
         ('immutability', ['python3', 'db/tests/immutability.py', '--out', str(out_dir / 'immutability.json')], jsonfile(out_dir / 'immutability.json')),
-        ('e2e', ['npm', '--prefix', 'frontend', 'run', 'test:e2e', '--', 'closure.spec.ts', 'additional.spec.ts', 'keyboard.spec.ts', 'visual.spec.ts'], playwright),
+        ('e2e', ['npm', '--prefix', 'frontend', 'run', 'test:e2e', '--', 'closure.spec.ts', 'additional.spec.ts', 'keyboard.spec.ts', 'visual.spec.ts', 'academic.spec.ts'], playwright),
         ('security', ['python3', 'tests/security/sec_dynamic.py', '--out', str(out_dir / 'security.json')], jsonfile(out_dir / 'security.json')),
     ]
     if with_load:

@@ -799,7 +799,10 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        /** Cambiar nombre o vigencia del acceso */
+        /**
+         * Cambiar nombre, vigencia o restablecer la contraseña del acceso
+         * @description Sólo ADMIN de la sede. `contrasena` restablece la credencial (recuperación administrativa, sin correo); la API la convierte en bcrypt, no la incluye en la huella de idempotencia y la auditoría registra únicamente `contrasena_restablecida`.
+         */
         patch: operations["editarUsuario"];
         trace?: never;
     };
@@ -4117,6 +4120,11 @@ export interface operations {
                     nombre?: string;
                     /** @enum {string} */
                     estado?: "ACTIVO" | "BLOQUEADO";
+                    /**
+                     * Format: password
+                     * @description Nueva contraseña; máximo 72 bytes UTF-8 para bcrypt; no se devuelve.
+                     */
+                    contrasena?: string;
                 };
             };
         };

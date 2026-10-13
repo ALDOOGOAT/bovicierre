@@ -1,7 +1,7 @@
 {
   "database": "bovicierre_release_replay",
   "command_calls": 22,
-  "seconds": 0.126,
+  "seconds": 0.155,
   "stale_412_no_idem_or_audit_effect": [
     "cancelar_operacion",
     "anular_venta",

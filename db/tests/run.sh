@@ -10,6 +10,8 @@ fi
 cd "$repo_dir"
 "$test_env/bin/python" db/tests/gold.py
 "$test_env/bin/python" db/tests/gold_acad.py
+"$test_env/bin/python" db/tests/password_reset.py
+"$test_env/bin/python" db/tests/empty_install.py
 "$test_env/bin/python" db/tests/academic.py
 "$test_env/bin/python" db/tests/provider.py
 "$test_env/bin/python" db/tests/negatives.py

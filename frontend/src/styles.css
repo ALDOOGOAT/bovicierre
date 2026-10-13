@@ -356,3 +356,10 @@ p.field-error a{color:var(--error)}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 @media print{.sidebar,.topbar,.footer,.skip{display:none}.panel{box-shadow:none;border-color:#999}.page-heading.hero{color:var(--ink);box-shadow:none}.page-heading.hero picture,.page-heading.hero:before{display:none}}
+.metric.task{text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+.metric.task small{display:block;margin-top:var(--s1);color:var(--muted);font-size:var(--fs-sm)}
+.metric.task:focus-visible{outline:2px solid var(--green-600);outline-offset:2px}
+.guide summary{cursor:pointer}
+.guide-steps{margin:var(--s4) 0 0;padding-left:1.4em;display:grid;gap:var(--s3)}
+.guide-steps .text-button{margin-left:var(--s2)}
+@media(max-width:600px){.task-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.task-grid .metric{padding:var(--s4)}.task-grid .metric strong{font-size:22px}}
