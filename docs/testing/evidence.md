@@ -218,3 +218,16 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 - **DAST** (ZAP): baseline y API activa; SF-22 y SF-26 corregidos y re-escaneados ([zap-summary](evidence/security/20261013-dast/zap-summary.json)).
 - **Puerta local** tras todo lo anterior: **PASS** — frontend 14, backend 30, SQL 37, inmutabilidad 50, E2E 16, seguridad 63; 0 omitidos ([release-gate](evidence/release-local/20261013T0115/release-gate.json)).
 - **Restauración** con imágenes nuevas: 26.2 s, firma y hashes OK ([restore-20261013](evidence/recovery/restore-20261013.json)). Configuración de producción validada con `docker compose config` (sólo Caddy publica 80/443; todo sin root salvo PostgreSQL oficial).
+
+## Cierre académico · 13-oct-2026 (rama `feature/cierre-academico-v1`)
+- **Puerta tras V20** (20261013T1349): **PASS** — frontend 14, backend 30, SQL 41, inmutabilidad 50, E2E 16, seguridad 63; 0 omitidos ([release-gate](evidence/release-local/20261013T1349/release-gate.json)).
+- **Puerta final** (20261013T1415, tras V21 y todo el cierre): **PASS** — frontend 14, backend 30, SQL 50, inmutabilidad 50, E2E 19, seguridad 63 = 226 casos; 0 fallos, 0 omitidos ([release-gate](evidence/release-local/20261013T1415/release-gate.json)).
+- **GOLD-ACAD-01/02** (`db/tests/gold_acad.py`): cifras exactas del mandato; compra kg sin pesaje aprobado → BV015/RN-017 y 0 liquidaciones. **GOLD-ACAD-03** = TEST-10: fase roja reproducida (perdedor recibía 23505 crudo) → V20 → perdedor BV402 y una reserva activa.
+- **TEST-38** restablecimiento ADMIN (V21): hash cambia, auditoría sin hash, hash no bcrypt BV015, OPERADOR 42501. Antes de V21 el resultado y el hash no cambiaban.
+- **TEST-39** instalación vacía (`bovicierre_vacia_check`): 1 empresa sin DEMO, 1 admin con ADMIN en 2 sedes, 0 hechos comerciales, réplica a B, admin abre periodo; segunda corrida idempotente; bootstrap DEMO sobre esa base rechazado.
+- **TEST-40** (`infra-evidence-result.json`): Pgpool 4.7.3 raw A→pg-a up y B→pg-b up; réplica A→B `bovi.parte` 0.016 s y B→A `bovi.operacion` 0.01 s; `sub_b_desde_a` deshabilitada 3 s sin llegada y convergencia 0.119 s al reanudar; FDW 12000, INSERT 42501, caída 08001, recuperado.
+- **E2E `academic.spec.ts`** (3): tablero = conteos de la API y guía recordada; selección 51+1 animales en 2 páginas y búsqueda con 3 seleccionados persistidos; restablecimiento por UI sin la contraseña en almacenamiento del navegador y acceso con la nueva. Una corrida justo después de reiniciar Caddy falló en la primera prueba (upstream frío); 4 corridas posteriores 3/3 sin reintentos.
+- **Visual** 390/768/1440 revisado: corregidos plural “obligacións” → “obligaciones” y tablero a 2 columnas en 390 px.
+- **Restauración tras V21**: 30.9 s, firma y hashes OK, sesiones invalidadas, idempotencia preservada ([restore-v21](evidence/recovery/restore-v21.json)). No demuestra PITR ni pérdida del host.
+- **Manual**: sección 23.10 añadida; recompilado desde fuente, 251 págs., páginas 239–240 revisadas visualmente, 0 coincidencias con patrones de secreto.
+- **Despliegue externo: bloqueado** por falta de destino, credenciales y presupuesto autorizados; no se ejecutó ninguna acción en Railway/Vercel.

@@ -127,7 +127,7 @@
 \fancyhf{}
 \fancyhead[L]{\sffamily\small BoviCierre}
 \fancyhead[R]{\sffamily\small Manual técnico integral}
-\fancyfoot[L]{\sffamily\scriptsize Revisión 92d3d41 · 12 octubre 2026}
+\fancyfoot[L]{\sffamily\scriptsize Base 92d3d41 + cierre académico 9bdae27 · 13 octubre 2026}
 \fancyfoot[R]{\sffamily\small\thepage}
 \setlength{\headheight}{15pt}
 \setlength{\emergencystretch}{3em}
@@ -141,7 +141,7 @@
 \clubpenalty=10000
 \fancyhead[L]{\color{brand}\sffamily\small BoviCierre}
 \fancyhead[R]{\color{black!70}\sffamily\small Manual técnico integral}
-\fancyfoot[L]{\color{black!70}\sffamily\footnotesize Revisión 92d3d41 · 12 octubre 2026}
+\fancyfoot[L]{\color{black!70}\sffamily\footnotesize Base 92d3d41 + cierre académico 9bdae27 · 13 octubre 2026}
 \fancyfoot[R]{\color{brand}\sffamily\small\thepage}
 \renewcommand{\maketitle}{%
 \hypersetup{pageanchor=false}
@@ -159,9 +159,9 @@
 \vfill
 {\sffamily\normalsize Preparado para Aldo y Jared\par}
 \vspace{5mm}
-{\normalsize Revisión del repositorio 92d3d41\par
-Actualización de campaña UI/UX y QA (V14--V18)\par
-12 de octubre de 2026\par}
+{\normalsize Revisión base del repositorio 92d3d41\par
+Campaña UI/UX y QA (V14--V18) y cierre académico (V19--V21)\par
+13 de octubre de 2026\par}
 \vspace{13mm}
 {\small PostgreSQL · Java · React · Docker Compose\par}
 \end{titlepage}
@@ -21814,6 +21814,55 @@ condicionado a la revisión humana, a la preparación de la VM (dominio,
 TLS, firewall, rutas privadas), a credenciales comerciales nuevas, a un
 respaldo fuera del host ensayado y a la decisión de integrar la rama. No
 se declara producción lista ni ausencia de vulnerabilidades.
+
+\section{Cierre académico del 13 de octubre}\label{campana-cierre-academico}
+
+\textbf{Sin copiar identificadores (V19).} Recibir ganado, registrar
+entrega y dar de baja se hacen abriendo la operación y marcando animales por
+arete; \texttt{bovi.consultar} filtra posiciones por \texttt{operacion\_id} y
+devuelve la identificación legible. El pesaje base del lote, la evidencia de
+báscula, el gasto y los documentos usan selectores con búsqueda. Toda
+violación de CHECK (23514) responde 422 BV015 y nunca 500.
+
+\textbf{Carrera de reservas (V20).} Al reforzar TEST-10 se reprodujo que la
+reserva perdedora recibía un 23505 crudo. El trigger
+\texttt{reserva\_activa\_unica} lo convierte en la regla BV402/RN-018: un
+ganador, una sola reserva activa.
+
+\textbf{GOLD-ACAD.} Compra de 2 animales a 10,000, flete de 2,000 por
+cabeza, pago total, venta de uno a 16,000 y cobro de 4,000: 1 disponible,
+inventario 11,000.00, venta 16,000.00, costo 11,000.00, margen 5,000.00,
+saldo del comprador 12,000.00 y del proveedor 0.00. Compra por peso: 500 kg
+a 60 = 30,000.00, que sólo se confirma con el pesaje aprobado (antes,
+BV015/RN-017 sin liquidación).
+
+\textbf{Tablero y primer ingreso.} La Bandeja muestra pendientes con conteos
+del servidor (ganado por recibir, entregas pendientes, por cobrar, por pagar
+e incidencias de sincronización) y una guía de cuatro pasos. Un error o la
+falta de permiso se muestran como ``—'', nunca como 0. La selección de
+ganado pagina de 50 en 50 y conserva lo elegido entre páginas y búsquedas.
+
+\textbf{Contraseñas e instalación (V21).} Un administrador puede restablecer
+la contraseña de un usuario de su sede, sin correo: la API la convierte en
+bcrypt, la huella de idempotencia ya no deriva de la contraseña y la
+auditoría registra sólo \texttt{contrasena\_restablecida}. Con
+\texttt{BOVI\_INSTALL=vacia} el arranque crea empresa, sedes y primer
+administrador propios con identificadores generados y guardados en un
+archivo privado, sin datos DEMO; se niega a mezclar dos instalaciones en la
+misma base.
+
+\textbf{Evidencia de infraestructura (TEST-40).} \texttt{SHOW POOL\_NODES}
+por cada Pgpool (4.7.3, raw): A apunta a \texttt{pg-a} y B a \texttt{pg-b},
+ambos activos. Réplica con identificadores concretos A$\rightarrow$B
+(contraparte) y B$\rightarrow$A (borrador de la sede B); con la suscripción
+de B deshabilitada la fila no llega y converge al reanudar. FDW: lectura de
+12,000 por Pgpool, INSERT denegado (42501), enlace caído (08001) y
+recuperación. Restauración posterior a V21 conciliada en 30.9 s.
+
+\textbf{Límites.} La imagen original de la rúbrica no estaba en el entorno
+de trabajo; el despliegue externo está bloqueado por falta de destino,
+credenciales y presupuesto autorizados; la aceptación de Aldo, Jared y del
+profesor está pendiente.
 
 \section{Pendientes después de esta actualización}\label{campana-pendientes}
 

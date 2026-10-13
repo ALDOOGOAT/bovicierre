@@ -1,0 +1,30 @@
+{
+  "estado": "PASS",
+  "first_seconds": 4.981,
+  "replay_seconds": 1.83,
+  "first_command_calls": 1901,
+  "replay_command_calls": 1901,
+  "same_ids_results_counts": true,
+  "first": {
+    "animal": 16,
+    "operacion": 28,
+    "posicion_inventario": 11,
+    "liquidacion": 16,
+    "gasto_operacion": 3,
+    "asignacion_costo": 13,
+    "pago": 3,
+    "aplicacion_pago": 3,
+    "movimiento_inventario": 4
+  },
+  "after": {
+    "animal": 216,
+    "operacion": 328,
+    "posicion_inventario": 211,
+    "liquidacion": 316,
+    "gasto_operacion": 303,
+    "asignacion_costo": 413,
+    "pago": 103,
+    "aplicacion_pago": 103,
+    "movimiento_inventario": 104
+  }
+}

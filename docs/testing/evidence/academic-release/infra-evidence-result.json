@@ -1,0 +1,54 @@
+{
+ "base": "bovicierre_gold_final",
+ "medido_en": "2026-10-13T14:15:59-0600",
+ "pool_nodes_A": {
+  "pgpool": "4.7.3 (tasukiboshi)",
+  "nodos": [
+   {
+    "node_id": "0",
+    "hostname": "pg-a",
+    "port": "5432",
+    "status": "up",
+    "role": "main",
+    "lb_weight": "1.000000"
+   }
+  ]
+ },
+ "pool_nodes_B": {
+  "pgpool": "4.7.3 (tasukiboshi)",
+  "nodos": [
+   {
+    "node_id": "0",
+    "hostname": "pg-b",
+    "port": "5432",
+    "status": "up",
+    "role": "main",
+    "lb_weight": "1.000000"
+   }
+  ]
+ },
+ "replica": {
+  "A_a_B": {
+   "tabla": "bovi.parte",
+   "id": "01a136e8-5b57-7cc7-95f9-fd4313e01fd6",
+   "segundos": 0.011
+  },
+  "B_a_A": {
+   "tabla": "bovi.operacion",
+   "id": "01a136e8-5c3a-7813-b028-105ceaa0e14b",
+   "segundos": 0.006
+  }
+ },
+ "corte_enlace": {
+  "suscripcion": "sub_b_desde_a",
+  "id": "01a136e8-5d5c-7453-8779-2e6a57105481",
+  "ausente_durante_corte_s": 3,
+  "converge_tras_reanudar_s": 0.615
+ },
+ "fdw": {
+  "lectura_pgpool": "12000",
+  "insert_denegado": "42501",
+  "caida_sqlstate": "08001",
+  "recuperado": true
+ }
+}

@@ -1,0 +1,208 @@
+{
+  "regla": "RN-023",
+  "divergencia": "DIV-03",
+  "tablas_con_trigger_en_catalogo": [
+    "ajuste_liquidacion",
+    "aplicacion_pago",
+    "asiento_valoracion",
+    "asignacion_costo",
+    "auditoria_evento",
+    "cierre_periodo_version",
+    "concepto_liquidacion",
+    "documento",
+    "evento_outbox",
+    "liquidacion",
+    "movimiento_inventario",
+    "revision_administrativa",
+    "revision_documento"
+  ],
+  "ejecutados": 50,
+  "invariantes_div05": {
+    "LIQ-DESCUADRE": {
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "PERIODO-DOS-ABIERTOS": {
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "ANIMAL-SEDE-INMUTABLE": {
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "OPERACION-TIPO-INMUTABLE": {
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "POSICION-ACTIVA-DUPLICADA": {
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "RESERVA-VENCE-MAX": {
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    }
+  },
+  "resultados": {
+    "liquidacion": {
+      "filas": 362,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "concepto_liquidacion": {
+      "filas": 388,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "ajuste_liquidacion": {
+      "filas": 31,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "asignacion_costo": {
+      "filas": 528,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "asiento_valoracion": {
+      "filas": 713,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "aplicacion_pago": {
+      "filas": 140,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "cierre_periodo_version": {
+      "filas": 60,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "movimiento_inventario": {
+      "filas": 174,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "documento": {
+      "filas": 80,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "auditoria_evento": {
+      "filas": 14654,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "evento_outbox": {
+      "filas": 14654,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "revision_administrativa": {
+      "filas": 52,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    },
+    "revision_documento": {
+      "filas": 52,
+      "update": "BLOQUEADO_BV016",
+      "delete": "BLOQUEADO_BV016"
+    }
+  },
+  "estados_terminales_div04": {
+    "OP-CONF-UPD": {
+      "tabla": "operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "OP-CONF-REABRIR": {
+      "tabla": "operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "OP-CONF-DEL": {
+      "tabla": "operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "OP-CANC-UPD": {
+      "tabla": "operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "OP-CANC-DEL": {
+      "tabla": "operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "OP-ANUL-REVIVIR": {
+      "tabla": "operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "GASTO-APR-UPD": {
+      "tabla": "gasto_operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "GASTO-APR-DEL": {
+      "tabla": "gasto_operacion",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "PAGO-VAL-UPD": {
+      "tabla": "pago",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "PAGO-VAL-DEL": {
+      "tabla": "pago",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "POS-CERR-REABRIR": {
+      "tabla": "posicion_inventario",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "POS-CERR-DEL": {
+      "tabla": "posicion_inventario",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "POS-BAJA-UPD": {
+      "tabla": "posicion_inventario",
+      "esperado": "BLOQUEADO",
+      "obtenido": "BLOQUEADO"
+    },
+    "OP-CONF-ENTREGA": {
+      "tabla": "operacion",
+      "esperado": "PERMITIDO",
+      "obtenido": "PERMITIDO"
+    },
+    "OP-CONF-ANULAR": {
+      "tabla": "operacion",
+      "esperado": "PERMITIDO",
+      "obtenido": "PERMITIDO"
+    },
+    "GASTO-BORR-UPD": {
+      "tabla": "gasto_operacion",
+      "esperado": "PERMITIDO",
+      "obtenido": "PERMITIDO"
+    },
+    "PAGO-REG-UPD": {
+      "tabla": "pago",
+      "esperado": "PERMITIDO",
+      "obtenido": "PERMITIDO"
+    },
+    "POS-VEND-LIBERAR": {
+      "tabla": "posicion_inventario",
+      "esperado": "PERMITIDO",
+      "obtenido": "PERMITIDO"
+    }
+  },
+  "filas_sin_cambio_tras_rollback": true,
+  "fallos": 0,
+  "sin_fixture": []
+}

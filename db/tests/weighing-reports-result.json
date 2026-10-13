@@ -2,7 +2,7 @@
   "estado": "PASS",
   "database": "bovicierre_release_replay",
   "sql_commands": 68,
-  "seconds": 0.219,
+  "seconds": 0.592,
   "migration": "V13",
   "tests": [
     "DIV-10 BRUTO_TARA: neto=bruto-tara en servidor ignorando neto enviado; tara>bruto → 23514 *_check (API BV015 422)",

@@ -1,0 +1,21 @@
+{
+  "resultado": "PASS",
+  "comando": "docker compose config --format json",
+  "proyecto_revision": "bovicierre-production-review",
+  "servicios_arrancados": 0,
+  "dns_tls_real": false,
+  "puertos_db_pgpool_eliminados": true,
+  "caddy_tcp": [
+    80,
+    443
+  ],
+  "caddy_udp": [
+    443
+  ],
+  "perfil_api": "production",
+  "caddy_uid_gid": "1000:1000",
+  "caddy_estado_persistente": true,
+  "bootstrap_semilla_automaticos": false,
+  "configuracion_resuelta_privada": "/tmp/bovi-production-review-q1ci6xca/compose-resolved.json",
+  "limite": "Sólo configuración; no acredita VM, TLS ni permisos reales de volúmenes."
+}

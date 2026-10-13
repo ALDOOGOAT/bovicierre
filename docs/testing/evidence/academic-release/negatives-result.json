@@ -1,0 +1,24 @@
+{
+  "database": "bovicierre_release_replay",
+  "command_calls": 8,
+  "results": {
+    "TEST-13": {
+      "two_connections_barrier": true,
+      "states": [
+        "OK",
+        "23505"
+      ],
+      "canonical_writer": "A for both site scopes"
+    },
+    "foreign_site_fk": "23503",
+    "foreign_company_scope": "42501",
+    "nonfinite_money": "23514",
+    "disable_trigger": "42501",
+    "replica_mode": "42501",
+    "immutable_liquidacion": "BV016",
+    "immutable_contrato_version": "BV016",
+    "immutable_condicion_lote": "BV016",
+    "immutable_pesaje": "BV016"
+  },
+  "scope": "SQL direct; does not certify HTTP error mapping"
+}

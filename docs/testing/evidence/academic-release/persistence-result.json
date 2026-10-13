@@ -1,0 +1,738 @@
+{
+  "seconds": 1.744,
+  "container_recreated": true,
+  "old_container_id": "21bb7e65e045",
+  "new_container_id": "866f97ecd863",
+  "same_named_volume": "bovicierre-academic_pg-a",
+  "before": {
+    "bovicierre": {
+      "table_signatures": {
+        "bovi.ajuste_liquidacion": {
+          "count": 7,
+          "md5": "a42b4f30054d7839aad82d97cb54ad4d"
+        },
+        "bovi.animal": {
+          "count": 58,
+          "md5": "8fbe3dc57fe9900f8e054492426344c3"
+        },
+        "bovi.animal_identificacion": {
+          "count": 58,
+          "md5": "94335e24a68fd4dc996fcc95dcb6ca20"
+        },
+        "bovi.aplicacion_pago": {
+          "count": 30,
+          "md5": "9e1f145219e30b95067fd49a29a2e8d7"
+        },
+        "bovi.asiento_valoracion": {
+          "count": 109,
+          "md5": "0d90d049141a6090dacdb133b6ba8b68"
+        },
+        "bovi.asignacion_costo": {
+          "count": 77,
+          "md5": "be0dbf4cedb3bfe4b013f1fad0b9ddd9"
+        },
+        "bovi.auditoria_evento": {
+          "count": 554,
+          "md5": "3f77bdad85e523093152eca94f162bb0"
+        },
+        "bovi.cierre_periodo_version": {
+          "count": 8,
+          "md5": "6bc8e8885cf7e3280128ebf2f59a6e64"
+        },
+        "bovi.clave_idempotencia": {
+          "count": 548,
+          "md5": "9adb5f5629272b6df5af5b723a512b87"
+        },
+        "bovi.concepto_liquidacion": {
+          "count": 50,
+          "md5": "090c442444ad0a6f85420b6837a1e6ce"
+        },
+        "bovi.condicion_lote": {
+          "count": 63,
+          "md5": "329d9c6b584b1222eb29090b723f5e22"
+        },
+        "bovi.contrato_version": {
+          "count": 74,
+          "md5": "8c3327cb7d859d91cdb08aa464073fe1"
+        },
+        "bovi.documento": {
+          "count": 18,
+          "md5": "cdc7320c7f611aee69436fdaee46097e"
+        },
+        "bovi.empresa": {
+          "count": 1,
+          "md5": "2731aa6226d624fe391d468fd82c58e5"
+        },
+        "bovi.evento_outbox": {
+          "count": 554,
+          "md5": "6b74159ff94d70eba99aa34cc879b075"
+        },
+        "bovi.folio_contador": {
+          "count": 3,
+          "md5": "b062ac4824c3ed8ebb1876007d4deec1"
+        },
+        "bovi.gasto_operacion": {
+          "count": 21,
+          "md5": "5fc714d249414a0803b59995802aa619"
+        },
+        "bovi.liquidacion": {
+          "count": 48,
+          "md5": "2f58a2babba1455fd2b2431113a70b76"
+        },
+        "bovi.lote_operacion": {
+          "count": 55,
+          "md5": "7ae14b0f9bed79acb7d03929947df026"
+        },
+        "bovi.membresia_usuario": {
+          "count": 19,
+          "md5": "ec94b41c00af5ed12e09c64816cdac0c"
+        },
+        "bovi.mensaje_inbox": {
+          "count": 548,
+          "md5": "087416091f335cbe615977daa1416867"
+        },
+        "bovi.movimiento_inventario": {
+          "count": 26,
+          "md5": "26506f58371945f955e583d0cdc815fe"
+        },
+        "bovi.operacion": {
+          "count": 66,
+          "md5": "8a5cc3167a31036277e2978995e73c03"
+        },
+        "bovi.operacion_documento": {
+          "count": 18,
+          "md5": "1487d3191ec990dd2240dc71d39aa086"
+        },
+        "bovi.pago": {
+          "count": 25,
+          "md5": "2ca91f63fe114b0bb3b85841fb27b033"
+        },
+        "bovi.parte": {
+          "count": 59,
+          "md5": "e53f380dc85a4a57de35ed9a236e7e11"
+        },
+        "bovi.periodo_cierre": {
+          "count": 2,
+          "md5": "5983fd322b8dd9476e06f24956e0f2f2"
+        },
+        "bovi.pesaje": {
+          "count": 8,
+          "md5": "6ec122e95d93b8e5784d435c61028c0e"
+        },
+        "bovi.pesaje_animal": {
+          "count": 14,
+          "md5": "d70d8a2e0a2670134ad0f8576a1ac335"
+        },
+        "bovi.posicion_inventario": {
+          "count": 50,
+          "md5": "c53804f0c57ddefea889f597088fa905"
+        },
+        "bovi.predio": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.reserva_venta": {
+          "count": 32,
+          "md5": "f4a55ad12e3240a842b23000fcda2276"
+        },
+        "bovi.revision_administrativa": {
+          "count": 11,
+          "md5": "44d72d96a2507e1e8d892c7840290a93"
+        },
+        "bovi.revision_documento": {
+          "count": 11,
+          "md5": "d9bb6861e5bbefa5c3db9c0cc91241e1"
+        },
+        "bovi.rol_aplicacion": {
+          "count": 4,
+          "md5": "4bb4ff9e5350f98402a49c8a31d67586"
+        },
+        "bovi.seleccion_compra": {
+          "count": 54,
+          "md5": "f925f596bb489b2094cd88d42885acbb"
+        },
+        "bovi.seleccion_venta": {
+          "count": 34,
+          "md5": "cab10840bbba9bc48247bac4d3ddcdad"
+        },
+        "bovi.sucursal": {
+          "count": 2,
+          "md5": "05ba906dac503d2a7b60a4f6940044f1"
+        },
+        "bovi.usuario": {
+          "count": 15,
+          "md5": "3e4ce59e49ace4ac7d9756d7bc19eb1d"
+        },
+        "infra.entrega_outbox": {
+          "count": 548,
+          "md5": "8dcb44440fddc5bcf34c2a4977bb4b6a"
+        },
+        "infra.flyway_schema_history": {
+          "count": 8,
+          "md5": "7165d81c8d2f44fc969c43c4c2fc72b8"
+        },
+        "infra.importacion_fuente": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "infra.nodo_config": {
+          "count": 1,
+          "md5": "4f082d9eb162890456e1b3bd478d71c9"
+        },
+        "infra.tarifa_snapshot": {
+          "count": 41,
+          "md5": "e3088f4188a36db079c778bbc77b1cc4"
+        }
+      },
+      "signature_sha256": "b7635e07a63a3860ee2440e3bc53f89c7e53a6351a6976b5f2db536890e95168"
+    },
+    "bovicierre_release_replay": {
+      "table_signatures": {
+        "bovi.ajuste_liquidacion": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.animal": {
+          "count": 14,
+          "md5": "2f3d3aa16b3f0364a212b759f0da7d85"
+        },
+        "bovi.animal_identificacion": {
+          "count": 14,
+          "md5": "192d3b96d5f411bc7cff5ccc7ecf581f"
+        },
+        "bovi.aplicacion_pago": {
+          "count": 3,
+          "md5": "55e5d8331a9acd10ff6a748e965511a6"
+        },
+        "bovi.asiento_valoracion": {
+          "count": 18,
+          "md5": "f903736427f6ec024b21df76158a10f0"
+        },
+        "bovi.asignacion_costo": {
+          "count": 11,
+          "md5": "d4554bfa131d940758d3a7b2ddc57cbe"
+        },
+        "bovi.auditoria_evento": {
+          "count": 94,
+          "md5": "a4813308105dade52daddb638c716ec4"
+        },
+        "bovi.cierre_periodo_version": {
+          "count": 8,
+          "md5": "7627bde12c556bf65cc2315816aee609"
+        },
+        "bovi.clave_idempotencia": {
+          "count": 65,
+          "md5": "63c0858c22d14f6c9bd2fbee5d582d5a"
+        },
+        "bovi.concepto_liquidacion": {
+          "count": 12,
+          "md5": "b4e93ede93b580c7608d280484202a59"
+        },
+        "bovi.condicion_lote": {
+          "count": 20,
+          "md5": "d824f541c63bd925b7bd6f8476c3cad2"
+        },
+        "bovi.contrato_version": {
+          "count": 20,
+          "md5": "b173a6902cb9c03133c8d3dde8d7a37e"
+        },
+        "bovi.documento": {
+          "count": 4,
+          "md5": "d4e4de9bc567adb41cc64143d2a02d62"
+        },
+        "bovi.empresa": {
+          "count": 1,
+          "md5": "f4d5a456d6438980dfb435dcf7109863"
+        },
+        "bovi.evento_outbox": {
+          "count": 94,
+          "md5": "934c244ff1be98f95c0a8ae7411004dd"
+        },
+        "bovi.folio_contador": {
+          "count": 3,
+          "md5": "176f5c2ab5af537f634351a3b4d77faf"
+        },
+        "bovi.gasto_operacion": {
+          "count": 3,
+          "md5": "5f13eeacb6261e55090cf3760eb9534f"
+        },
+        "bovi.liquidacion": {
+          "count": 12,
+          "md5": "8521f8b7f722db708b1d5c4d15e4c2e5"
+        },
+        "bovi.lote_operacion": {
+          "count": 20,
+          "md5": "f1a156108e874b142eef3eee3102e5d8"
+        },
+        "bovi.membresia_usuario": {
+          "count": 8,
+          "md5": "7faf0f1e0a02b75c69e8d7f62ee5dfc7"
+        },
+        "bovi.mensaje_inbox": {
+          "count": 4,
+          "md5": "0072d0db62c5f100f742055a574d8aa4"
+        },
+        "bovi.movimiento_inventario": {
+          "count": 4,
+          "md5": "5026c19a8aa34af237fdb2018166bf42"
+        },
+        "bovi.operacion": {
+          "count": 20,
+          "md5": "bf20e8c6dd02203fa0459b9f515799e5"
+        },
+        "bovi.operacion_documento": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.pago": {
+          "count": 3,
+          "md5": "b6e31284bbc4791b98efbcf3054cdeb2"
+        },
+        "bovi.parte": {
+          "count": 4,
+          "md5": "ed49551b02f284cffa70151ca6834bbf"
+        },
+        "bovi.periodo_cierre": {
+          "count": 2,
+          "md5": "31ea6ebe561cba154199033cd6baafad"
+        },
+        "bovi.pesaje": {
+          "count": 1,
+          "md5": "1a0610f5099f26b0349552e2f9266fa9"
+        },
+        "bovi.pesaje_animal": {
+          "count": 1,
+          "md5": "a3900c941b6606f2fa891548a703439c"
+        },
+        "bovi.posicion_inventario": {
+          "count": 9,
+          "md5": "fe394fa4058e5f5535caebf2a9d9c67d"
+        },
+        "bovi.predio": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.reserva_venta": {
+          "count": 4,
+          "md5": "0c31efe84cb76cae74c7dcbc6f13c601"
+        },
+        "bovi.revision_administrativa": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.revision_documento": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.rol_aplicacion": {
+          "count": 4,
+          "md5": "4bb4ff9e5350f98402a49c8a31d67586"
+        },
+        "bovi.seleccion_compra": {
+          "count": 13,
+          "md5": "fea0ea9cd0d315f4123e71832f08e64f"
+        },
+        "bovi.seleccion_venta": {
+          "count": 7,
+          "md5": "d6edde9de90355ec24f9fd9bc4371e05"
+        },
+        "bovi.sucursal": {
+          "count": 2,
+          "md5": "05ba906dac503d2a7b60a4f6940044f1"
+        },
+        "bovi.usuario": {
+          "count": 4,
+          "md5": "6008c35662bc351b5fc003d21f27e3a5"
+        },
+        "infra.entrega_outbox": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "infra.flyway_schema_history": {
+          "count": 11,
+          "md5": "00b75f7ee3824d71bd7fcef35e03f7f6"
+        },
+        "infra.importacion_fuente": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "infra.nodo_config": {
+          "count": 1,
+          "md5": "4f082d9eb162890456e1b3bd478d71c9"
+        },
+        "infra.tarifa_snapshot": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        }
+      },
+      "signature_sha256": "4a9cf22305579ef1abb1a2cf954abe7d3fbe678f7ab2b77eb385e2660cd542d6"
+    }
+  },
+  "after": {
+    "bovicierre": {
+      "table_signatures": {
+        "bovi.ajuste_liquidacion": {
+          "count": 7,
+          "md5": "a42b4f30054d7839aad82d97cb54ad4d"
+        },
+        "bovi.animal": {
+          "count": 58,
+          "md5": "8fbe3dc57fe9900f8e054492426344c3"
+        },
+        "bovi.animal_identificacion": {
+          "count": 58,
+          "md5": "94335e24a68fd4dc996fcc95dcb6ca20"
+        },
+        "bovi.aplicacion_pago": {
+          "count": 30,
+          "md5": "9e1f145219e30b95067fd49a29a2e8d7"
+        },
+        "bovi.asiento_valoracion": {
+          "count": 109,
+          "md5": "0d90d049141a6090dacdb133b6ba8b68"
+        },
+        "bovi.asignacion_costo": {
+          "count": 77,
+          "md5": "be0dbf4cedb3bfe4b013f1fad0b9ddd9"
+        },
+        "bovi.auditoria_evento": {
+          "count": 554,
+          "md5": "3f77bdad85e523093152eca94f162bb0"
+        },
+        "bovi.cierre_periodo_version": {
+          "count": 8,
+          "md5": "6bc8e8885cf7e3280128ebf2f59a6e64"
+        },
+        "bovi.clave_idempotencia": {
+          "count": 548,
+          "md5": "9adb5f5629272b6df5af5b723a512b87"
+        },
+        "bovi.concepto_liquidacion": {
+          "count": 50,
+          "md5": "090c442444ad0a6f85420b6837a1e6ce"
+        },
+        "bovi.condicion_lote": {
+          "count": 63,
+          "md5": "329d9c6b584b1222eb29090b723f5e22"
+        },
+        "bovi.contrato_version": {
+          "count": 74,
+          "md5": "8c3327cb7d859d91cdb08aa464073fe1"
+        },
+        "bovi.documento": {
+          "count": 18,
+          "md5": "cdc7320c7f611aee69436fdaee46097e"
+        },
+        "bovi.empresa": {
+          "count": 1,
+          "md5": "2731aa6226d624fe391d468fd82c58e5"
+        },
+        "bovi.evento_outbox": {
+          "count": 554,
+          "md5": "6b74159ff94d70eba99aa34cc879b075"
+        },
+        "bovi.folio_contador": {
+          "count": 3,
+          "md5": "b062ac4824c3ed8ebb1876007d4deec1"
+        },
+        "bovi.gasto_operacion": {
+          "count": 21,
+          "md5": "5fc714d249414a0803b59995802aa619"
+        },
+        "bovi.liquidacion": {
+          "count": 48,
+          "md5": "2f58a2babba1455fd2b2431113a70b76"
+        },
+        "bovi.lote_operacion": {
+          "count": 55,
+          "md5": "7ae14b0f9bed79acb7d03929947df026"
+        },
+        "bovi.membresia_usuario": {
+          "count": 19,
+          "md5": "ec94b41c00af5ed12e09c64816cdac0c"
+        },
+        "bovi.mensaje_inbox": {
+          "count": 548,
+          "md5": "087416091f335cbe615977daa1416867"
+        },
+        "bovi.movimiento_inventario": {
+          "count": 26,
+          "md5": "26506f58371945f955e583d0cdc815fe"
+        },
+        "bovi.operacion": {
+          "count": 66,
+          "md5": "8a5cc3167a31036277e2978995e73c03"
+        },
+        "bovi.operacion_documento": {
+          "count": 18,
+          "md5": "1487d3191ec990dd2240dc71d39aa086"
+        },
+        "bovi.pago": {
+          "count": 25,
+          "md5": "2ca91f63fe114b0bb3b85841fb27b033"
+        },
+        "bovi.parte": {
+          "count": 59,
+          "md5": "e53f380dc85a4a57de35ed9a236e7e11"
+        },
+        "bovi.periodo_cierre": {
+          "count": 2,
+          "md5": "5983fd322b8dd9476e06f24956e0f2f2"
+        },
+        "bovi.pesaje": {
+          "count": 8,
+          "md5": "6ec122e95d93b8e5784d435c61028c0e"
+        },
+        "bovi.pesaje_animal": {
+          "count": 14,
+          "md5": "d70d8a2e0a2670134ad0f8576a1ac335"
+        },
+        "bovi.posicion_inventario": {
+          "count": 50,
+          "md5": "c53804f0c57ddefea889f597088fa905"
+        },
+        "bovi.predio": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.reserva_venta": {
+          "count": 32,
+          "md5": "f4a55ad12e3240a842b23000fcda2276"
+        },
+        "bovi.revision_administrativa": {
+          "count": 11,
+          "md5": "44d72d96a2507e1e8d892c7840290a93"
+        },
+        "bovi.revision_documento": {
+          "count": 11,
+          "md5": "d9bb6861e5bbefa5c3db9c0cc91241e1"
+        },
+        "bovi.rol_aplicacion": {
+          "count": 4,
+          "md5": "4bb4ff9e5350f98402a49c8a31d67586"
+        },
+        "bovi.seleccion_compra": {
+          "count": 54,
+          "md5": "f925f596bb489b2094cd88d42885acbb"
+        },
+        "bovi.seleccion_venta": {
+          "count": 34,
+          "md5": "cab10840bbba9bc48247bac4d3ddcdad"
+        },
+        "bovi.sucursal": {
+          "count": 2,
+          "md5": "05ba906dac503d2a7b60a4f6940044f1"
+        },
+        "bovi.usuario": {
+          "count": 15,
+          "md5": "3e4ce59e49ace4ac7d9756d7bc19eb1d"
+        },
+        "infra.entrega_outbox": {
+          "count": 548,
+          "md5": "8dcb44440fddc5bcf34c2a4977bb4b6a"
+        },
+        "infra.flyway_schema_history": {
+          "count": 8,
+          "md5": "7165d81c8d2f44fc969c43c4c2fc72b8"
+        },
+        "infra.importacion_fuente": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "infra.nodo_config": {
+          "count": 1,
+          "md5": "4f082d9eb162890456e1b3bd478d71c9"
+        },
+        "infra.tarifa_snapshot": {
+          "count": 41,
+          "md5": "e3088f4188a36db079c778bbc77b1cc4"
+        }
+      },
+      "signature_sha256": "b7635e07a63a3860ee2440e3bc53f89c7e53a6351a6976b5f2db536890e95168"
+    },
+    "bovicierre_release_replay": {
+      "table_signatures": {
+        "bovi.ajuste_liquidacion": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.animal": {
+          "count": 14,
+          "md5": "2f3d3aa16b3f0364a212b759f0da7d85"
+        },
+        "bovi.animal_identificacion": {
+          "count": 14,
+          "md5": "192d3b96d5f411bc7cff5ccc7ecf581f"
+        },
+        "bovi.aplicacion_pago": {
+          "count": 3,
+          "md5": "55e5d8331a9acd10ff6a748e965511a6"
+        },
+        "bovi.asiento_valoracion": {
+          "count": 18,
+          "md5": "f903736427f6ec024b21df76158a10f0"
+        },
+        "bovi.asignacion_costo": {
+          "count": 11,
+          "md5": "d4554bfa131d940758d3a7b2ddc57cbe"
+        },
+        "bovi.auditoria_evento": {
+          "count": 94,
+          "md5": "a4813308105dade52daddb638c716ec4"
+        },
+        "bovi.cierre_periodo_version": {
+          "count": 8,
+          "md5": "7627bde12c556bf65cc2315816aee609"
+        },
+        "bovi.clave_idempotencia": {
+          "count": 65,
+          "md5": "63c0858c22d14f6c9bd2fbee5d582d5a"
+        },
+        "bovi.concepto_liquidacion": {
+          "count": 12,
+          "md5": "b4e93ede93b580c7608d280484202a59"
+        },
+        "bovi.condicion_lote": {
+          "count": 20,
+          "md5": "d824f541c63bd925b7bd6f8476c3cad2"
+        },
+        "bovi.contrato_version": {
+          "count": 20,
+          "md5": "b173a6902cb9c03133c8d3dde8d7a37e"
+        },
+        "bovi.documento": {
+          "count": 4,
+          "md5": "d4e4de9bc567adb41cc64143d2a02d62"
+        },
+        "bovi.empresa": {
+          "count": 1,
+          "md5": "f4d5a456d6438980dfb435dcf7109863"
+        },
+        "bovi.evento_outbox": {
+          "count": 94,
+          "md5": "934c244ff1be98f95c0a8ae7411004dd"
+        },
+        "bovi.folio_contador": {
+          "count": 3,
+          "md5": "176f5c2ab5af537f634351a3b4d77faf"
+        },
+        "bovi.gasto_operacion": {
+          "count": 3,
+          "md5": "5f13eeacb6261e55090cf3760eb9534f"
+        },
+        "bovi.liquidacion": {
+          "count": 12,
+          "md5": "8521f8b7f722db708b1d5c4d15e4c2e5"
+        },
+        "bovi.lote_operacion": {
+          "count": 20,
+          "md5": "f1a156108e874b142eef3eee3102e5d8"
+        },
+        "bovi.membresia_usuario": {
+          "count": 8,
+          "md5": "7faf0f1e0a02b75c69e8d7f62ee5dfc7"
+        },
+        "bovi.mensaje_inbox": {
+          "count": 4,
+          "md5": "0072d0db62c5f100f742055a574d8aa4"
+        },
+        "bovi.movimiento_inventario": {
+          "count": 4,
+          "md5": "5026c19a8aa34af237fdb2018166bf42"
+        },
+        "bovi.operacion": {
+          "count": 20,
+          "md5": "bf20e8c6dd02203fa0459b9f515799e5"
+        },
+        "bovi.operacion_documento": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.pago": {
+          "count": 3,
+          "md5": "b6e31284bbc4791b98efbcf3054cdeb2"
+        },
+        "bovi.parte": {
+          "count": 4,
+          "md5": "ed49551b02f284cffa70151ca6834bbf"
+        },
+        "bovi.periodo_cierre": {
+          "count": 2,
+          "md5": "31ea6ebe561cba154199033cd6baafad"
+        },
+        "bovi.pesaje": {
+          "count": 1,
+          "md5": "1a0610f5099f26b0349552e2f9266fa9"
+        },
+        "bovi.pesaje_animal": {
+          "count": 1,
+          "md5": "a3900c941b6606f2fa891548a703439c"
+        },
+        "bovi.posicion_inventario": {
+          "count": 9,
+          "md5": "fe394fa4058e5f5535caebf2a9d9c67d"
+        },
+        "bovi.predio": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.reserva_venta": {
+          "count": 4,
+          "md5": "0c31efe84cb76cae74c7dcbc6f13c601"
+        },
+        "bovi.revision_administrativa": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.revision_documento": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "bovi.rol_aplicacion": {
+          "count": 4,
+          "md5": "4bb4ff9e5350f98402a49c8a31d67586"
+        },
+        "bovi.seleccion_compra": {
+          "count": 13,
+          "md5": "fea0ea9cd0d315f4123e71832f08e64f"
+        },
+        "bovi.seleccion_venta": {
+          "count": 7,
+          "md5": "d6edde9de90355ec24f9fd9bc4371e05"
+        },
+        "bovi.sucursal": {
+          "count": 2,
+          "md5": "05ba906dac503d2a7b60a4f6940044f1"
+        },
+        "bovi.usuario": {
+          "count": 4,
+          "md5": "6008c35662bc351b5fc003d21f27e3a5"
+        },
+        "infra.entrega_outbox": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "infra.flyway_schema_history": {
+          "count": 11,
+          "md5": "00b75f7ee3824d71bd7fcef35e03f7f6"
+        },
+        "infra.importacion_fuente": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        },
+        "infra.nodo_config": {
+          "count": 1,
+          "md5": "4f082d9eb162890456e1b3bd478d71c9"
+        },
+        "infra.tarifa_snapshot": {
+          "count": 0,
+          "md5": "d751713988987e9331980363e24189ce"
+        }
+      },
+      "signature_sha256": "4a9cf22305579ef1abb1a2cf954abe7d3fbe678f7ab2b77eb385e2660cd542d6"
+    }
+  },
+  "equal": true,
+  "source_data_preserved": true,
+  "excluded_only_ephemeral_auth_sessions": true
+}

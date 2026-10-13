@@ -29,7 +29,10 @@ Especificación maestra: `docs/spec/megaprompt.md` (no resumirla; las reglas can
 ```bash
 npx -y @redocly/cli@1.34.5 lint docs/api/openapi.yaml   # válido al 2026-10-10
 ```
-Implementación disponible: `make academic`, `make demo`, `make verify-docs`, `make verify-api` (Caddy15180), `make backup` y `make restore-check` con BACKUP_DIR privado. `make verify-release-local`: puerta local en serie (docs, frontend, backend con HTTP/Testcontainers, SQL, inmutabilidad, E2E, seguridad); falla si algo obligatorio falla o se omite. Evidencia/alcance actual en `docs/status.md`; no confundir estas comprobaciones con aceptación humana.
+Implementación disponible: `make academic` (o `BOVI_INSTALL=vacia BOVI_EMPRESA=… make academic` en volúmenes nuevos), `make demo`, `make demo-profesor`, `make verify-academic`, `make evidence`, `make release-academic`, `make verify-docs`, `make verify-api` (Caddy15180), `make backup` y `make restore-check` con BACKUP_DIR privado. `make verify-release-local`: puerta local en serie (docs, frontend, backend con HTTP/Testcontainers, SQL, inmutabilidad, E2E, seguridad); falla si algo obligatorio falla o se omite. Evidencia/alcance actual en `docs/status.md`; no confundir estas comprobaciones con aceptación humana.
+
+## Skills de proyecto (`.claude/skills/`)
+`bovicierre-run` (arranque/diagnóstico), `bovicierre-db-verify` (SQL, réplica, Pgpool, FDW), `bovicierre-ux` (pantallas y validación visual), `bovicierre-release-academic` (puerta, evidencia, paquete). Siguiente migración: V22.
 
 ## Al terminar cada tarea
 1. Actualizar `docs/status.md`, la documentación afectada y `docs/traceability.md`.

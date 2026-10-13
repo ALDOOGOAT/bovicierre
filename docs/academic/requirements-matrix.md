@@ -47,4 +47,18 @@ Estado: `diseñado` = existe documentación; `implementado` = código/SQL en rep
 | AC08 | backend Java21/JDBC/Spring,24pruebas; POO/puertos/patrones sobre código real | evaluación humana del temario |
 | AC09 | dosPgpoolraw reales, API por dueño, Dockerapp/Caddy15180 real y restoreV13conciliado | staging/TLS público externo pendiente |
 
-[Estado](../status.md), [matriz TEST](../testing/evidence/sql-test-matrix.md), [evidencia](../testing/evidence.md) y [dossier](dossier.md) distinguen diseño/implementación/verificación local/revisión humana. La imagen de rúbrica no se recuperó; los requisitos IMG son transcripción histórica provisional, no aprobación del profesor.
+[Estado](../status.md), [matriz TEST](../testing/evidence/sql-test-matrix.md), [evidencia](../testing/evidence.md) y [dossier](dossier.md) distinguen diseño/implementación/verificación local/revisión humana. Según el mandato de cierre (13-oct-2026) la fotografía original `RUBRICA_ORIGINAL_PIZARRON.png` sí se recuperó, pero no está en este entorno: los requisitos IMG siguen tomándose de su lectura transcrita, sin afirmar inspección propia. La foto es evidencia de temas, no aprobación del profesor.
+
+## Cierre académico (13-oct-2026): evidencia añadida
+
+| ID | Nueva evidencia | Prueba |
+|---|---|---|
+| AC-03 | Restablecimiento administrativo de contraseña sólo ADMIN, hash bcrypt validado en SQL, auditoría sin hash (V21); instalación vacía con primer administrador propio | TEST-38 `password_reset.py`, TEST-39 `empty_install.py`, `academic.spec.ts` |
+| AC-04 | Trigger `reserva_activa_unica` (V20) convierte la carrera de reservas en regla BV402/RN-018 | TEST-10 reforzado (GOLD-ACAD-03) |
+| AC-05 | GOLD-ACAD-02: confirmación por kg sin pesaje aprobado se revierte sin liquidación; carrera con un ganador | `gold_acad.py`, TEST-10 |
+| AC-06 | IDs concretos A→B (`bovi.parte`) y B→A (`bovi.operacion`), corte de suscripción `sub_b_desde_a` y convergencia | TEST-40 `infra_evidence.py` → `infra-evidence-result.json` |
+| AC-07 | FDW: lectura por Pgpool, INSERT 42501, caída del enlace 08001 y recuperación | TEST-40 |
+| AC-08 | Matriz SRP/OCP/LSP/ISP/DIP con rutas, pruebas y límites | `oop-solid-patterns.md` |
+| AC-09 | `SHOW POOL_NODES`: Pgpool 4.7.3 A→pg-a up, B→pg-b up (raw); excepción de autenticación directa a `pg-a:5432` documentada | TEST-40 |
+
+Cifras GOLD-ACAD-01 (compra 2×10000, flete 2000/cabeza, venta 1×16000, cobro 4000): 1 disponible, inventario 11000.00, venta 16000.00, costo 11000.00, margen 5000.00, cobro 4000.00, saldo comprador 12000.00, saldo proveedor 0.00. Estado docente de todas las filas: **pendiente de evaluación humana**.

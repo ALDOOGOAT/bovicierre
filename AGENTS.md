@@ -22,7 +22,7 @@ npx -y @redocly/cli@1.34.5 lint docs/api/openapi.yaml
 
 These check specification ID/document coverage, foreign-key references, and OpenAPI validity, respectively. Diagram generation example: `python3 tools/diagramas/gen_relacional_completo.py`. Preserve manual diagram edits before regenerating.
 
-Do not assume a README command was executed: use the evidence register. `make doctor` diagnoses the local environment; `make verify-docs` checks documentation only. Preserve other projects' Docker containers and volumes.
+Do not assume a README command was executed: use the evidence register. `make doctor` diagnoses the local environment; `make verify-docs` checks documentation only; `make verify-academic` runs the full local gate. Claude project skills live in `.claude/skills/bovicierre-*` (run, db-verify, ux, release-academic); next migration is V22. Preserve other projects' Docker containers and volumes.
 
 ## Coding Style & Naming Conventions
 Follow existing Python style: four-space indentation and `snake_case` functions and variables. Keep documentation in Spanish, using concise Markdown headings, relative links, and UTF-8 text. Preserve identifiers such as `RN-001`, `TEST-01`, and `TASK-A-001`; never reuse retired IDs. No repository-wide formatter configuration currently exists.
