@@ -73,7 +73,8 @@ public class ApiErrors {
         if ("23505".equals(state) && constraint!=null && (constraint.startsWith("uk_") || constraint.endsWith("_key"))) return new ApiException(409,"BV401","El registro ya existe o entra en conflicto."); // _key: UNIQUE inline de V1 con nombre autogenerado (DIV-01)
         if ("23001".equals(state) && constraint!=null && constraint.startsWith("fk_")) return new ApiException(409,"BV401","El registro tiene referencias que impiden modificarlo.");
         if ("23503".equals(state) && constraint!=null && constraint.startsWith("fk_")) return new ApiException(422,"BV015","Las referencias no corresponden a esta empresa o sede.");
-        if ("23514".equals(state) && constraint!=null && constraint.matches("[a-z_][a-z0-9_]*_check[0-9]*")) return new ApiException(422,"BV015","Los datos no cumplen las reglas del dominio.");
+        // Toda violación de CHECK es un dato fuera del dominio (p. ej. condicion_lote_base_tipo), nunca un 500.
+        if ("23514".equals(state)) return new ApiException(422,"BV015","Los datos no cumplen las reglas del dominio.");
         if (java.util.Set.of("23502","22P02","22001","22003","22007").contains(state)) return new ApiException(422,"BV015","Los datos no cumplen las reglas del dominio.");
         // DAST 13-oct-2026: byte nulo o codificación inválida en filtros/cuerpos llegaba como 500.
         if ("22P05".equals(state) || "22021".equals(state)) return new ApiException(400,"BV400","La solicitud no es válida.");

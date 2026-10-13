@@ -38,6 +38,8 @@ class ContractTest {
         assertEquals(500,ApiErrors.database(pg("P0001",null,"{\"codigo\":\"BV405\",\"regla_id\":\"secret SQL\",\"campos\":[]}")).status);
         assertEquals(500,ApiErrors.database(pg("P0001",null,"malformed JSON")).status);
         assertEquals(500,ApiErrors.database(new java.sql.SQLException("SQL syntax secret","42601")).status);
+        // CHECK con nombre explícito (condicion_lote_base_tipo) también es 422, nunca 500.
+        assertEquals(422,ApiErrors.database(pg("23514","condicion_lote_base_tipo",null)).status);
         // DAST: byte nulo / codificación inválida → 400, nunca 500.
         assertEquals(400,ApiErrors.database(new java.sql.SQLException("unsupported Unicode escape","22P05")).status);
         assertEquals(400,ApiErrors.database(new java.sql.SQLException("invalid byte sequence","22021")).status);
