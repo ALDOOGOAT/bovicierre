@@ -1,0 +1,12 @@
+**
+!backend/
+!backend/.mvn/
+!backend/.mvn/**
+!backend/mvnw
+!backend/pom.xml
+!backend/src/
+!backend/src/**
+!backend/container-entrypoint.sh
+!frontend/
+!frontend/src/
+!frontend/src/**

@@ -1,0 +1,414 @@
+{
+  "herramienta": "OWASP ZAP (ghcr.io/zaproxy/zaproxy:stable), sólo contra http://127.0.0.1:15180 con datos DEMO",
+  "pasadas": {
+    "baseline": {
+      "descripcion": "baseline sin sesión, araña 3 min, pasivo",
+      "alertas": [
+        {
+          "riesgo": "Low (Medium)",
+          "alerta": "Cross-Origin-Embedder-Policy Header Missing or Invalid",
+          "pluginid": "90004",
+          "casos": 1,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/"
+            }
+          ]
+        },
+        {
+          "riesgo": "Low (Medium)",
+          "alerta": "Cross-Origin-Resource-Policy Header Missing or Invalid",
+          "pluginid": "90004",
+          "casos": 5,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/index-8LKXN8sW.css"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/index-B5w85Bp6.js"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/inter-latin-wght-normal-Dx4kXJAl.woff2"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Modern Web Application",
+          "pluginid": "10109",
+          "casos": 4,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/robots.txt"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Non-Storable Content",
+          "pluginid": "10049",
+          "casos": 2,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sesion/actual"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sesion/csrf"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Storable and Cacheable Content",
+          "pluginid": "10049",
+          "casos": 3,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/index-8LKXN8sW.css"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/index-B5w85Bp6.js"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/inter-latin-wght-normal-Dx4kXJAl.woff2"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Storable but Non-Cacheable Content",
+          "pluginid": "10049",
+          "casos": 3,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/favicon.svg"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/img/login-ganado-general-teran-960.webp"
+            }
+          ]
+        }
+      ],
+      "resumen": "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 3\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 64"
+    },
+    "api": {
+      "descripcion": "escaneo activo de la API desde openapi.yaml, sesión demo.auditor (sólo lectura), máx. 15 min",
+      "alertas": [
+        {
+          "riesgo": "Low (High)",
+          "alerta": "A Server Error response code was returned by the server",
+          "pluginid": "100000",
+          "casos": 13,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/animales"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/contrapartes"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/documentos"
+            }
+          ]
+        },
+        {
+          "riesgo": "Low (Medium)",
+          "alerta": "Cross-Origin-Resource-Policy Header Missing or Invalid",
+          "pluginid": "90004",
+          "casos": 5,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/animales"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/contrapartes"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/inventario/posiciones"
+            }
+          ]
+        },
+        {
+          "riesgo": "Low (High)",
+          "alerta": "Unexpected Content-Type was returned",
+          "pluginid": "100001",
+          "casos": 12,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/4657526845501807869"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (High)",
+          "alerta": "A Client Error response code was returned by the server",
+          "pluginid": "100000",
+          "casos": 519,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/2373276168395312283"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Non-Storable Content",
+          "pluginid": "10049",
+          "casos": 5,
+          "ejemplos": [
+            {
+              "metodo": "PATCH",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/operaciones/%7BoperacionId%7D"
+            },
+            {
+              "metodo": "POST",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/animales"
+            },
+            {
+              "metodo": "POST",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/contrapartes"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Session Management Response Identified",
+          "pluginid": "10112",
+          "casos": 1,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sesion/csrf"
+            }
+          ]
+        }
+      ],
+      "resumen": "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 3\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 118"
+    },
+    "baseline2": {
+      "descripcion": "baseline tras correcciones",
+      "alertas": [
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Modern Web Application",
+          "pluginid": "10109",
+          "casos": 3,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/sitemap.xml"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Non-Storable Content",
+          "pluginid": "10049",
+          "casos": 3,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sesion/actual"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sesion/csrf"
+            },
+            {
+              "metodo": "POST",
+              "uri": "http://127.0.0.1:15180/api/v1/sesion/login"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Storable and Cacheable Content",
+          "pluginid": "10049",
+          "casos": 3,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/index-8LKXN8sW.css"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/index-B5w85Bp6.js"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/assets/inter-latin-wght-normal-Dx4kXJAl.woff2"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Storable but Non-Cacheable Content",
+          "pluginid": "10049",
+          "casos": 4,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/favicon.svg"
+            }
+          ]
+        }
+      ],
+      "resumen": "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 2\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 65"
+    },
+    "api2": {
+      "descripcion": "API activa tras correcciones",
+      "alertas": [
+        {
+          "riesgo": "Low (High)",
+          "alerta": "A Server Error response code was returned by the server",
+          "pluginid": "100000",
+          "casos": 1,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/4437573437753040152"
+            }
+          ]
+        },
+        {
+          "riesgo": "Low (High)",
+          "alerta": "Unexpected Content-Type was returned",
+          "pluginid": "100001",
+          "casos": 11,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/6395037135096836991"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (High)",
+          "alerta": "A Client Error response code was returned by the server",
+          "pluginid": "100000",
+          "casos": 520,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/8331234675327270570"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Non-Storable Content",
+          "pluginid": "10049",
+          "casos": 5,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/animales/%7BanimalId%7D"
+            },
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/operaciones/%7BoperacionId%7D"
+            },
+            {
+              "metodo": "POST",
+              "uri": "http://127.0.0.1:15180/api/v1/sedes/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/operaciones/%7BoperacionId%7D/confirmar"
+            }
+          ]
+        },
+        {
+          "riesgo": "Informational (Medium)",
+          "alerta": "Session Management Response Identified",
+          "pluginid": "10112",
+          "casos": 1,
+          "ejemplos": [
+            {
+              "metodo": "GET",
+              "uri": "http://127.0.0.1:15180/api/v1/sesion/csrf"
+            }
+          ]
+        }
+      ],
+      "resumen": "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 2\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 119"
+    }
+  },
+  "nota": "Las cookies y cabeceras de sesión no se guardan; la sesión del escaneo se cerró (logout) al terminar."
+}

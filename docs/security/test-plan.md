@@ -18,7 +18,9 @@ Alcance: sólo la instancia local BoviCierre (`127.0.0.1:15180`, contenedores `b
 | SEC-12 | Roles SQL (superuser, DDL, DML financiero, replicación) | `db/tests/security.sql` en A y B dentro de `make verify-sql` | PASS ("runtime DML/DDL/replica-role denied") |
 | SEC-13 | SECURITY DEFINER y sombreado `pg_temp` | `db/tests/security.sql` (catálogo de `proconfig`, ACL de base, `CREATE TEMP TABLE` como `bovi_auditor`) | PASS en A/B y en restauración V14; SF-08 corregido |
 | SEC-14 | FDW sólo lectura, secretos | `make verify-sql` (TEST-25: UPDATE denegado 42501); revisión estática | PASS FDW; SF-18 abierto |
-| SEC-15 | Dependencias y exposición de puertos | `npm audit`; puertos publicados sólo en 127.0.0.1 (`docker ps`) | npm completo; Maven/imágenes INCOMPLETO |
+| SEC-15 | Dependencias y exposición de puertos | Trivy (Maven, npm, Python, imágenes) y `docker ps`; producción sin puertos de BD | COMPLETO 13-oct: ver SEC-18 y [dependency-report](dependency-report.md) |
+| SEC-17 | DAST con OWASP ZAP | Baseline pasivo y escaneo activo de la API desde OpenAPI con sesión de sólo lectura, sólo local | 0 FAIL; 13×500 corregidos (SF-22); COOP/CORP/COEP añadidas (SF-26) |
+| SEC-18 | SCA de código e imágenes | Trivy fs + imágenes desplegadas | 0 altas/críticas en código, backend, frontend y Caddy; residual aceptado en PostgreSQL (`gosu`) y Pgpool (Debian sin corrección) |
 | SEC-16 | Cadena de herramientas del agente | Revisión del plugin propio, MCP y skills | SF-17 corregido; MCP de navegador/`npx -y` documentados |
 
 Repetición: `python3 tests/security/sec_dynamic.py --out docs/testing/evidence/security/<run>/dynamic.json` (requiere la app levantada; crea usuarios/registros DEMO SEC; 12 intentos fallidos sobre un login inexistente, no bloquea cuentas reales).

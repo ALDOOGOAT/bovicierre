@@ -75,6 +75,8 @@ public class ApiErrors {
         if ("23503".equals(state) && constraint!=null && constraint.startsWith("fk_")) return new ApiException(422,"BV015","Las referencias no corresponden a esta empresa o sede.");
         if ("23514".equals(state) && constraint!=null && constraint.matches("[a-z_][a-z0-9_]*_check[0-9]*")) return new ApiException(422,"BV015","Los datos no cumplen las reglas del dominio.");
         if (java.util.Set.of("23502","22P02","22001","22003","22007").contains(state)) return new ApiException(422,"BV015","Los datos no cumplen las reglas del dominio.");
+        // DAST 13-oct-2026: byte nulo o codificación inválida en filtros/cuerpos llegaba como 500.
+        if ("22P05".equals(state) || "22021".equals(state)) return new ApiException(400,"BV400","La solicitud no es válida.");
         if ("42501".equals(state)) return new ApiException(403,"AUTH403","No tiene permiso para esta acción.");
         if ("40001".equals(state) || "40P01".equals(state)) return new ApiException(409,"BV409","Conflicto concurrente; reintente con la misma clave.");
         if (sql instanceof java.sql.SQLTransientConnectionException || sql instanceof java.sql.SQLNonTransientConnectionException || state!=null && state.startsWith("08")) return new ApiException(503,"BV501","El nodo requerido no está disponible.");
@@ -85,6 +87,6 @@ public class ApiErrors {
     ResponseEntity<?> oversized(RuntimeException ex,HttpServletRequest request) { return api(new ApiException(413,"BV023","El archivo supera el límite de 20 MiB."),request); }
     @ExceptionHandler({DataAccessException.class,org.springframework.transaction.TransactionException.class})
     ResponseEntity<?> database(RuntimeException ex, HttpServletRequest request) { return api(database((Throwable) ex), request); }
-    @ExceptionHandler({org.springframework.web.bind.MissingRequestHeaderException.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class, org.springframework.http.converter.HttpMessageNotReadableException.class, org.springframework.web.bind.MethodArgumentNotValidException.class})
+    @ExceptionHandler({org.springframework.web.bind.MissingRequestHeaderException.class, org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class, org.springframework.http.converter.HttpMessageNotReadableException.class, org.springframework.web.bind.MethodArgumentNotValidException.class, org.springframework.web.multipart.MultipartException.class})
     ResponseEntity<?> invalid(Exception ex, HttpServletRequest request) { return api(new ApiException(400,"BV400","La solicitud no es válida."),request); }
 }

@@ -21382,28 +21382,28 @@ tablas y se corrigió.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=.95\linewidth,height=.42\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/after/1440-login.jpg}}
-\caption{Acceso rediseñado a 1440 px, con la fotografía de dominio
-público y su crédito.}
+\includegraphics[width=.95\linewidth,height=.42\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261013-v3/crops/1440-login.jpg}}
+\caption{Acceso (pase v3, 13-oct) a 1440 px: titular de 48 px con
+tracking negativo, pasos numerados y foto de dominio público con deriva lenta.}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=.95\linewidth,height=.42\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/after/1440-operaciones.jpg}}
-\caption{Bandeja de operaciones con insignias de estado comercial, de
-entrega y de pago separadas.}
+\includegraphics[width=.95\linewidth,height=.42\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261013-v3/crops/1440-operaciones.jpg}}
+\caption{Bandeja (v3): banda fotográfica con velo, filtros con «Todos»,
+insignias por eje y botón «Abrir →» con desplazamiento al pasar.}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=.95\linewidth,height=.45\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/compare/1440-liquidacion-detalle.jpg}}
-\caption{Detalle de liquidación antes y después del rediseño: el saldo
-pasa a ser el dato dominante.}
+\includegraphics[width=.95\linewidth,height=.45\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261013-v3/crops/1440-liquidacion-detalle.jpg}}
+\caption{Liquidación (v3): saldo a 42 px con la moneda al 60 \%, desglose
+y conciliación lado a lado con cifras tabulares alineadas a la derecha.}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=.40\linewidth,height=.55\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261012T0214/after/390-operaciones.jpg}}
+\includegraphics[width=.40\linewidth,height=.55\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui-redesign/20261013-v3/crops/390-operaciones.jpg}}
 \caption{La misma bandeja a 390 px: la tabla se desplaza dentro de su
 contenedor y la página no tiene desbordamiento horizontal.}
 \end{figure}
@@ -21762,14 +21762,65 @@ extracción AST del código y semántica de los documentos de la campaña:
 2,871 nodos, 4,758 aristas y 298 comunidades, sin aristas colgantes.
 \end{itemize}
 
+\section{Actualización del 13 de octubre: pase visual v3, seguridad y
+veredicto}\label{campana-13-oct}
+
+\textbf{Pase visual v3.} Un agente \texttt{ecc:a11y-architect} auditó la
+interfaz (29 puntos con criterio WCAG) y otro agente hizo ingeniería
+inversa del CSS público de Linear, Stripe, Vercel, Mercury y AgriWebb
+para tomar valores reales, no inventados. Se aplicaron (UXD-12 a UXD-20):
+pesos variables 510/590/680 con tracking negativo en títulos; cifras con
+\texttt{lining-nums tabular-nums slashed-zero}; importes con la moneda al
+60 \%; transiciones de .25 s con \texttt{cubic-bezier(.25,1,.5,1)}, pulsación
+\texttt{scale(.97)}, entrada escalonada de secciones y esqueletos de carga
+de 1.5 s, todo anulado con \texttt{prefers-reduced-motion}; banda
+fotográfica en la Bandeja y sede a dos columnas con foto 4:5; selects con
+chevron propio; sidebar como riel de iconos en tablet; título del documento
+por pantalla. El recorrido visual de 45 vistas en tres anchos no tiene
+desbordamiento horizontal. Se descartó ocultar el asterisco de obligatorio
+a lectores de pantalla porque cambiaba el nombre accesible que usan cinco
+pruebas sin beneficio real.
+
+\textbf{SF-09 (ADR-018).} La credencial de aplicación lee todo su nodo y
+envía el actor. Se decidió aceptar el riesgo para el piloto de una empresa
+por despliegue, con controles verificables (sin DML ni DDL en tiempo de
+ejecución, inmutabilidad en la base, secreto sólo en el backend, base sin
+puertos en producción y auditoría con actor), y se fijaron disparadores
+para atar el actor a una sesión viva o usar RLS. Queda pendiente de
+revisión humana.
+
+\textbf{Composición de software (Trivy 0.75.0).} Se corrigieron Tomcat
+11.0.24→11.0.25 (tres críticas), Jackson 3.1.5→3.1.7 y pgjdbc
+42.7.10→42.7.13; la imagen del frontend pasó a nginx-unprivileged 1.30.5;
+Caddy se recompiló con Go 1.27.2 y \texttt{x/net} 0.60.0 porque la versión
+2.11.7 publicada traía Go 1.26.8 con denegaciones de servicio en HTTP/2;
+se eliminó \texttt{pebble} de la imagen del backend y Pgpool dejó de correr
+como root. Riesgo residual aceptado: \texttt{gosu} en la imagen oficial de
+PostgreSQL y paquetes Debian sin corrección en Pgpool, ambos internos.
+
+\textbf{DAST (OWASP ZAP).} Baseline pasivo y escaneo activo de la API
+desde \texttt{openapi.yaml} con una sesión de sólo lectura: 0 fallos.
+Encontró 13 respuestas 500 por un byte nulo en filtros y por multipart
+malformado; ahora responden 400 (SF-22). También se añadieron las
+cabeceras COOP, CORP y COEP (SF-26).
+
+\textbf{Carga sostenida.} 20 sesiones durante 15 minutos: 39,674
+peticiones sin fallos, p95 de 15 ms, p99 de 50 ms, sin deadlocks ni
+esperas de lock, y conciliación exacta de 5,201 efectos.
+
+\textbf{Veredicto.} El software está técnicamente listo para un
+despliegue piloto controlado (una empresa, una VM, staging primero),
+condicionado a la revisión humana, a la preparación de la VM (dominio,
+TLS, firewall, rutas privadas), a credenciales comerciales nuevas, a un
+respaldo fuera del host ensayado y a la decisión de integrar la rama. No
+se declara producción lista ni ausencia de vulnerabilidades.
+
 \section{Pendientes después de esta actualización}\label{campana-pendientes}
 
 \begin{itemize}
-\item Decisión humana sobre SF-09: protección por fila o contexto de
-actor en la base, o un ADR que acepte el riesgo por escrito.
+\item Revisión humana de ADR-018 (SF-09) y de sus disparadores.
 \item Las 17 divergencias de la matriz quedaron corregidas, cubiertas o resueltas; las que se resolvieron sólo en documentación (DIV-16, DIV-17) lo indican con su razón.
-\item Escáneres SCA y DAST, carga sostenida de 15 a 20 minutos y dataset
-de 10,000 posiciones.
+\item DAST con rol de escritura, SAST dedicado, Gitleaks sobre todo el historial y dataset de 10,000 posiciones.
 \item Revisión de los diagramas MER y relacional contra la matriz de
 coherencia; las migraciones V14--V18 no añaden tablas ni columnas, sólo
 triggers, un índice, un CHECK y privilegios.

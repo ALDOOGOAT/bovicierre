@@ -31,7 +31,7 @@ Los QR se generan localmente como SVG mediante ZXing y conservan autenticación/
 
 `run-local.sh` guarda PID Java y registro en `~/.local/share/bovicierre-academic/run` (o `BOVI_RUNTIME_DIR`). Para una copia coherente, terminar ese PID propio mediante SIGTERM y esperar su salida: HTTP y scheduler tienen drenaje de 30 segundos. Después de terminar, comprobar que no quedan transacciones financieras activas antes de copiar base y archivos. Reiniciar con `./run-local.sh`; no se usa SIGSTOP.
 
-El Dockerfile construye con Java 21 y Wrapper y ejecuta como UID/GID 1000. El entrypoint admite `BOVI_DB_A_PASSWORD_FILE`, `BOVI_DB_B_PASSWORD_FILE`, `BOVI_AUTH_PASSWORD_FILE` y `BOVI_WORKER_PASSWORD_FILE`. El contenedor escucha internamente en `0.0.0.0`; publicar sólo en loopback corresponde al Compose local. No contiene Flyway ni intenta DDL al arrancar.
+El Dockerfile construye con Java 21 y Wrapper y ejecuta como UID/GID 1000. Su contexto es la raíz del repositorio (`docker build -f backend/Dockerfile .`): las pruebas revisan las fuentes Java y TypeScript para detectar coma flotante. `backend/Dockerfile.dockerignore` limita el contexto a las fuentes necesarias; el frontend sólo se copia a la etapa de compilación, fuera de la imagen final. El entrypoint admite `BOVI_DB_A_PASSWORD_FILE`, `BOVI_DB_B_PASSWORD_FILE`, `BOVI_AUTH_PASSWORD_FILE` y `BOVI_WORKER_PASSWORD_FILE`. El contenedor escucha internamente en `0.0.0.0`; publicar sólo en loopback corresponde al Compose local. No contiene Flyway ni intenta DDL al arrancar.
 
 Prueba fresca separada con un único PostgreSQL 18.6 efímero, migraciones reales y comprobación del rol runtime:
 

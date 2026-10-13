@@ -6,4 +6,7 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends libpq5 libssl3 postgresql-client && rm -rf /var/lib/apt/lists/* && mkdir -p /etc/pgpool2
 COPY --from=build /usr/local /usr/local
 COPY entrypoint.sh /entrypoint.sh
+# Sin root (Trivy DS-0002): pool_passwd, pid y sockets viven en /tmp; Compose fija el UID que lee los secretos.
+RUN useradd --system --uid 10001 --no-create-home pgpool
+USER pgpool
 ENTRYPOINT ["/entrypoint.sh"]

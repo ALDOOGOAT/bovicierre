@@ -1,0 +1,395 @@
+{
+ "herramienta": "Trivy 0.75.0 (local, sin subir código; base de datos de vulnerabilidades descargada)",
+ "objetivos": {
+  "trivy-fs-after": {
+   "artefacto": ".",
+   "severidades": {},
+   "altas_criticas": [],
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-fs": {
+   "artefacto": ".",
+   "severidades": {
+    "CRITICAL": 3,
+    "HIGH": 7,
+    "MEDIUM": 2
+   },
+   "altas_criticas": [
+    {
+     "id": "CVE-2026-65182",
+     "paquete": "org.apache.tomcat.embed:tomcat-embed-core",
+     "version": "11.0.24",
+     "corregida": "11.0.25, 10.1.58, 9.0.121",
+     "severidad": "CRITICAL",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-65905",
+     "paquete": "org.apache.tomcat.embed:tomcat-embed-core",
+     "version": "11.0.24",
+     "corregida": "11.0.25, 10.1.58, 9.0.121",
+     "severidad": "CRITICAL",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-68525",
+     "paquete": "org.apache.tomcat.embed:tomcat-embed-core",
+     "version": "11.0.24",
+     "corregida": "11.0.25, 10.1.58, 9.0.121",
+     "severidad": "CRITICAL",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-89407",
+     "paquete": "tools.jackson.core:jackson-core",
+     "version": "3.1.5",
+     "corregida": "3.1.7, 3.2.2",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-89425",
+     "paquete": "tools.jackson.core:jackson-core",
+     "version": "3.1.5",
+     "corregida": "3.1.7, 3.2.3",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-68497",
+     "paquete": "tools.jackson.core:jackson-databind",
+     "version": "3.1.5",
+     "corregida": "3.2.2, 3.1.6",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-91776",
+     "paquete": "tools.jackson.core:jackson-databind",
+     "version": "3.1.5",
+     "corregida": "3.1.7, 3.2.3",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-91777",
+     "paquete": "tools.jackson.core:jackson-databind",
+     "version": "3.1.5",
+     "corregida": "3.1.7, 3.2.3",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-42198",
+     "paquete": "org.postgresql:postgresql",
+     "version": "42.7.10",
+     "corregida": "42.7.11",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-54291",
+     "paquete": "org.postgresql:postgresql",
+     "version": "42.7.10",
+     "corregida": "42.7.12",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    }
+   ],
+   "secretos": 0,
+   "misconfig": [
+    {
+     "id": "DS-0026",
+     "severidad": "LOW",
+     "archivo": "backend/Dockerfile"
+    },
+    {
+     "id": "DS-0026",
+     "severidad": "LOW",
+     "archivo": "frontend/Dockerfile"
+    },
+    {
+     "id": "DS-0002",
+     "severidad": "HIGH",
+     "archivo": "infra/pgpool/Dockerfile"
+    },
+    {
+     "id": "DS-0013",
+     "severidad": "MEDIUM",
+     "archivo": "infra/pgpool/Dockerfile"
+    },
+    {
+     "id": "DS-0026",
+     "severidad": "LOW",
+     "archivo": "infra/pgpool/Dockerfile"
+    }
+   ]
+  },
+  "trivy-image-backend-after": {
+   "artefacto": "bovicierre-backend:local",
+   "severidades": {
+    "MEDIUM": 40,
+    "LOW": 4
+   },
+   "altas_criticas": [],
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-backend": {
+   "artefacto": "bovicierre-backend:local",
+   "severidades": {
+    "MEDIUM": 45,
+    "LOW": 5,
+    "HIGH": 3,
+    "UNKNOWN": 4
+   },
+   "altas_criticas": [
+    {
+     "id": "CVE-2026-78667",
+     "paquete": "stdlib",
+     "version": "v1.26.7",
+     "corregida": "1.26.9, 1.27.2",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-78669",
+     "paquete": "stdlib",
+     "version": "v1.26.7",
+     "corregida": "1.26.9, 1.27.2",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-97031",
+     "paquete": "stdlib",
+     "version": "v1.26.7",
+     "corregida": "1.26.9, 1.27.2",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    }
+   ],
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-caddy-after": {
+   "artefacto": "bovicierre-caddy:local",
+   "severidades": {
+    "MEDIUM": 1,
+    "UNKNOWN": 1
+   },
+   "altas_criticas": [],
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-caddy": {
+   "artefacto": "caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f",
+   "severidades": {
+    "MEDIUM": 8,
+    "UNKNOWN": 7,
+    "HIGH": 4,
+    "LOW": 1
+   },
+   "altas_criticas": [
+    {
+     "id": "CVE-2026-78669",
+     "paquete": "golang.org/x/net",
+     "version": "v0.59.0",
+     "corregida": "0.60.0",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-78667",
+     "paquete": "stdlib",
+     "version": "v1.26.8",
+     "corregida": "1.26.9, 1.27.2",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-78669",
+     "paquete": "stdlib",
+     "version": "v1.26.8",
+     "corregida": "1.26.9, 1.27.2",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    },
+    {
+     "id": "CVE-2026-97031",
+     "paquete": "stdlib",
+     "version": "v1.26.8",
+     "corregida": "1.26.9, 1.27.2",
+     "severidad": "HIGH",
+     "clase": "lang-pkgs"
+    }
+   ],
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-frontend-after": {
+   "artefacto": "bovicierre-frontend:local",
+   "severidades": {
+    "MEDIUM": 1
+   },
+   "altas_criticas": [],
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-frontend": {
+   "artefacto": "bovicierre-frontend:local",
+   "severidades": {
+    "HIGH": 47,
+    "MEDIUM": 86,
+    "LOW": 50,
+    "UNKNOWN": 2
+   },
+   "altas_criticas": {
+    "total": 47,
+    "sin_correccion": 0,
+    "paquetes": [
+     "c-ares",
+     "curl",
+     "libcrypto3",
+     "libcurl",
+     "libexpat",
+     "libssl3",
+     "libuuid",
+     "libxml2",
+     "musl",
+     "musl-utils",
+     "nghttp2-libs",
+     "pcre2",
+     "tiff",
+     "zlib"
+    ]
+   },
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-pg-a-after": {
+   "artefacto": "postgres:18-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873",
+   "severidades": {
+    "MEDIUM": 29,
+    "UNKNOWN": 5,
+    "CRITICAL": 1,
+    "HIGH": 24,
+    "LOW": 3
+   },
+   "altas_criticas": {
+    "total": 25,
+    "sin_correccion": 0,
+    "paquetes": [
+     "stdlib"
+    ]
+   },
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-pg-a": {
+   "artefacto": "postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2",
+   "severidades": {
+    "HIGH": 33,
+    "MEDIUM": 39,
+    "LOW": 21,
+    "UNKNOWN": 6,
+    "CRITICAL": 1
+   },
+   "altas_criticas": {
+    "total": 34,
+    "sin_correccion": 0,
+    "paquetes": [
+     "libcrypto3",
+     "libssl3",
+     "libuuid",
+     "stdlib"
+    ]
+   },
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-pgpool-a-after": {
+   "artefacto": "bovicierre-academic-pgpool-a",
+   "severidades": {
+    "LOW": 106,
+    "HIGH": 55,
+    "MEDIUM": 113,
+    "UNKNOWN": 7,
+    "CRITICAL": 1
+   },
+   "altas_criticas": {
+    "total": 56,
+    "sin_correccion": 56,
+    "paquetes": [
+     "bsdutils",
+     "gzip",
+     "libacl1",
+     "libblkid1",
+     "libgnutls30",
+     "libldap-2.5-0",
+     "libmount1",
+     "libperl5.36",
+     "libsmartcols1",
+     "libssl3",
+     "libsystemd0",
+     "libtinfo6",
+     "libudev1",
+     "libuuid1",
+     "mount",
+     "ncurses-base",
+     "ncurses-bin",
+     "perl",
+     "perl-base",
+     "perl-modules-5.36",
+     "util-linux",
+     "util-linux-extra",
+     "zlib1g"
+    ]
+   },
+   "secretos": 0,
+   "misconfig": []
+  },
+  "trivy-image-pgpool-a": {
+   "artefacto": "bovicierre-academic-pgpool-a",
+   "severidades": {
+    "LOW": 106,
+    "HIGH": 55,
+    "MEDIUM": 113,
+    "UNKNOWN": 7,
+    "CRITICAL": 1
+   },
+   "altas_criticas": {
+    "total": 56,
+    "sin_correccion": 56,
+    "paquetes": [
+     "bsdutils",
+     "gzip",
+     "libacl1",
+     "libblkid1",
+     "libgnutls30",
+     "libldap-2.5-0",
+     "libmount1",
+     "libperl5.36",
+     "libsmartcols1",
+     "libssl3",
+     "libsystemd0",
+     "libtinfo6",
+     "libudev1",
+     "libuuid1",
+     "mount",
+     "ncurses-base",
+     "ncurses-bin",
+     "perl",
+     "perl-base",
+     "perl-modules-5.36",
+     "util-linux",
+     "util-linux-extra",
+     "zlib1g"
+    ]
+   },
+   "secretos": 0,
+   "misconfig": []
+  }
+ }
+}

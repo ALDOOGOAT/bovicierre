@@ -209,3 +209,12 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 - Puerta 20261012T0818: **PASS** — frontend 14, backend 30, SQL 37, inmutabilidad 50, E2E 16, seguridad 63; 0 omitidos ([release-gate](evidence/release-local/20261012T0818/release-gate.json)).
 - Restauración V18: 31.1 s, firma OK, 7 triggers + CHECK de reserva + TEMP revocado ([restore-v18](evidence/recovery/restore-v18.json)).
 - Manual: 249 págs., 0 Overfull/Missing character, 0 coincidencias con secretos.
+
+## Campaña · pase UI v3, SF-09, SCA/DAST y carga sostenida · 13-oct-2026
+- **Carga sostenida** (`BOVI_PROFILE=sustained`, 20 sesiones 15 min): 39,674 peticiones, 0 fallidas, p95 15.0 ms, p99 50.0 ms, 0 deadlocks, conciliación 5,201 = 5,201 ([report](evidence/performance/20261013-sustained/report.md)).
+- **UI v3**: auditoría `ecc:a11y-architect` (29 puntos) + ingeniería inversa del CSS público de Linear/Stripe/Vercel/Mercury/AgriWebb → UXD-12..20. Build y 14 unitarias PASS; recorrido visual 45 vistas × 3 anchos sin desbordamiento tras corregir uno a 390 px (rejilla `split-even`); capturas tomadas con animaciones finalizadas ([v3](evidence/ui-redesign/20261013-v3/)). Se revirtió ocultar el asterisco de obligatorio porque rompía el nombre accesible que usan 5 pruebas.
+- **SF-09**: decisión en [ADR-018](../architecture/adr/ADR-018-confianza-credencial-aplicacion.md) (riesgo aceptado con controles verificables, pendiente de revisión humana).
+- **SCA** (Trivy 0.75.0): corregidos SF-23/24/25; residual aceptado documentado ([dependency-report](../security/dependency-report.md)).
+- **DAST** (ZAP): baseline y API activa; SF-22 y SF-26 corregidos y re-escaneados ([zap-summary](evidence/security/20261013-dast/zap-summary.json)).
+- **Puerta local** tras todo lo anterior: **PASS** — frontend 14, backend 30, SQL 37, inmutabilidad 50, E2E 16, seguridad 63; 0 omitidos ([release-gate](evidence/release-local/20261013T0115/release-gate.json)).
+- **Restauración** con imágenes nuevas: 26.2 s, firma y hashes OK ([restore-20261013](evidence/recovery/restore-20261013.json)). Configuración de producción validada con `docker compose config` (sólo Caddy publica 80/443; todo sin root salvo PostgreSQL oficial).

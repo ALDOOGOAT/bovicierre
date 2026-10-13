@@ -3,7 +3,8 @@ services:
   backend:
     image: bovicierre-backend:local
     build:
-      context: ../../backend
+      context: ../..
+      dockerfile: backend/Dockerfile
     user: '${BOVI_UID:-1000}:${BOVI_GID:-1000}'
     environment:
       BOVI_BIND_ADDRESS: 0.0.0.0
@@ -27,7 +28,8 @@ services:
     user: '${BOVI_UID:-1000}:${BOVI_GID:-1000}'
     mem_limit: 128m
   caddy:
-    image: caddy:2.11.7-alpine@sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f
+    build: ../caddy
+    image: bovicierre-caddy:local
     user: '${BOVI_UID:-1000}:${BOVI_GID:-1000}'
     ports: ['127.0.0.1:15180:8080']
     volumes: ['../caddy/Caddyfile.local:/etc/caddy/Caddyfile:ro']

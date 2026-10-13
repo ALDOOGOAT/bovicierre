@@ -38,6 +38,9 @@ class ContractTest {
         assertEquals(500,ApiErrors.database(pg("P0001",null,"{\"codigo\":\"BV405\",\"regla_id\":\"secret SQL\",\"campos\":[]}")).status);
         assertEquals(500,ApiErrors.database(pg("P0001",null,"malformed JSON")).status);
         assertEquals(500,ApiErrors.database(new java.sql.SQLException("SQL syntax secret","42601")).status);
+        // DAST: byte nulo / codificación inválida → 400, nunca 500.
+        assertEquals(400,ApiErrors.database(new java.sql.SQLException("unsupported Unicode escape","22P05")).status);
+        assertEquals(400,ApiErrors.database(new java.sql.SQLException("invalid byte sequence","22021")).status);
     }
     @Test void nativeDatabaseMessagesNeverLeakSql() {
         ApiException conflict=ApiErrors.database(pg("23505","uk_animal_identificacion_codigo",null));

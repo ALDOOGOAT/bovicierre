@@ -18,4 +18,6 @@ Complementa, sin sustituir, las 55 tareas de `docs/project/backlog.md`. `[x]` = 
 | [x] | UQ-012 | Regresión frontend/contrato/errores | Jared | E2E 16/16 tras CSP y backend; vite 8.0.16; contrato: Redocly OK, divergencias DIV-11/12 abiertas |
 | [x] | UQ-013 | Concurrencia, carga HTTP y conciliación | Aldo | Carreras SQL con barreras en `verify-sql`; k6 1→20, conciliación 1,185=1,185. Dataset grande y sostenido no ejecutados |
 | [x] | UQ-014 | Recuperación final y runbooks | Aldo | Respaldo previo y posterior a V14; `make restore-check` conciliado (firma, hashes, sesiones) con triggers V14 y PUBLIC sin TEMP en la base restaurada ([restore-v14](../testing/evidence/recovery/restore-v14.json)); runbook corregido en `scripts/recovery.py`. Sin PITR ni pérdida de host |
+| [x] | UQ-016 | SF-09, SCA/DAST y carga sostenida | Aldo | ADR-018; Trivy + ZAP con SF-22..26 corregidos; k6 15 min 0 errores |
+| [x] | UQ-017 | Pase visual v3 con agentes ECC y referencias | Jared | UXD-12..20; visual 45 vistas sin desbordamiento |
 | [ ] | UQ-015 | Dossier, evidencia, grafo y cierre S2 | Ambos | [final-report](final-report.md), grafo AST actualizado; falta `/graphify --update` semántico y revisión humana |

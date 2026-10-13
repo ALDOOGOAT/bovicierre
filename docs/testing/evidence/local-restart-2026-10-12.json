@@ -1,0 +1,35 @@
+{
+  "observado_utc": "2026-10-12T16:35:19Z",
+  "revision_base": "0bcee08",
+  "rama": "feature/uiux-qa-claude",
+  "working_tree": "dirty; cambios previos preservados y corrección local del contexto Docker",
+  "url": "http://localhost:15180",
+  "arranque": {
+    "comando": "make academic",
+    "primer_intento": "Falló: MoneyTypesLintTest no encontraba ../frontend/src en la etapa Docker del backend",
+    "correccion": "Contexto desde la raíz con Dockerfile.dockerignore de lista permitida; TypeScript disponible sólo durante compilación; no se omiten pruebas",
+    "segundo_intento_exit_code": 0,
+    "migraciones": "A/B en V18; 19 migraciones validadas, ninguna nueva aplicada",
+    "servicios_activos": 8,
+    "datos": "Volúmenes conservados; no se ejecutó seed ni limpieza"
+  },
+  "verificaciones": {
+    "salud_http": 200,
+    "A": "DISPONIBLE",
+    "B": "DISPONIBLE",
+    "AUTORIZACION_A": "DISPONIBLE",
+    "login_admin_http": 204,
+    "logout_http": 204,
+    "periodo_abierto_A_B": "2026-10-01 a 2026-10-31",
+    "navegador": "Playwright con Google Chrome headless a 1440x1000: login, selección de DEMO Sede A, Bandeja y logout visibles",
+    "errores_javascript_en_acceso": 0,
+    "captura_local": "/tmp/bovicierre-arranque-bandeja.png",
+    "apertura_escritorio": "xdg-open http://localhost:15180 devolvió 0; pestaña de escritorio no inspeccionada",
+    "diff_check_exit_code": 0
+  },
+  "limites": [
+    "No se repitió el recorrido financiero completo ni las suites académicas",
+    "La captura headless no acredita rendimiento de GPU",
+    "Credenciales sólo en almacenamiento privado externo; no incluidas en esta evidencia"
+  ]
+}

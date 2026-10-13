@@ -79,3 +79,18 @@ Siguiente tarea concreta: ver [NEXT_SESSION](../continuity/NEXT_SESSION.md).
 **Actualización V16/V17 (12-oct-2026):** DIV-05 corregido. V16 tenía un defecto (`NEW.id` en conceptos) que la fase verde detectó antes de cualquier commit; se corrigió hacia delante con V17 sin tocar el historial de Flyway. Puerta con carga PASS ([release-gate](../testing/evidence/release-local/20261012T0732/release-gate.json)); restauración V17 conciliada en 30.8 s ([restore-v17](../testing/evidence/recovery/restore-v17.json)).
 
 **Actualización V18 y cierre de la matriz (12-oct-2026):** V18 limita el vencimiento de reservas a 30 días (DIV-14, DEC-24); OpenAPI cubre las 71 rutas Java con comprobación automática (DIV-11, DEC-22); `Pago` sin campos fantasma (DIV-13, DEC-23); nombres, ENT-42, retención y alcance de BV402 corregidos en la documentación (DIV-15/16/17, DEC-25). Puerta PASS 210 casos ([release-gate](../testing/evidence/release-local/20261012T0818/release-gate.json)); restauración V18 conciliada en 31.1 s. Manual: capítulo 23 (págs. 229–238) documenta todos los cambios y las decisiones DEC-12..25. El bloque S2 superó los 300 min previstos por continuar a petición explícita del usuario.
+
+## Veredicto de despliegue (13-oct-2026)
+
+**Técnicamente listo para un despliegue piloto controlado** (una empresa, una VM, staging primero), **condicionado** a lo que sigue. No se declara «producción lista» ni «sin vulnerabilidades».
+
+Evidencia a favor: puerta local PASS 210 casos sin omitidos ([release-gate](../testing/evidence/release-local/20261013T0115/release-gate.json)); carga sostenida 15 min con 20 sesiones sin errores (p95 15 ms); SCA sin altas/críticas en código, backend, frontend y Caddy; DAST sin fallos tras corregir SF-22/26; restauración conciliada; configuración de producción validada (sólo Caddy expuesto, servicios sin root); 17/17 divergencias de coherencia cerradas.
+
+Condiciones antes de exponerlo:
+1. **Revisión humana** de Aldo y Jared ([lista](human-review-checklist.md)), incluida la aceptación de ADR-018 (SF-09), DEC-24 (30 días de reserva) y el pase visual v3.
+2. **Infraestructura de la VM**: dominio autorizado, `TLS_CONTACT_EMAIL`, firewall (sólo 80/443), `BOVI_PRIVATE_DIR`/`BOVI_SECRET_DIR` propios, usuario sin privilegios.
+3. **Credenciales comerciales** nuevas (no DEMO) e inicialización autorizada de empresa/sedes/usuarios; plan de rotación.
+4. **Respaldo fuera del host** y una restauración ensayada en la VM; PITR y alta disponibilidad quedan fuera del piloto.
+5. **Decisión de integración**: merge de `feature/uiux-qa-claude` a `main` y push (no hecho por el agente).
+
+Riesgos residuales aceptados: SF-09 (ADR-018), `gosu` en la imagen oficial de PostgreSQL y paquetes Debian sin corrección en Pgpool (internos), un solo host sin HA, lector de pantalla/axe/teléfono físico no probados.

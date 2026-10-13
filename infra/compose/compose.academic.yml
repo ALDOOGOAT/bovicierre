@@ -1,6 +1,6 @@
 name: bovicierre-academic
 x-pg: &pg
-  image: postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+  image: postgres:18-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
   restart: unless-stopped
   environment:
     POSTGRES_DB: bovicierre
@@ -30,6 +30,7 @@ services:
     volumes: [pg-prov:/var/lib/postgresql]
   pgpool-a:
     build: ../pgpool
+    user: '${BOVI_UID:-1000}:${BOVI_GID:-1000}'
     ports: ['127.0.0.1:19999:9999']
     volumes: ['../pgpool/pgpool-a.conf:/etc/pgpool2/pgpool.conf:ro', '../pgpool/pool_hba.conf:/etc/pgpool2/pool_hba.conf:ro']
     secrets: [app_a_password, app_b_password, repl_password, worker_password]
@@ -37,6 +38,7 @@ services:
       pg-a: {condition: service_healthy}
   pgpool-b:
     build: ../pgpool
+    user: '${BOVI_UID:-1000}:${BOVI_GID:-1000}'
     ports: ['127.0.0.1:19998:9999']
     volumes: ['../pgpool/pgpool-b.conf:/etc/pgpool2/pgpool.conf:ro', '../pgpool/pool_hba.conf:/etc/pgpool2/pool_hba.conf:ro']
     secrets: [app_a_password, app_b_password, repl_password, worker_password]

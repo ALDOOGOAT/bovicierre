@@ -74,3 +74,5 @@ El PDF y su fuente LaTeX, que duplican el corpus explicado, quedan excluidos en 
 `graphify update .` tras V14 (12-oct-2026, sólo AST): **2946 nodos, 5434 aristas, 294 comunidades**. La migración SQL y los documentos nuevos no se reinterpretan semánticamente; `/graphify . --update` sigue pendiente.
 
 `/graphify --update` semántico (12-oct-2026): 141 archivos de código por AST y 101 documentos (46 desde caché, 55 extraídos por 3 agentes, ~473k tokens de entrada) → **2,871 nodos, 4,758 aristas, 298 comunidades**; salud del grafo sin aristas colgantes, faltantes, bucles ni colapsadas. Exportado con `force` porque reemplazar nodos obsoletos y deduplicar 42 redujo el total frente a 2,946. Las 167 imágenes nuevas (151 capturas de evidencia) no se extrajeron semánticamente (DEC-21) y quedan sin sellar. Etiquetas de comunidad por nodo central, no curadas.
+
+`graphify update .` tras UI v3 y SCA/DAST (13-oct-2026, sólo AST); los documentos nuevos se reinterpretarán en el próximo `/graphify --update`.

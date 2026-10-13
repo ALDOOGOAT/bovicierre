@@ -20,6 +20,8 @@ const USERS = [
 const PROFILE = __ENV.BOVI_PROFILE || 'ramp';
 const stages = PROFILE === 'smoke'
   ? [{duration: '20s', target: 2}]
+  : PROFILE === 'sustained'
+  ? [{duration: '2m', target: 20}, {duration: '15m', target: 20}, {duration: '30s', target: 0}]
   : [{duration: '1m', target: 1}, {duration: '1m', target: 5}, {duration: '2m', target: 10}, {duration: '3m', target: 20}, {duration: '30s', target: 0}];
 
 export const options = {
