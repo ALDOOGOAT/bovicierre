@@ -55,7 +55,10 @@ def reserve(op):
   except psycopg.Error as ex:con.rollback();return(ex.sqlstate,op,json.loads(ex.diag.message_detail)['codigo'] if ex.diag.message_detail and ex.sqlstate=='P0001' else None)
 with concurrent.futures.ThreadPoolExecutor(2) as executor:results=list(executor.map(reserve,sales))
 assert sum(r[0]=='ok' for r in results)==1,results
-winner=next(r[1] for r in results if r[0]=='ok');loser=next(r[1] for r in results if r[0]!='ok');command('A','confirmar_operacion',{'operacion_id':winner,'version_lock':0})
+winner=next(r[1] for r in results if r[0]=='ok');loser=next(r[1] for r in results if r[0]!='ok')
+# GOLD-ACAD-03: el perdedor recibe conflicto de negocio y queda una sola reserva activa.
+assert next(r for r in results if r[0]!='ok')[2]=='BV402',results;assert sql('A',"select count(*) from bovi.reserva_venta where posicion_id=%s and estado='ACTIVA'",(pos,))==1
+command('A','confirmar_operacion',{'operacion_id':winner,'version_lock':0})
 print('PASS TEST-10 barrier race: exactly one reservation/confirmation')
 # Two application transactions share a payment lock, no overapplication.
 liq=str(sql('A','select id from bovi.liquidacion where operacion_id=%s',(winner,)));pay=command('A','registrar_pago',{'parte_id':party,'tipo':'COBRO','importe':{'importe':'600.00','moneda':'MXN'},'metodo':'EFECTIVO'})['id'];command('A','validar_pago',{'pago_id':pay});barrier=threading.Barrier(2)

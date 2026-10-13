@@ -1,6 +1,6 @@
 {
   "database": "bovicierre_release_replay",
-  "seconds": 1.399,
+  "seconds": 1.505,
   "command_calls": 25,
   "tests": [
     "TEST-10",
@@ -14,11 +14,11 @@
     "roles"
   ],
   "dataset": {
-    "animal": 310,
-    "operacion": 502,
-    "posicion_inventario": 278,
-    "liquidacion": 410,
-    "aplicacion_pago": 117,
-    "evento_outbox": 2741
+    "animal": 318,
+    "operacion": 518,
+    "posicion_inventario": 284,
+    "liquidacion": 418,
+    "aplicacion_pago": 118,
+    "evento_outbox": 2801
   }
 }

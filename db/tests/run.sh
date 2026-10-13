@@ -9,6 +9,7 @@ if [ ! -x "$test_env/bin/python" ]; then
 fi
 cd "$repo_dir"
 "$test_env/bin/python" db/tests/gold.py
+"$test_env/bin/python" db/tests/gold_acad.py
 "$test_env/bin/python" db/tests/academic.py
 "$test_env/bin/python" db/tests/provider.py
 "$test_env/bin/python" db/tests/negatives.py
