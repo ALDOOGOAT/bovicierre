@@ -21,4 +21,4 @@ Diagnóstico rápido:
 - E2E contra Caddy: `BOVI_UI_TEST_URL=http://127.0.0.1:15180` (el default 15173 es Vite dev).
 - La primera prueba justo tras reiniciar Caddy puede ver el upstream frío; espera a que `/api/v1/sesion/actual` responda 401 antes de medir.
 
-No borres volúmenes ni historial git para "limpiar"; no edites migraciones aplicadas (la siguiente es V22).
+No borres volúmenes ni historial git para "limpiar"; no edites migraciones aplicadas (la siguiente es V26).

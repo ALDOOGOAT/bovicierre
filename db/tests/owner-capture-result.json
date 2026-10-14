@@ -1,6 +1,6 @@
 {
   "database": "bovicierre_release_replay",
-  "seconds": 0.251,
+  "seconds": 0.261,
   "command_calls": 12,
   "FDW_reader": "A",
   "capture_owner": "B",

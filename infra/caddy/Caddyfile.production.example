@@ -32,7 +32,9 @@
 		max_size 22MB
 	}
 	handle /api/* {
-		reverse_proxy backend:18080
+		reverse_proxy backend:18080 {
+			header_up X-Real-IP {client_ip}
+		}
 	}
 	handle {
 		encode gzip

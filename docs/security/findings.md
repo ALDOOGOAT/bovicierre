@@ -39,5 +39,15 @@ Primera ejecución: 48/56 PASS ([dynamic-before-fixes.json](../testing/evidence/
 
 Cobertura **no ejecutada**: ZAP/DAST autenticado, Semgrep/Gitleaks/Trivy/escáner Maven (no instalados; ver [dependency-report.md](dependency-report.md)), subida políglota de archivos, descargas concurrentes de 20 MiB, enumeración por tiempo.
 
+## Revisión automática de commits y push · 13-oct-2026 (cierre académico)
+
+| ID | Severidad | Hallazgo | Corrección | Prueba |
+|---|---|---|---|---|
+| SF-27 | Alta | `LoginThrottle` usaba `X-Forwarded-For` crudo del cliente como origen: rotarlo evadía el límite por origen y creaba claves sin límite de memoria | Caddy envía `X-Real-IP {client_ip}` (sobrescribe la del cliente; en Railway con `trusted_proxies` estricto); el backend sólo usa esa IP; mapa con tope duro `MAX_KEYS` | `LoginThrottleTest` (6), puerta 20261013T1903 |
+| SF-28 | Alta | Un ADMIN de una sede podía restablecer la contraseña (o bloquear) una cuenta con rol ADMIN en otra sede: escalada entre sedes (V21) | V24: `actualizar_usuario` exige ADMIN vigente en todas las sedes donde la cuenta tiene roles | TEST-38 (42501) |
+| SF-29 | Media | Restablecer contraseña o bloquear no cerraba sesiones abiertas | V25: borra `infra.spring_session` de la cuenta en la misma transacción | TEST-38 |
+| SF-30 | Media | `pg_monitor` en la cuenta de consulta (texto de consultas ajenas) y `sslmode=prefer` remoto | V23; `require` hacia destinos remotos | TEST-42 |
+| SF-31 | Media | Backend como root en Railway y entrypoint escribible por el UID 1000 | `setpriv` a 1000 sin grupos ni capacidades; entrypoint root 555; `chown -h` en ruta fija | inspección de imagen (`CapEff=0`) |
+
 ## Salida
 Ningún hallazgo crítico/alto **confirmado y no mitigado dentro del alcance ejecutado**. Abiertos: 1 media aceptada provisionalmente (SF-09, requiere decisión humana), bajas/info estáticas sin reproducir. Esto no es una certificación de seguridad ni habilita un piloto por sí mismo.

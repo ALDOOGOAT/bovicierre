@@ -39,7 +39,7 @@ public class SessionController {
     static final int AUTHENTICATED_SESSION_SECONDS = 1800;
     @GetMapping("/sesion/csrf") ResponseEntity<Map<String,String>> csrf(CsrfToken token,HttpServletRequest request,HttpServletResponse response,Authentication authentication) {
         boolean fresh=request.getSession(false)==null;
-        if (fresh && !throttle.anonymousSession(request.getRemoteAddr()+"|"+String.valueOf(request.getHeader("X-Forwarded-For")))) {
+        if (fresh && !throttle.anonymousSession(LoginThrottle.origin(request))) {
             response.setHeader("Retry-After","60"); throw new ApiException(429,"AUTH429","Demasiadas sesiones nuevas desde este origen.");
         }
         String value=token.getToken(); // genera y guarda el token: crea la sesión si no existía
@@ -50,7 +50,7 @@ public class SessionController {
     }
     @PostMapping("/sesion/login") ResponseEntity<Void> login(@Valid @RequestBody Login input,HttpServletRequest request,HttpServletResponse response) {
         if (input.contrasena().getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72) throw new ApiException(400,"BV400","La contraseña excede 72 bytes UTF-8.");
-        String origin=request.getRemoteAddr()+"|"+String.valueOf(request.getHeader("X-Forwarded-For"));
+        String origin=LoginThrottle.origin(request);
         long wait=throttle.retryAfter(input.login(),origin);
         if (wait>0) { response.setHeader("Retry-After",String.valueOf(wait)); throw new ApiException(429,"AUTH429","Demasiados intentos. Espera antes de volver a intentar."); }
         var user=access.login(input.login());

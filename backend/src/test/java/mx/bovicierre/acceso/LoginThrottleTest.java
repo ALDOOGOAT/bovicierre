@@ -51,4 +51,24 @@ class LoginThrottleTest {
         clock.now = clock.now.plus(LoginThrottle.WINDOW).plusSeconds(1);
         assertTrue(t.anonymousSession("o1"));
     }
+
+    @Test void elOrigenIgnoraXForwardedForDelClienteYUsaLaIpDeCaddy() {
+        var spoofed = new org.springframework.mock.web.MockHttpServletRequest();
+        spoofed.setRemoteAddr("172.18.0.5"); spoofed.addHeader("X-Forwarded-For", "1.2.3." + System.nanoTime() % 255);
+        spoofed.addHeader("X-Real-IP", "203.0.113.7");
+        assertEquals("203.0.113.7", LoginThrottle.origin(spoofed), "rotar X-Forwarded-For no cambia el origen");
+        var direct = new org.springframework.mock.web.MockHttpServletRequest(); direct.setRemoteAddr("10.0.0.9");
+        direct.addHeader("X-Forwarded-For", "9.9.9.9");
+        assertEquals("10.0.0.9", LoginThrottle.origin(direct));
+    }
+
+    @Test void laMemoriaQuedaAcotadaYLasClavesExistentesSiguenContando() {
+        var t = new LoginThrottle(new MutableClock());
+        for (int i = 0; i < LoginThrottle.MAX_KEYS; i++) t.failed("u" + i, "203.0.113.7");
+        int full = t.trackedKeys();
+        for (int i = 0; i < 1000; i++) t.failed("nuevo" + i, "203.0.113.7");
+        assertTrue(t.trackedKeys() <= LoginThrottle.MAX_KEYS, "sin crecimiento ilimitado: " + t.trackedKeys());
+        assertEquals(full, t.trackedKeys());
+        assertTrue(t.retryAfter("cualquiera", "203.0.113.7") > 0, "el origen existente sigue bloqueado");
+    }
 }

@@ -20,7 +20,7 @@ public class LoginThrottle {
     static final int MAX_PER_ORIGIN = 50;
     static final int MAX_ANONYMOUS_SESSIONS = 600;
     static final Duration WINDOW = Duration.ofMinutes(15);
-    private static final int MAX_KEYS = 50_000;
+    static final int MAX_KEYS = 50_000;
     private final ConcurrentHashMap<String, Deque<Instant>> failures = new ConcurrentHashMap<>();
     private final Clock clock;
 
@@ -32,21 +32,37 @@ public class LoginThrottle {
         return Math.max(wait(key("u", login), MAX_PER_LOGIN), wait(key("o", origin), MAX_PER_ORIGIN));
     }
 
-    public void failed(String login, String origin) {
-        if (failures.size() > MAX_KEYS) failures.entrySet().removeIf(e -> { synchronized (e.getValue()) { prune(e.getValue()); return e.getValue().isEmpty(); } });
-        Instant now = clock.instant();
-        for (String k : new String[]{key("u", login), key("o", origin)}) {
-            Deque<Instant> q = failures.computeIfAbsent(k, ignored -> new ArrayDeque<>());
-            synchronized (q) { prune(q); q.addLast(now); }
-        }
+    /**
+     * Origen del cliente: X-Real-IP que fija Caddy con su {client_ip} (sobrescribe lo que envíe el cliente; el backend
+     * sólo es alcanzable a través de Caddy). Nunca X-Forwarded-For crudo: el cliente lo controla y evadiría el límite.
+     */
+    public static String origin(jakarta.servlet.http.HttpServletRequest request) {
+        String real = request.getHeader("X-Real-IP");
+        return real == null || real.isBlank() || real.length() > 64 ? request.getRemoteAddr() : real.trim();
     }
+
+    public void failed(String login, String origin) {
+        Instant now = clock.instant();
+        for (String k : new String[]{key("u", login), key("o", origin)}) track(k, now);
+    }
+
+    /** Memoria acotada: limpia lo vencido y, si sigue lleno, no crea claves nuevas (las existentes siguen contando). */
+    private void track(String k, Instant now) {
+        if (!failures.containsKey(k) && failures.size() >= MAX_KEYS) {
+            failures.entrySet().removeIf(e -> { synchronized (e.getValue()) { prune(e.getValue()); return e.getValue().isEmpty(); } });
+            if (failures.size() >= MAX_KEYS) return;
+        }
+        Deque<Instant> q = failures.computeIfAbsent(k, ignored -> new ArrayDeque<>());
+        synchronized (q) { prune(q); q.addLast(now); }
+    }
+
+    int trackedKeys() { return failures.size(); }
 
     /** Registra una sesión anónima nueva del origen; false si superó el tope de la ventana (hallazgo SF-03). */
     public boolean anonymousSession(String origin) {
         String k = key("s", origin);
         if (wait(k, MAX_ANONYMOUS_SESSIONS) > 0) return false;
-        Deque<Instant> q = failures.computeIfAbsent(k, ignored -> new ArrayDeque<>());
-        synchronized (q) { prune(q); q.addLast(clock.instant()); }
+        track(k, clock.instant());
         return true;
     }
 

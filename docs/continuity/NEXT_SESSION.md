@@ -13,4 +13,3 @@ F1–F5 sin UUID (V19); CHECK→422; GOLD-ACAD-01/02/03 (V20 BV402); tablero de 
 ## Siguiente acción ejecutable
 - Con la rúbrica: incorporarla y ajustar la matriz.
 - `/graphify . --update` semántico para los documentos nuevos; `graphify label`.
-- Opcional: cerrar sesiones abiertas al restablecer contraseña (hoy se usa “Bloqueado”).

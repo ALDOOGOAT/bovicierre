@@ -25,4 +25,4 @@ Foto del pizarrón: [`rubrica.png`](rubrica.png) con [procedencia](rubrica-proce
 - Paquete: `make release-academic` → `dist/bovicierre-academico-<commit>.tar.gz` + `.sha256` (desde `git archive`, con escaneo de secretos).
 
 ## Límites conocidos
-Un solo host (no alta disponibilidad); proveedor FDW simulado; sin PITR; PDF interno no es CFDI; QR no es certificación; sin envío de correo (recuperación administrativa de contraseña); restablecer contraseña no cierra sesiones abiertas del usuario (usar “Bloqueado” para cortar acceso).
+Un solo host (no alta disponibilidad); proveedor FDW simulado; sin PITR; PDF interno no es CFDI; QR no es certificación; sin envío de correo (recuperación administrativa de contraseña). Restablecer contraseña o bloquear cierra las sesiones abiertas de la cuenta (V25).
