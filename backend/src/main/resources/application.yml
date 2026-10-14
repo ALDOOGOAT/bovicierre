@@ -8,7 +8,7 @@ server:
         name: BOVI_SESSION
         http-only: true
         same-site: lax
-        secure: false
+        secure: ${BOVI_COOKIE_SECURE:false}
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s

@@ -11,10 +11,13 @@ ROOT=Path(__file__).resolve().parents[2]
 SECRETS=Path(os.environ.get('BOVI_SECRET_DIR',Path.home()/'.local/share/bovicierre-academic/secrets'))
 fixture=json.loads((ROOT/'data/synthetic/demo-scenarios.json').read_text());dataset=fixture['dataset'];day=date.fromisoformat(fixture['fecha'])
 assert dataset.startswith('DEMO-')
-label=subprocess.run(['docker','inspect','--format','{{index .Config.Labels "com.docker.compose.project"}}','bovicierre-academic-pg-a-1'],capture_output=True,text=True,check=True).stdout.strip()
-if label!='bovicierre-academic':raise SystemExit('Proyecto académico exacto requerido; semilla bloqueada')
+# Remoto explícito (Railway): BOVI_DEMO_TARGET=host:puerto de A; sigue exigiendo la empresa DEMO exacta más abajo.
+TARGET=os.environ.get('BOVI_DEMO_TARGET','')
+if not TARGET:
+ label=subprocess.run(['docker','inspect','--format','{{index .Config.Labels "com.docker.compose.project"}}','bovicierre-academic-pg-a-1'],capture_output=True,text=True,check=True).stdout.strip()
+ if label!='bovicierre-academic':raise SystemExit('Proyecto académico exacto requerido; semilla bloqueada')
 e='11111111-1111-4111-8111-111111111111';s='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';actor='99999999-9999-4999-8999-999999999999'
-with psycopg.connect(host='127.0.0.1',port=19999,dbname='bovicierre',user='bovi_app_a',password=(SECRETS/'app_a_password').read_text().strip()) as connection:
+with psycopg.connect(host=TARGET.rsplit(':',1)[0] if TARGET else '127.0.0.1',port=int(TARGET.rsplit(':',1)[1]) if TARGET else 19999,dbname='bovicierre',user='bovi_app_a',password=(SECRETS/'app_a_password').read_text().strip()) as connection:
  c=connection.cursor()
  c.execute('select razon_social from bovi.empresa where id=%s',(e,));company=c.fetchone()
  if not company or not company[0].startswith('DEMO '):raise SystemExit('Empresa DEMO exacta requerida')

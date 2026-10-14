@@ -31,8 +31,18 @@ if INSTALL=='vacia':
  if not first.exists():
   with os.fdopen(os.open(first,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600),'w') as out: out.write(tokens.token_urlsafe(18)+'\n')
 def lit(v): return "'"+str(v).replace("'","''")+"'"
+# Destino remoto opcional (p. ej. Railway): BOVI_PSQL_TARGETS='{"a":"host:puerto","b":…,"prov":…}' usa psql por TCP
+# con la contraseña de administrador; BOVI_INTERNAL_SUFFIX ('.railway.internal') completa los nombres de la red privada.
+import json as _json
+TARGETS=_json.loads(os.environ.get('BOVI_PSQL_TARGETS','{}'))
+SUFFIX=os.environ.get('BOVI_INTERNAL_SUFFIX','')
+def internal(node): return 'pg-'+node+SUFFIX
 def sql(node, query):
- p=subprocess.run(['docker','exec','-i',f'{PROJECT}-pg-{node}-1','psql','-X','-qAt','-U','postgres','-d',DATABASE,'-v','ON_ERROR_STOP=1'],input=query,text=True,capture_output=True)
+ if TARGETS:
+  host,port=TARGETS[node].rsplit(':',1)
+  p=subprocess.run(['psql','-X','-qAt','-h',host,'-p',port,'-U','postgres','-d',DATABASE,'-v','ON_ERROR_STOP=1'],input=query,text=True,capture_output=True,env={**os.environ,'PGPASSWORD':secret('admin_password'),'PGSSLMODE':'prefer'})
+ else:
+  p=subprocess.run(['docker','exec','-i',f'{PROJECT}-pg-{node}-1','psql','-X','-qAt','-U','postgres','-d',DATABASE,'-v','ON_ERROR_STOP=1'],input=query,text=True,capture_output=True)
  if p.returncode:
   error=p.stderr
   for file in SECRET.iterdir():
@@ -59,7 +69,7 @@ for node in 'ab':
 for node,remote in [('b','a'),('a','b')]:
  sub=f'sub_{node}_desde_{remote}'
  if sql(node,f"SELECT count(*) FROM pg_subscription WHERE subname='{sub}' AND subdbid=(SELECT oid FROM pg_database WHERE datname=current_database())")=='0':
-  connection=f'host=pg-{remote} port=5432 dbname={DATABASE} user=bovi_repl password={secret("repl_password")} connect_timeout=3'
+  connection=f'host={internal(remote)} port=5432 dbname={DATABASE} user=bovi_repl password={secret("repl_password")} connect_timeout=3'
   slot_suffix='' if DATABASE=='bovicierre' else '_'+DATABASE
   sql(node,f'CREATE SUBSCRIPTION {sub} CONNECTION {lit(connection)} PUBLICATION pub_{remote} WITH(slot_name=\'slot_{remote}_para_{node}{slot_suffix}\',origin=none,copy_data=false);')
 if INSTALL=='vacia':
@@ -92,14 +102,14 @@ INSERT INTO proveedor.tarifa_transporte VALUES('DEMO-RUTA-01','DEMO origen','DEM
 INSERT INTO proveedor.ticket_bascula VALUES('DEMO-TICKET-01','DEMO báscula',now(),5000,'Datos sintéticos') ON CONFLICT DO NOTHING;
 REVOKE ALL ON SCHEMA public FROM PUBLIC; GRANT USAGE ON SCHEMA proveedor TO bovi_fdw_read; GRANT SELECT ON ALL TABLES IN SCHEMA proveedor TO bovi_fdw_read;"""
 sql('prov',provider)
-fdw=f"""CREATE EXTENSION IF NOT EXISTS postgres_fdw; CREATE SCHEMA IF NOT EXISTS ext_proveedor; DO $$ BEGIN IF NOT EXISTS(SELECT 1 FROM pg_foreign_server WHERE srvname='prov_sim') THEN CREATE SERVER prov_sim FOREIGN DATA WRAPPER postgres_fdw OPTIONS(host 'pg-prov',dbname '{DATABASE}',connect_timeout '3'); END IF; END $$;
-CREATE USER MAPPING IF NOT EXISTS FOR bovi_app_a SERVER prov_sim OPTIONS(user 'bovi_fdw_read',password {lit(secret('fdw_password'))});
+fdw=f"""CREATE EXTENSION IF NOT EXISTS postgres_fdw; CREATE SCHEMA IF NOT EXISTS ext_proveedor; DO $$ BEGIN IF NOT EXISTS(SELECT 1 FROM pg_foreign_server WHERE srvname='prov_sim') THEN CREATE SERVER prov_sim FOREIGN DATA WRAPPER postgres_fdw OPTIONS(host '{internal("prov")}',dbname '{DATABASE}',connect_timeout '3'); END IF; END $$;
 """
-for node in 'a':
+# FDW desde ambos maestros hacia la tercera instancia (la “Y” del pizarrón): A y B leen el proveedor, nunca escriben.
+for node in 'ab':
  sql(node,fdw)
  # IMPORT uses bootstrap identity; definer and business roles have SELECT-only provider mapping.
  for role in ['postgres','bovi_command','bovi_app_'+node]:
   sql(node,f"CREATE USER MAPPING IF NOT EXISTS FOR {role} SERVER prov_sim OPTIONS(user 'bovi_fdw_read',password {lit(secret('fdw_password'))});")
  if sql(node,"SELECT count(*) FROM information_schema.foreign_tables WHERE foreign_table_schema='ext_proveedor'")=='0': sql(node,'IMPORT FOREIGN SCHEMA proveedor LIMIT TO(tarifa_transporte,ticket_bascula) FROM SERVER prov_sim INTO ext_proveedor;')
  sql(node,'GRANT USAGE ON SCHEMA ext_proveedor TO bovi_command,bovi_app_'+node+'; GRANT SELECT ON ALL TABLES IN SCHEMA ext_proveedor TO bovi_command,bovi_app_'+node+';')
-print('Bootstrap: A/B PostgreSQL18, maestros convergentes, proveedor FDW SELECT-only en lector A preparado.')
+print('Bootstrap: A/B PostgreSQL18, maestros convergentes, proveedor FDW SELECT-only desde A y B preparado.')

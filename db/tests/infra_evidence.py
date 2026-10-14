@@ -99,7 +99,13 @@ finally:
     with admin('A') as c: c.execute("ALTER SERVER prov_sim OPTIONS (SET host 'pg-prov')")
 assert outage and outage.startswith('08'), outage
 assert fdw_read() == 12000
-evidence['fdw'] = {'lectura_pgpool': '12000', 'insert_denegado': denied, 'caida_sqlstate': outage, 'recuperado': True}
-print(f'PASS TEST-40 FDW lectura 12000, INSERT {denied}, caída {outage}, recuperado')
+with connect(PORT['poolB'], 'bovi_app_b', pw('app_b_password')) as c:  # la “Y”: B también consulta el proveedor
+    assert c.execute("select precio_mxn from ext_proveedor.tarifa_transporte where ruta='DEMO-RUTA-01'").fetchone()[0] == 12000
+    try:
+        c.execute("update ext_proveedor.tarifa_transporte set precio_mxn=1"); raise AssertionError('UPDATE FDW desde B permitido')
+    except psycopg.Error as ex: denied_b = ex.sqlstate
+assert denied_b == '42501', denied_b
+evidence['fdw'] = {'lectura_pgpool_B': '12000', 'update_denegado_B': denied_b, 'lectura_pgpool': '12000', 'insert_denegado': denied, 'caida_sqlstate': outage, 'recuperado': True}
+print(f'PASS TEST-40 FDW desde A y B lectura 12000, INSERT/UPDATE {denied}/{denied_b}, caída {outage}, recuperado')
 
 Path(__file__).with_name('infra-evidence-result.json').write_text(json.dumps(evidence, ensure_ascii=False, indent=1, default=str) + '\n')

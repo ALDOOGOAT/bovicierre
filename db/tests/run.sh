@@ -14,6 +14,7 @@ cd "$repo_dir"
 "$test_env/bin/python" db/tests/empty_install.py
 "$test_env/bin/python" db/tests/academic.py
 "$test_env/bin/python" db/tests/infra_evidence.py
+"$test_env/bin/python" db/tests/rules_lab.py
 "$test_env/bin/python" db/tests/provider.py
 "$test_env/bin/python" db/tests/negatives.py
 "$test_env/bin/python" db/tests/expiry.py
