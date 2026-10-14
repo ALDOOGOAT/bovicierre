@@ -16,6 +16,10 @@ creds = json.loads((OUT / 'accesos.json').read_text())
 SEDE_A = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
 
 
+def sslmode(host):  # local sin TLS; remoto (proxy TCP público) exige cifrado
+    return os.environ.get('BOVI_PG_SSLMODE', 'prefer' if host in ('127.0.0.1', 'localhost') else 'require')
+
+
 class Client:
     def __init__(self):
         self.op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(CookieJar())); self.csrf = {}
@@ -54,7 +58,7 @@ print('PASS TEST-42 contraseña incorrecta → 401')
 
 for node in ('a', 'b'):
     host, port = TARGETS[node].rsplit(':', 1)
-    with psycopg.connect(host=host, port=int(port), dbname='bovicierre', user='profesor_bd', password=creds['profesor_bd'], autocommit=True) as c:
+    with psycopg.connect(host=host, port=int(port), sslmode=sslmode(host), dbname='bovicierre', user='profesor_bd', password=creds['profesor_bd'], autocommit=True) as c:
         tables = c.execute("select count(*) from information_schema.tables where table_schema='bovi'").fetchone()[0]
         c.execute('select count(*) from bovi.operacion').fetchone()
         subs = c.execute('select count(*) from pg_stat_subscription').fetchone()[0]
@@ -63,6 +67,6 @@ for node in ('a', 'b'):
             except psycopg.Error as e: assert e.sqlstate == code, (stmt, e.sqlstate)
     print(f'PASS TEST-42 profesor_bd en {node.upper()}: lee {tables} tablas y {subs} suscripción(es); hash y UPDATE → 42501')
 host, port = TARGETS['prov'].rsplit(':', 1)
-with psycopg.connect(host=host, port=int(port), dbname='bovicierre', user='profesor_bd', password=creds['profesor_bd'], autocommit=True) as c:
+with psycopg.connect(host=host, port=int(port), sslmode=sslmode(host), dbname='bovicierre', user='profesor_bd', password=creds['profesor_bd'], autocommit=True) as c:
     assert c.execute('select count(*) from proveedor.tarifa_transporte').fetchone()[0] >= 1
 print('PASS TEST-42 profesor_bd lee el proveedor (tercera instancia)')

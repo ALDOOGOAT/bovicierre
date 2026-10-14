@@ -3,7 +3,7 @@
 
 - Aplicación (maestros en A, comandos canónicos): profesor.tabd (OPERADOR, CAJA, AUDITOR), aldo.admin y jared.admin (ADMIN),
   en ambas sedes.
-- PostgreSQL: profesor_bd, aldo_bd, jared_bd con rol bovi_consulta (lectura sin hashes + pg_monitor) en A y B, y
+- PostgreSQL: profesor_bd, aldo_bd, jared_bd con rol bovi_consulta (lectura sin hashes) en A y B, y
   lectura del proveedor (bovi_fdw_read) en la tercera instancia.
 Contraseñas generadas una vez y guardadas en <BOVI_ENTREGA_DIR>/accesos.json (0600); el resumen legible para entregar
 por canal privado queda en <BOVI_ENTREGA_DIR>/accesos.md (0600). Destino: BOVI_PG_TARGETS='{"a":"host:puerto",…}'
@@ -25,6 +25,10 @@ APP = {'profesor.tabd': ('Profesor de Tópicos Avanzados de BD', ['OPERADOR', 'C
        'aldo.admin': ('Aldo (equipo)', ['ADMIN']), 'jared.admin': ('Jared (equipo)', ['ADMIN'])}
 DB = ['profesor_bd', 'aldo_bd', 'jared_bd']
 
+def sslmode(host):  # local sin TLS; remoto (proxy TCP público) exige cifrado
+    return os.environ.get('BOVI_PG_SSLMODE', 'prefer' if host in ('127.0.0.1', 'localhost') else 'require')
+
+
 OUT.mkdir(parents=True, exist_ok=True, mode=0o700); os.chmod(OUT, 0o700)
 store = OUT / 'accesos.json'
 creds = json.loads(store.read_text()) if store.exists() else {}
@@ -35,7 +39,7 @@ with os.fdopen(os.open(store, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), 'w'
 
 def connect(node):
     host, port = TARGETS[node].rsplit(':', 1)
-    return psycopg.connect(host=host, port=int(port), dbname='bovicierre', user='postgres', password=(SECRET / 'admin_password').read_text().strip(), autocommit=True)
+    return psycopg.connect(host=host, port=int(port), sslmode=sslmode(host), dbname='bovicierre', user='postgres', password=(SECRET / 'admin_password').read_text().strip(), autocommit=True)
 
 
 # Roles de base de datos (no se replican: se crean en cada instancia).
@@ -65,7 +69,7 @@ lines = ['# Accesos de la entrega académica (PRIVADO: no subir al repositorio)'
          '| Usuario de la aplicación | Roles por sede | Contraseña |', '|---|---|---|']
 lines += [f'| `{u}` | {", ".join(r)} | `{creds[u]}` |' for u, (_, r) in APP.items()]
 lines += ['', '| Usuario PostgreSQL | Permisos | Contraseña |', '|---|---|---|']
-lines += [f'| `{u}` | bovi_consulta en A y B (lectura sin hashes, pg_monitor); bovi_fdw_read en proveedor | `{creds[u]}` |' for u in DB]
+lines += [f'| `{u}` | bovi_consulta en A y B (lectura sin hashes); bovi_fdw_read en proveedor | `{creds[u]}` |' for u in DB]
 lines += ['', 'Hosts y puertos de PostgreSQL: ver docs/deploy/railway.md (TCP proxy, si está habilitado).']
 with os.fdopen(os.open(OUT / 'accesos.md', os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), 'w') as f: f.write('\n'.join(lines) + '\n')
 print(f'Cuentas listas: {len(APP)} de aplicación y {len(DB)} de PostgreSQL. Resumen privado en {OUT}/accesos.md (0600).')

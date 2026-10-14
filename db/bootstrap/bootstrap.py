@@ -40,7 +40,7 @@ def internal(node): return 'pg-'+node+SUFFIX
 def sql(node, query):
  if TARGETS:
   host,port=TARGETS[node].rsplit(':',1)
-  p=subprocess.run(['psql','-X','-qAt','-h',host,'-p',port,'-U','postgres','-d',DATABASE,'-v','ON_ERROR_STOP=1'],input=query,text=True,capture_output=True,env={**os.environ,'PGPASSWORD':secret('admin_password'),'PGSSLMODE':'prefer'})
+  p=subprocess.run(['psql','-X','-qAt','-h',host,'-p',port,'-U','postgres','-d',DATABASE,'-v','ON_ERROR_STOP=1'],input=query,text=True,capture_output=True,env={**os.environ,'PGPASSWORD':secret('admin_password'),'PGSSLMODE':os.environ.get('BOVI_PG_SSLMODE','require')})
  else:
   p=subprocess.run(['docker','exec','-i',f'{PROJECT}-pg-{node}-1','psql','-X','-qAt','-U','postgres','-d',DATABASE,'-v','ON_ERROR_STOP=1'],input=query,text=True,capture_output=True)
  if p.returncode:
