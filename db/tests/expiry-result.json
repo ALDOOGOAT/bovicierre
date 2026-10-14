@@ -1,6 +1,6 @@
 {
   "database": "bovicierre_release_replay",
-  "seconds": 4.946,
+  "seconds": 5.078,
   "command_calls": 9,
   "two_connections": true,
   "barrier": true,

@@ -1,6 +1,6 @@
 {
  "base": "bovicierre_gold_final",
- "medido_en": "2026-10-13T18:41:29-0600",
+ "medido_en": "2026-10-13T18:51:52-0600",
  "pool_nodes_A": {
   "pgpool": "4.7.3 (tasukiboshi)",
   "nodos": [
@@ -30,18 +30,18 @@
  "replica": {
   "A_a_B": {
    "tabla": "bovi.parte",
-   "id": "01a137db-6d36-7f13-967c-a2b048944104",
-   "segundos": 0.024
+   "id": "01a137e4-ef93-7609-b294-594e8242c1d8",
+   "segundos": 0.008
   },
   "B_a_A": {
    "tabla": "bovi.operacion",
-   "id": "01a137db-6d7b-7a43-8662-7d999c62a825",
-   "segundos": 0.015
+   "id": "01a137e4-efb0-7586-8320-16ca3fc3832d",
+   "segundos": 0.007
   }
  },
  "corte_enlace": {
   "suscripcion": "sub_b_desde_a",
-  "id": "01a137db-6dbe-7dca-89de-b0cbfdb36adb",
+  "id": "01a137e4-efd7-7084-958d-cd0e53178ee8",
   "ausente_durante_corte_s": 3,
   "converge_tras_reanudar_s": 0.117
  },

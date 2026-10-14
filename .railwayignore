@@ -1,0 +1,8 @@
+# Sólo el backend sube la raíz del repo (necesita backend/ y frontend/src); lo demás no se envía a Railway.
+docs/
+tools/
+dist/
+graphify-out/
+data/
+*.pdf
+MEGAPROMPT_*

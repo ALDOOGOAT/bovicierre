@@ -47,7 +47,7 @@ Estado: `diseñado` = existe documentación; `implementado` = código/SQL en rep
 | AC08 | backend Java21/JDBC/Spring,24pruebas; POO/puertos/patrones sobre código real | evaluación humana del temario |
 | AC09 | dosPgpoolraw reales, API por dueño, Dockerapp/Caddy15180 real y restoreV13conciliado | staging/TLS público externo pendiente |
 
-[Estado](../status.md), [matriz TEST](../testing/evidence/sql-test-matrix.md), [evidencia](../testing/evidence.md) y [dossier](dossier.md) distinguen diseño/implementación/verificación local/revisión humana. Según el mandato de cierre (13-oct-2026) la fotografía original `RUBRICA_ORIGINAL_PIZARRON.png` sí se recuperó, pero no está en este entorno: los requisitos IMG siguen tomándose de su lectura transcrita, sin afirmar inspección propia. La foto es evidencia de temas, no aprobación del profesor.
+[Estado](../status.md), [matriz TEST](../testing/evidence/sql-test-matrix.md), [evidencia](../testing/evidence.md) y [dossier](dossier.md) distinguen diseño/implementación/verificación local/revisión humana. La fotografía del pizarrón está en [`rubrica.png`](rubrica.png) (SHA-256 `1aa0bd31…7d32`, [procedencia y lectura directa](rubrica-procedencia.md), revisada el 13-oct-2026). Los IMG coinciden con lo visible; la foto es evidencia de temas, no aprobación del profesor.
 
 ## Cierre académico (13-oct-2026): evidencia añadida
 
@@ -62,3 +62,21 @@ Estado: `diseñado` = existe documentación; `implementado` = código/SQL en rep
 | AC-09 | `SHOW POOL_NODES`: Pgpool 4.7.3 A→pg-a up, B→pg-b up (raw); excepción de autenticación directa a `pg-a:5432` documentada | TEST-40 |
 
 Cifras GOLD-ACAD-01 (compra 2×10000, flete 2000/cabeza, venta 1×16000, cobro 4000): 1 disponible, inventario 11000.00, venta 16000.00, costo 11000.00, margen 5000.00, cobro 4000.00, saldo comprador 12000.00, saldo proveedor 0.00. Estado docente de todas las filas: **pendiente de evaluación humana**.
+
+## Cotejo directo con `rubrica.png` (13-oct-2026)
+
+| Visible | ID | Cumplimiento técnico local | Evidencia |
+|---|---|---|---|
+| 1. MER | AC-01 | Sí | `docs/database/conceptual-model.md`, diagramas Chen |
+| 2. Modelo Relacional | AC-02 | Sí | `relational-model.md`, 42 tablas, catálogo A/B comparado |
+| 3. User | AC-03 | Sí: roles técnicos de mínimo privilegio + cuentas personales `bovi_consulta` (V22/V23) + roles de aplicación por sede | TEST-42, `security.sql` |
+| 3. constraints | AC-03 | Sí: PK/UK/FK/CHECK con negativas 23503/23514 | `negatives.py` |
+| 3. reglas | AC-03 | Sí: RN-001..045 en CHECK/triggers/funciones; `CREATE RULE` en laboratorio (DEC-27) | TEST-41 |
+| 3. PL, Triggers | AC-04 | Sí: `cmd_ejecutar`/`consultar` PL/pgSQL, triggers de inmutabilidad, propietario, reserva | `immutability.py`, TEST-10 |
+| 3. Transactions | AC-05 | Sí: rollback, carreras con un ganador, idempotencia | GOLD-ACAD-02, TEST-10/11 |
+| 4. Replication M–M `[ ]↔[ ]` | AC-06 | Sí: A y B escritores con réplica lógica bidireccional (recursos disjuntos) | TEST-21, TEST-40 |
+| 5. FDW, “Y” hacia un tercer nodo | AC-07 | Sí: A y B leen la tercera instancia por `postgres_fdw`, escritura denegada, caída y recuperación (DEC-26) | TEST-40 |
+| 6. Java, SOLID, patrones | AC-08 | Sí | `oop-solid-patterns.md`, 30 pruebas backend |
+| Pgpool-II envolviendo Postgres + Postgres aparte | AC-09 | Sí: un Pgpool delante de cada maestro; proveedor aparte | `SHOW POOL_NODES` TEST-40 |
+
+Pendiente del profesor: confirmar M–M por recursos disjuntos, lectura de la “Y” y del término “reglas”.

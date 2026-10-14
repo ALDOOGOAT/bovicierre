@@ -5,8 +5,8 @@
     "TEST-13": {
       "two_connections_barrier": true,
       "states": [
-        "OK",
-        "23505"
+        "23505",
+        "OK"
       ],
       "canonical_writer": "A for both site scopes"
     },

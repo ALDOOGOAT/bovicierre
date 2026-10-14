@@ -24,7 +24,9 @@ with conn('a',True) as reader,conn('b') as owner:
  quotes=reader.execute('select bovi.leer_tarifas_proveedor(%s,%s,%s,%s)',(E,SB,U,Jsonb({'ruta':'DEMO-RUTA-01'}))).fetchone()[0];assert 'snapshot_id' not in quotes['elementos'][0]
  captured=owner.execute('select bovi.capturar_tarifas_proveedor(%s,%s,%s,%s)',(E,SB,U,Jsonb(quotes))).fetchone()[0];token=captured['elementos'][0]['snapshot_id'];assert captured['elementos'][0]['precio']=={'importe':'12000.00','moneda':'MXN'}
  accepted=command(owner,SB,'aceptar_tarifa',{'snapshot_id':token});assert accepted['snapshot_id']==token
- assert owner.execute("select count(*) from pg_foreign_server where srvname='prov_sim'").fetchone()[0]==0
+ # DEC-26: B tiene servidor FDW de sólo lectura para la “Y” de la rúbrica, pero el flujo de negocio en B no lo usa:
+ # la consulta en vivo sigue rechazada (BV501) y la captura sólo acepta lo leído por A (abajo).
+ assert owner.execute("select count(*) from pg_foreign_server where srvname='prov_sim'").fetchone()[0]==1
  reject(owner,'select bovi.consultar_tarifas_proveedor(%s,%s,%s,%s)',(E,SB,U,Jsonb({})),'BV501')
  reject(owner,'select bovi.capturar_tarifas_proveedor(%s,%s,%s,%s)',(E,SA,U,Jsonb(quotes)),'BV501')
  tampered=json.loads(json.dumps(quotes));tampered['elementos'][0]['precio']['importe']='1.00'

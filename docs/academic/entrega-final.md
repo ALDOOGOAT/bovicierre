@@ -5,7 +5,7 @@ Estado al 13-oct-2026, rama `feature/cierre-academico-v1` (sin push ni merge). T
 | Plano | Estado |
 |---|---|
 | Verificación técnica local | Puerta `make verify-release-local` en PASS (ver `docs/testing/evidence.md` y `docs/testing/evidence/academic-release/`) |
-| Despliegue externo | **Bloqueado**: no hay destino, credenciales ni presupuesto autorizados por el equipo. No se publicó nada. |
+| Despliegue externo | Railway autorizado por el usuario (13-oct-2026); procedimiento y variables en [docs/deploy/railway.md](../deploy/railway.md). Estado vigente en `docs/status.md`. |
 | Aceptación humana / profesor | **Pendiente**: ver [aceptacion-final.md](aceptacion-final.md). Ningún agente la declara. |
 
 ## Cómo usarlo
@@ -14,7 +14,7 @@ Estado al 13-oct-2026, rama `feature/cierre-academico-v1` (sin push ni merge). T
 - Recorrido: Bandeja (pendientes + guía) → Nueva operación → lote/ganado → revisar y confirmar → Recibir ganado → Liquidación → Cobrar/Pagar.
 
 ## Requisitos de la rúbrica
-Matriz AC-01..09: [requirements-matrix.md](requirements-matrix.md). **La imagen `RUBRICA_ORIGINAL_PIZARRON.png` no está en este entorno**; los temas se toman de la transcripción del mandato y no se afirma haber visto la foto. Al recibirla: copiarla sin alterar a `docs/academic/rubrica.png` y registrar su SHA-256 y procedencia.
+Foto del pizarrón: [`rubrica.png`](rubrica.png) con [procedencia](rubrica-procedencia.md). Cotejo punto por punto en [requirements-matrix.md](requirements-matrix.md) (sección “Cotejo directo”).
 
 ## Entregables
 - Modelo y BD: `docs/database/*`, `docs/diagrams/`, `db/migrations/V1..V21`.
