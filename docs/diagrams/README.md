@@ -65,3 +65,5 @@ Pendiente: revisión humana de la semántica por Aldo antes de marcar TASK-A-003
 ## Sincronización final V11
 
 Relacional completo42tablas/83FK y cinco módulos incorporan periodo/fecha de reconocimiento, naturaleza de pago, leases locales y origen/destino documental. PDF/SVG A0/A3 regenerados, texto/vector conservados, combinado11p; inspección visual del coordinador y cinco pruebas de herramientas. La comparación catálogo A/B cubre columnas/tipos/NN/PK/UK/FK declaradas; no todas las restricciones de negocio. Revisión humana/impresión pendiente.
+
+> **Vigencia (14-oct-2026):** las láminas MER y relacionales siguen correspondiendo al esquema en **V26**: V19–V26 no cambian tablas, columnas ni relaciones (sólo funciones, triggers y roles). Catálogo A/B comparado: 42 tablas, 0 diferencias.

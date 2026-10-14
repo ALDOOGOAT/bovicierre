@@ -21,6 +21,7 @@ public class LoginThrottle {
     static final int MAX_ANONYMOUS_SESSIONS = 600;
     static final Duration WINDOW = Duration.ofMinutes(15);
     static final int MAX_KEYS = 50_000;
+    static final int OVERFLOW_BUCKETS = 4_096;
     private final ConcurrentHashMap<String, Deque<Instant>> failures = new ConcurrentHashMap<>();
     private final Clock clock;
 
@@ -46,13 +47,20 @@ public class LoginThrottle {
         for (String k : new String[]{key("u", login), key("o", origin)}) track(k, now);
     }
 
-    /** Memoria acotada: limpia lo vencido y, si sigue lleno, no crea claves nuevas (las existentes siguen contando). */
+    /**
+     * Memoria acotada sin fallar en abierto: con el mapa lleno (tras limpiar lo vencido), una clave nueva cuenta en uno
+     * de OVERFLOW_BUCKETS compartidos. Colisionar endurece el límite para quien comparte cubeta; nunca lo desactiva.
+     */
+    private String resolve(String k) {
+        if (failures.containsKey(k) || failures.size() < MAX_KEYS) return k;
+        failures.entrySet().removeIf(e -> !e.getKey().startsWith("x:") && pruneAndEmpty(e.getValue()));
+        return failures.size() < MAX_KEYS ? k : "x:" + k.charAt(0) + Math.floorMod(k.hashCode(), OVERFLOW_BUCKETS);
+    }
+
+    private boolean pruneAndEmpty(Deque<Instant> q) { synchronized (q) { prune(q); return q.isEmpty(); } }
+
     private void track(String k, Instant now) {
-        if (!failures.containsKey(k) && failures.size() >= MAX_KEYS) {
-            failures.entrySet().removeIf(e -> { synchronized (e.getValue()) { prune(e.getValue()); return e.getValue().isEmpty(); } });
-            if (failures.size() >= MAX_KEYS) return;
-        }
-        Deque<Instant> q = failures.computeIfAbsent(k, ignored -> new ArrayDeque<>());
+        Deque<Instant> q = failures.computeIfAbsent(resolve(k), ignored -> new ArrayDeque<>());
         synchronized (q) { prune(q); q.addLast(now); }
     }
 
@@ -69,7 +77,7 @@ public class LoginThrottle {
     public void succeeded(String login) { failures.remove(key("u", login)); }
 
     private long wait(String k, int max) {
-        Deque<Instant> q = failures.get(k);
+        Deque<Instant> q = failures.get(failures.containsKey(k) ? k : resolve(k));
         if (q == null) return 0;
         synchronized (q) {
             prune(q);

@@ -1,5 +1,7 @@
 # Diccionario de datos
 
+> **Vigencia (14-oct-2026):** válido hasta la migración **V26**. V19–V26 no agregan ni cambian tablas o columnas (sólo funciones, triggers y roles); `tools/esquema/comparar_catalogo.py` contra A y B: 42 tablas, 0 diferencias.
+
 Convenciones comunes (no se repiten por tabla):
 - `empresa_id uuid NOT NULL`, `sucursal_id uuid NOT NULL` en tablas locales; `id uuid NOT NULL DEFAULT uuidv7()`.
 - `nodo_origen char(1) NOT NULL CHECK (nodo_origen IN ('A','B'))`, lo deriva el comando; trigger `guarda_propietario` (función `trg_propietario`) rechaza INSERT/UPDATE cuando `nodo_origen` ≠ `infra.nodo_config.nodo` (no corre en apply porque `session_replication_role = replica`).
@@ -51,6 +53,7 @@ Rechazado: parte_responsable_id de otra empresa (FK compuesta falla, TEST-14).
 Propósito: usuario del producto (no rol PostgreSQL). PK(E,id); UK(E,login_normalizado). A · A→B · **S** (hash).
 Columnas: login_normalizado varchar(80) NOT NULL (`lower(trim())`); nombre varchar(120); hash_contrasena varchar(255) NOT NULL (formato `{bcrypt}`/`{argon2}` de Spring Security DelegatingPasswordEncoder); estado varchar(10) DEFAULT 'ACTIVO' (ACTIVO, BLOQUEADO); creado_en.
 Nunca se loguea ni se indexa en el grafo el hash.
+Administración (V21, V24–V26): sólo ADMIN de **todas** las sedes de la cuenta puede cambiar nombre, estado o contraseña; restablecer o bloquear cierra sus sesiones (`infra.spring_session`). La auditoría registra `contrasena_restablecida`, nunca el hash.
 
 ## ENT-06 rol_aplicacion
 PK(codigo varchar(12)); descripcion. Valores: ADMIN, OPERADOR, CAJA, AUDITOR. A→B · T.
@@ -128,6 +131,8 @@ Hecho físico inmutable (RN-020). Columnas: posicion_id NOT NULL; operacion_id N
 
 ## ENT-15 reserva_venta
 Columnas: operacion_id, numero_lote, posicion_id (→ seleccion_venta); estado varchar(10) (ACTIVA, CONSUMIDA, LIBERADA, EXPIRADA); creada_en; vence_en timestamptz NOT NULL CHECK > creada_en; cerrada_en NULL. Índice UNIQUE parcial `(E,S,posicion_id) WHERE estado='ACTIVA'` (RN-018); `(E,S,vence_en) WHERE estado='ACTIVA'` para el expirador. L↔.
+
+Reglas añadidas: CHECK `vence_en ≤ creada_en + 30 días` (V18, DIV-14); trigger `reserva_activa_unica` (V20): una sola reserva ACTIVA por posición, la carrera perdedora recibe BV402/RN-018.
 
 ## ENT-16 contrato_version
 PK(E,S,operacion_id,numero_version smallint > 0). estado (PROPUESTA, ACEPTADA, SUPERADA); politica_redondeo varchar(12) DEFAULT 'HALF_UP_2'; requiere_recepcion boolean DEFAULT false; documento_id NULL; aceptada_por/aceptada_en NULL. Inmutable una vez ACEPTADA (RN-011). Pueden conservarse varias versiones ACEPTADAS históricas: `operacion.numero_version_aceptada` identifica la que referencia la operación. La restricción parcial propuesta inicialmente para permitir sólo una ACEPTADA no existe en el DDL vigente de `V1__esquema.sql`; la PK distingue cada versión sin modificar las aceptadas anteriores.

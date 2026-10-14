@@ -9,6 +9,7 @@ Estado al 13-oct-2026, rama `feature/cierre-academico-v1`, integrada por avance 
 | Aceptación humana / profesor | **Pendiente**: ver [aceptacion-final.md](aceptacion-final.md). Ningún agente la declara. |
 
 ## Cómo usarlo
+- Cuentas personales (aplicación y PostgreSQL): `scripts/academic_users.py`; contraseñas sólo en `~/.local/share/bovicierre-academic/entrega-local/accesos.md` (0600), entregar por canal privado. Verificación: `scripts/verify_access.py` (TEST-42).
 - Demo académica: `make demo-profesor` → http://localhost:15180, usuarios `demo.admin|operador|caja|auditor`; contraseñas sólo por canal privado (`~/.local/share/bovicierre-academic/secrets/`).
 - Instalación vacía para operaciones nuevas: volúmenes nuevos y `BOVI_INSTALL=vacia BOVI_EMPRESA="…" BOVI_ADMIN_LOGIN=… make academic`; contraseña inicial en `secrets/install_admin_password`; cambiarla desde Usuarios y permisos.
 - Recorrido: Bandeja (pendientes + guía) → Nueva operación → lote/ganado → revisar y confirmar → Recibir ganado → Liquidación → Cobrar/Pagar.
@@ -17,7 +18,7 @@ Estado al 13-oct-2026, rama `feature/cierre-academico-v1`, integrada por avance 
 Foto del pizarrón: [`rubrica.png`](rubrica.png) con [procedencia](rubrica-procedencia.md). Cotejo punto por punto en [requirements-matrix.md](requirements-matrix.md) (sección “Cotejo directo”).
 
 ## Entregables
-- Modelo y BD: `docs/database/*`, `docs/diagrams/`, `db/migrations/V1..V21`.
+- Modelo y BD: `docs/database/*`, `docs/diagrams/` (vigentes en V26), `db/migrations/V1..V26`.
 - Pruebas y evidencia: `docs/testing/evidence.md`, `db/tests/*`, `frontend/tests_e2e/*`, `db/tests/infra-evidence-result.json`.
 - Java/SOLID: [oop-solid-patterns.md](oop-solid-patterns.md).
 - Defensa: [guion-defensa.md](guion-defensa.md), [preguntas-profesor.md](preguntas-profesor.md).

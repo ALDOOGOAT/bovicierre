@@ -127,7 +127,7 @@
 \fancyhf{}
 \fancyhead[L]{\sffamily\small BoviCierre}
 \fancyhead[R]{\sffamily\small Manual técnico integral}
-\fancyfoot[L]{\sffamily\scriptsize Base 92d3d41 + cierre académico 9bdae27 · 13 octubre 2026}
+\fancyfoot[L]{\sffamily\scriptsize Base 92d3d41 + cierre académico (V19--V26) · 14 octubre 2026}
 \fancyfoot[R]{\sffamily\small\thepage}
 \setlength{\headheight}{15pt}
 \setlength{\emergencystretch}{3em}
@@ -141,7 +141,7 @@
 \clubpenalty=10000
 \fancyhead[L]{\color{brand}\sffamily\small BoviCierre}
 \fancyhead[R]{\color{black!70}\sffamily\small Manual técnico integral}
-\fancyfoot[L]{\color{black!70}\sffamily\footnotesize Base 92d3d41 + cierre académico 9bdae27 · 13 octubre 2026}
+\fancyfoot[L]{\color{black!70}\sffamily\footnotesize Base 92d3d41 + cierre académico (V19--V26) · 14 octubre 2026}
 \fancyfoot[R]{\color{brand}\sffamily\small\thepage}
 \renewcommand{\maketitle}{%
 \hypersetup{pageanchor=false}
@@ -160,8 +160,8 @@
 {\sffamily\normalsize Preparado para Aldo y Jared\par}
 \vspace{5mm}
 {\normalsize Revisión base del repositorio 92d3d41\par
-Campaña UI/UX y QA (V14--V18) y cierre académico (V19--V21)\par
-13 de octubre de 2026\par}
+Campaña UI/UX y QA (V14--V18) y cierre académico (V19--V26)\par
+14 de octubre de 2026\par}
 \vspace{13mm}
 {\small PostgreSQL · Java · React · Docker Compose\par}
 \end{titlepage}
@@ -21859,10 +21859,76 @@ de B deshabilitada la fila no llega y converge al reanudar. FDW: lectura de
 12,000 por Pgpool, INSERT denegado (42501), enlace caído (08001) y
 recuperación. Restauración posterior a V21 conciliada en 30.9 s.
 
-\textbf{Límites.} La imagen original de la rúbrica no estaba en el entorno
-de trabajo; el despliegue externo está bloqueado por falta de destino,
-credenciales y presupuesto autorizados; la aceptación de Aldo, Jared y del
-profesor está pendiente.
+\textbf{Límites.} El cotejo con la fotografía de la rúbrica y el estado del
+despliegue se describen en la sección siguiente; la aceptación de Aldo, Jared
+y del profesor está pendiente.
+
+\section{Cotejo con la rúbrica y endurecimiento final (14 de octubre)}\label{campana-rubrica}
+
+\textbf{La rúbrica.} La fotografía del pizarrón se guardó sin alterar en
+\texttt{docs/academic/rubrica.png} (SHA-256 \texttt{1aa0bd31\ldots7d32}); se
+recibió exportada desde ChatGPT y su procedencia está registrada. Lo visible y
+cómo se cubre:
+
+\begin{center}
+\small
+\begin{tabular}{p{0.30\linewidth}p{0.62\linewidth}}
+\toprule
+\textbf{Pizarrón} & \textbf{Cobertura en BoviCierre} \\
+\midrule
+1. MER & Modelo conceptual Chen y láminas; vigentes en V26 \\
+2. Modelo relacional & 42 tablas; catálogo A/B igual a la documentación \\
+3. User & Roles técnicos de mínimo privilegio, cuentas personales \texttt{bovi\_consulta} (V22/V23) y roles de aplicación por sede \\
+3. Constraints & PK/UK/FK/CHECK con pruebas negativas (23503, 23514) \\
+3. Reglas & Reglas de negocio en CHECK, triggers y funciones; \texttt{CREATE RULE} en laboratorio (TEST-41) \\
+3. PL, Triggers & \texttt{cmd\_ejecutar}/\texttt{consultar} en PL/pgSQL; triggers de inmutabilidad, propietario y reserva \\
+3. Transactions & Rollback y carreras con un solo ganador \\
+4. Replication M--M & A y B escritores con réplica lógica bidireccional \\
+5. FDW (dibujo en ``Y'') & A y B leen la tercera instancia por \texttt{postgres\_fdw} \\
+6. Java, SOLID, patrones & Matriz SOLID con clases y pruebas reales \\
+Pgpool-II con Postgres & Un Pgpool delante de cada maestro; proveedor aparte \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{FDW desde los dos maestros (DEC-26).} El dibujo en ``Y'' une los dos
+nodos superiores con el tercero. B recibió el mismo servidor \texttt{prov\_sim}
+de sólo lectura: lee 12,000 por su Pgpool y un UPDATE recibe 42501. El
+negocio no cambia: en B la consulta en vivo se rechaza (BV501) y la captura
+sólo acepta lo leído por A.
+
+\textbf{Reglas (DEC-27).} El laboratorio crea una vista con una regla
+\texttt{DO INSTEAD} (insertar en la vista escribe en la tabla base) y una
+regla \texttt{DO ALSO} (cada cambio de precio deja bitácora en la misma
+sentencia); el CHECK sigue aplicando a la consulta reescrita. Todo se
+revierte. En producción se prefieren triggers porque fallan con un error
+explícito, mientras una regla \texttt{DO INSTEAD NOTHING} ocultaría escrituras.
+
+\textbf{Cuentas personales.} \texttt{scripts/academic\_users.py} crea, sin
+imprimir contraseñas, las cuentas de aplicación \texttt{profesor.tabd}
+(OPERADOR, CAJA y AUDITOR en ambas sedes), \texttt{aldo.admin} y
+\texttt{jared.admin} (ADMIN), y las cuentas de PostgreSQL \texttt{profesor\_bd},
+\texttt{aldo\_bd} y \texttt{jared\_bd} en el grupo \texttt{bovi\_consulta}. Las
+contraseñas quedan en un archivo privado con permisos 0600. TEST-42 comprueba
+acceso, roles por sede, 403 al administrar sin ser ADMIN y, en la base, lectura
+permitida con \texttt{hash\_contrasena} y UPDATE denegados (42501).
+
+\textbf{Revisión de seguridad.} Las revisiones automáticas de cada commit
+encontraron y se corrigieron: \texttt{pg\_monitor} en la cuenta de consulta
+(V23); el límite de login tomaba \texttt{X-Forwarded-For} del cliente y podía
+evadirse o crecer sin tope (ahora Caddy envía la IP real, con cubetas de
+desbordamiento que nunca fallan en abierto); un ADMIN de una sede podía tomar
+una cuenta ADMIN de otra al restablecer su contraseña (V24 y V26 exigen ser
+ADMIN en todas las sedes de la cuenta, aun con roles suspendidos);
+restablecer o bloquear no cerraba sesiones (V25 las cierra); y el backend en
+Railway corría como root (ahora baja a 1000 sin capacidades). Hallazgos
+SF-27 a SF-33.
+
+\textbf{Despliegue.} El stack está listo para Railway con la misma topología
+(ocho servicios en red privada, PostgreSQL con TLS, Pgpool con secretos por
+variable, Caddy con dominio público): \texttt{scripts/railway\_deploy.sh} y
+\texttt{docs/deploy/railway.md}. Quedó pendiente porque el plan gratuito de
+Railway no permite más de tres servicios.
 
 \section{Pendientes después de esta actualización}\label{campana-pendientes}
 
@@ -21870,9 +21936,11 @@ profesor está pendiente.
 \item Revisión humana de ADR-018 (SF-09) y de sus disparadores.
 \item Las 17 divergencias de la matriz quedaron corregidas, cubiertas o resueltas; las que se resolvieron sólo en documentación (DIV-16, DIV-17) lo indican con su razón.
 \item DAST con rol de escritura, SAST dedicado, Gitleaks sobre todo el historial y dataset de 10,000 posiciones.
-\item Revisión de los diagramas MER y relacional contra la matriz de
-coherencia; las migraciones V14--V18 no añaden tablas ni columnas, sólo
-triggers, un índice, un CHECK y privilegios.
+\item Las migraciones V14--V26 no añaden tablas ni columnas (triggers, un
+índice, un CHECK, funciones y roles): los diagramas MER y relacional siguen
+vigentes y el catálogo de A y B coincide con la documentación.
+\item Despliegue en Railway al cambiar al plan Hobby, y confirmación del
+profesor sobre la lectura de la ``Y'' y del término ``reglas''.
 \item Lector de pantalla, axe y teléfono físico para el rediseño.
 \item Revisión humana de Aldo y Jared de todo lo anterior.
 \end{itemize}
@@ -21880,8 +21948,7 @@ triggers, un índice, un CHECK y privilegios.
 \chapter{Fuentes y trazabilidad del
 manual}\label{fuentes-y-trazabilidad-del-manual}
 
-Revisión de código
-\texorpdfstring{\softcode{92d3d4103a174eb11f4ccf21eff2deed8cc77682}}{92d3d4103a174eb11f4ccf21eff2deed8cc77682}.
+Código del cierre académico (14 de octubre de 2026, migraciones hasta V26; base histórica 92d3d41). Hashes recalculados sobre los archivos entregados.
 Los hashes identifican los archivos públicos utilizados, no incluyen
 directorios privados, contraseñas, cookies ni dumps. La documentación de
 capítulos aporta referencias adicionales de evidencia e
@@ -21906,7 +21973,7 @@ SHA-256
 \texorpdfstring{\softcode{d980c168ba1cdfcaf12a34ff85e5c3ac9fbac7d4dbcfb5a9ffb4bd3b334d2fd8}}{d980c168ba1cdfcaf12a34ff85e5c3ac9fbac7d4dbcfb5a9ffb4bd3b334d2fd8} \\
 \texorpdfstring{\softcode{backend/src/main/java/mx/bovicierre/acceso/AccessService.java}}{backend/src/main/java/mx/bovicierre/acceso/AccessService.java}
 &
-\texorpdfstring{\softcode{0304ac667578d051ff55484e9972c438d99d1ce82ec77d0fb6a419adf0f021a8}}{0304ac667578d051ff55484e9972c438d99d1ce82ec77d0fb6a419adf0f021a8} \\
+\texorpdfstring{\softcode{46472bdbaac9b9a35f978b91dffb1a72a86e9bbed53b3ca18d296ac2bc0a770d}}{46472bdbaac9b9a35f978b91dffb1a72a86e9bbed53b3ca18d296ac2bc0a770d} \\
 \texorpdfstring{\softcode{backend/src/main/java/mx/bovicierre/acceso/AvailabilityFilter.java}}{backend/src/main/java/mx/bovicierre/acceso/AvailabilityFilter.java}
 &
 \texorpdfstring{\softcode{5806a5edd039a20d529c07331985ccdd8b1cf14a4d911684f5db25262e08718c}}{5806a5edd039a20d529c07331985ccdd8b1cf14a4d911684f5db25262e08718c} \\
@@ -21915,10 +21982,10 @@ SHA-256
 \texorpdfstring{\softcode{10c96e1cae65befebfeacb9f3bc539464cfaec4fc93e4af6503c3dbee8b5ac22}}{10c96e1cae65befebfeacb9f3bc539464cfaec4fc93e4af6503c3dbee8b5ac22} \\
 \texorpdfstring{\softcode{backend/src/main/java/mx/bovicierre/acceso/SessionController.java}}{backend/src/main/java/mx/bovicierre/acceso/SessionController.java}
 &
-\texorpdfstring{\softcode{5754cfe69035116b05a3dc46abbd0ddfa8a8c5b69867c19e0342bb09fb8c64f7}}{5754cfe69035116b05a3dc46abbd0ddfa8a8c5b69867c19e0342bb09fb8c64f7} \\
+\texorpdfstring{\softcode{4784d9d434676fa37c4970447d01bb05f5e9c57656816e28a9143ed31b7e3b7f}}{4784d9d434676fa37c4970447d01bb05f5e9c57656816e28a9143ed31b7e3b7f} \\
 \texorpdfstring{\softcode{backend/src/main/java/mx/bovicierre/acceso/UserController.java}}{backend/src/main/java/mx/bovicierre/acceso/UserController.java}
 &
-\texorpdfstring{\softcode{c12a7a0cf0baaf2c1aa9ee0ded3bf45979109c8d2e6e8d08b163a84aacfd6896}}{c12a7a0cf0baaf2c1aa9ee0ded3bf45979109c8d2e6e8d08b163a84aacfd6896} \\
+\texorpdfstring{\softcode{1a8e0e18a0780922e816c3c55866b231815224b0271e3d79e03742a1853c26e0}}{1a8e0e18a0780922e816c3c55866b231815224b0271e3d79e03742a1853c26e0} \\
 \texorpdfstring{\softcode{backend/src/main/java/mx/bovicierre/evidencia/AnimalQrController.java}}{backend/src/main/java/mx/bovicierre/evidencia/AnimalQrController.java}
 &
 \texorpdfstring{\softcode{0b6a6e3e58b074f1f5a824fc9230322c00d11750e97f35889fb54c0cf2f9ff47}}{0b6a6e3e58b074f1f5a824fc9230322c00d11750e97f35889fb54c0cf2f9ff47} \\
@@ -21957,7 +22024,7 @@ SHA-256
 \texorpdfstring{\softcode{3e47b279a3e96034c186d92ac8cb9943acbca898cce440a2662a0c5e49646195}}{3e47b279a3e96034c186d92ac8cb9943acbca898cce440a2662a0c5e49646195} \\
 \texorpdfstring{\softcode{backend/src/main/java/mx/bovicierre/shared/ApiErrors.java}}{backend/src/main/java/mx/bovicierre/shared/ApiErrors.java}
 &
-\texorpdfstring{\softcode{412a052933aa19717d87c29d5339e4d40a8633e1998f211528aa5d2352f1a77b}}{412a052933aa19717d87c29d5339e4d40a8633e1998f211528aa5d2352f1a77b} \\
+\texorpdfstring{\softcode{e034435712f7e340621d4b5b3ab737786aaaea68a6542e3996590b738141a68c}}{e034435712f7e340621d4b5b3ab737786aaaea68a6542e3996590b738141a68c} \\
 \texorpdfstring{\softcode{backend/src/main/java/mx/bovicierre/shared/ApiException.java}}{backend/src/main/java/mx/bovicierre/shared/ApiException.java}
 &
 \texorpdfstring{\softcode{9ec9372a5a0cbd0b76540fa371038a71afaba3705f3dae75e691867f2b53dfc4}}{9ec9372a5a0cbd0b76540fa371038a71afaba3705f3dae75e691867f2b53dfc4} \\
@@ -21978,10 +22045,10 @@ SHA-256
 \texorpdfstring{\softcode{bfcc733378cf611c3ac96f728c53e7931fbddcfb0b8a8da91eb02271f9d92124}}{bfcc733378cf611c3ac96f728c53e7931fbddcfb0b8a8da91eb02271f9d92124} \\
 \texorpdfstring{\softcode{backend/src/main/resources/application.yml}}{backend/src/main/resources/application.yml}
 &
-\texorpdfstring{\softcode{4c4d625e70f97278baff22b1d560dae926aa14ce34488380ac23feb5c1da2987}}{4c4d625e70f97278baff22b1d560dae926aa14ce34488380ac23feb5c1da2987} \\
+\texorpdfstring{\softcode{cd3f5ca0340358196b304ec62383b6573f807e19947ebc0b8747505e770ccbd0}}{cd3f5ca0340358196b304ec62383b6573f807e19947ebc0b8747505e770ccbd0} \\
 \texorpdfstring{\softcode{db/bootstrap/bootstrap.py}}{db/bootstrap/bootstrap.py}
 &
-\texorpdfstring{\softcode{c848592d82e067a1eb6462219ec194b4487870bbffb15576aea7914199a63fed}}{c848592d82e067a1eb6462219ec194b4487870bbffb15576aea7914199a63fed} \\
+\texorpdfstring{\softcode{1b7736c3c9301e19f6c091491eab50dd1760e9cdcf496ed8a9184335aa5e8e5e}}{1b7736c3c9301e19f6c091491eab50dd1760e9cdcf496ed8a9184335aa5e8e5e} \\
 \texorpdfstring{\softcode{db/migrations/V10\_\_filtro\_posiciones\_vendibles.sql}}{db/migrations/V10\_\_filtro\_posiciones\_vendibles.sql}
 &
 \texorpdfstring{\softcode{fa88f9c089a4cc52ae031aa99b55999315be2151031cef23f202531bf3b2b1ab}}{fa88f9c089a4cc52ae031aa99b55999315be2151031cef23f202531bf3b2b1ab} \\
@@ -22028,13 +22095,13 @@ SHA-256
 \texorpdfstring{\softcode{567196ae28024ca38a8516260cfcd306b73b1b42a8cb92aeba2bcec6e741d02b}}{567196ae28024ca38a8516260cfcd306b73b1b42a8cb92aeba2bcec6e741d02b} \\
 \texorpdfstring{\softcode{docs/api/openapi.yaml}}{docs/api/openapi.yaml}
 &
-\texorpdfstring{\softcode{d635fb00d126833d3bd9a6f243ab2ec21a59488f304ce3bac1a9cdc412fddad7}}{d635fb00d126833d3bd9a6f243ab2ec21a59488f304ce3bac1a9cdc412fddad7} \\
+\texorpdfstring{\softcode{e212bce099191ad4b6bcebb0e045e159ec956020e590516e08888714af88364e}}{e212bce099191ad4b6bcebb0e045e159ec956020e590516e08888714af88364e} \\
 \texorpdfstring{\softcode{docs/architecture/adr/ADR-001-monolito-modular.md}}{docs/architecture/adr/ADR-001-monolito-modular.md}
 &
 \texorpdfstring{\softcode{4d72eeec9291a6073ae1a631fb88b42bed004218039e6e40033ecc93ecfdc6c3}}{4d72eeec9291a6073ae1a631fb88b42bed004218039e6e40033ecc93ecfdc6c3} \\
 \texorpdfstring{\softcode{docs/architecture/adr/ADR-002-sql-explicito-calculo-canonico.md}}{docs/architecture/adr/ADR-002-sql-explicito-calculo-canonico.md}
 &
-\texorpdfstring{\softcode{550f9d2167b1e62adc92a46a12b0a36d43498dc65cfadc26cfcf1d97b054ecf1}}{550f9d2167b1e62adc92a46a12b0a36d43498dc65cfadc26cfcf1d97b054ecf1} \\
+\texorpdfstring{\softcode{2fd993728b2d863e5417bcae663fd359e8716268b6d6540f6e5b0192a67ee133}}{2fd993728b2d863e5417bcae663fd359e8716268b6d6540f6e5b0192a67ee133} \\
 \texorpdfstring{\softcode{docs/architecture/adr/ADR-003-animal-y-posicion.md}}{docs/architecture/adr/ADR-003-animal-y-posicion.md}
 &
 \texorpdfstring{\softcode{2152cf4798f1142471f3fcb7bf059563ae2af341e6b1593844ada8f0fb96f202}}{2152cf4798f1142471f3fcb7bf059563ae2af341e6b1593844ada8f0fb96f202} \\
@@ -22043,7 +22110,7 @@ SHA-256
 \texorpdfstring{\softcode{fc7d95d6edb5423e9ebf71f54e0fdc74dca379c23fcd405f5e088a7de0a0326d}}{fc7d95d6edb5423e9ebf71f54e0fdc74dca379c23fcd405f5e088a7de0a0326d} \\
 \texorpdfstring{\softcode{docs/architecture/adr/ADR-005-maestro-y-propiedad.md}}{docs/architecture/adr/ADR-005-maestro-y-propiedad.md}
 &
-\texorpdfstring{\softcode{ea5ba9327d9ec434d552644dea391509837bfd9cf303dcc97119e569e7dd5d71}}{ea5ba9327d9ec434d552644dea391509837bfd9cf303dcc97119e569e7dd5d71} \\
+\texorpdfstring{\softcode{7aa36ef79b0fae3d874b910eb89ec90dde29091c8d54019370049658bc673b24}}{7aa36ef79b0fae3d874b910eb89ec90dde29091c8d54019370049658bc673b24} \\
 \texorpdfstring{\softcode{docs/architecture/adr/ADR-006-replicacion-bidireccional.md}}{docs/architecture/adr/ADR-006-replicacion-bidireccional.md}
 &
 \texorpdfstring{\softcode{6a80728dd848a2a01838c1f013f3101e317725234733da840d5f80297d1fbab1}}{6a80728dd848a2a01838c1f013f3101e317725234733da840d5f80297d1fbab1} \\
@@ -22082,13 +22149,13 @@ SHA-256
 \texorpdfstring{\softcode{a14fb7d1a048369cec2bed892417fdde5d817838ca3b6f0edf97f59a1b5fcede}}{a14fb7d1a048369cec2bed892417fdde5d817838ca3b6f0edf97f59a1b5fcede} \\
 \texorpdfstring{\softcode{docs/database/data-dictionary.md}}{docs/database/data-dictionary.md}
 &
-\texorpdfstring{\softcode{4062189a8d17e4c04837507e045d317fc1ea6f4e18fcbb0ffd57bec2a6406202}}{4062189a8d17e4c04837507e045d317fc1ea6f4e18fcbb0ffd57bec2a6406202} \\
+\texorpdfstring{\softcode{115b69969ffc2c298cbfa77c8c9d30956a2ddd2e19ed898022adcf554d82b0d0}}{115b69969ffc2c298cbfa77c8c9d30956a2ddd2e19ed898022adcf554d82b0d0} \\
 \texorpdfstring{\softcode{docs/database/normalization.md}}{docs/database/normalization.md}
 &
 \texorpdfstring{\softcode{41e9b66e398822eb5196e69e75f2e768c6b3d91f9500a3ccd52e42370b763ee6}}{41e9b66e398822eb5196e69e75f2e768c6b3d91f9500a3ccd52e42370b763ee6} \\
 \texorpdfstring{\softcode{docs/domain/business-rules.md}}{docs/domain/business-rules.md}
 &
-\texorpdfstring{\softcode{bcda2f84af489ec68fd5c7712dffbf3c79433b7dc3a61dd87c68255dd3f2796a}}{bcda2f84af489ec68fd5c7712dffbf3c79433b7dc3a61dd87c68255dd3f2796a} \\
+\texorpdfstring{\softcode{9908d39b9b2b3b2aa788b1b5261a23748ab615d4e4eb0825f3c46efdceb8ce00}}{9908d39b9b2b3b2aa788b1b5261a23748ab615d4e4eb0825f3c46efdceb8ce00} \\
 \texorpdfstring{\softcode{docs/domain/glossary.md}}{docs/domain/glossary.md}
 &
 \texorpdfstring{\softcode{32af005f9ba92301617325c1ffc68b2970c9f92e9bdd3e3d3921c47fc93bf7a0}}{32af005f9ba92301617325c1ffc68b2970c9f92e9bdd3e3d3921c47fc93bf7a0} \\
@@ -22104,16 +22171,16 @@ SHA-256
 \texorpdfstring{\softcode{7410af2f7a5db646f020ab5bd93f45d520b62eb1fde48f0a020e7ce26781b5d6}}{7410af2f7a5db646f020ab5bd93f45d520b62eb1fde48f0a020e7ce26781b5d6} \\
 \texorpdfstring{\softcode{frontend/src/generated/api-schema.ts}}{frontend/src/generated/api-schema.ts}
 &
-\texorpdfstring{\softcode{24f01aa65cecf591cb8adcf83352d6ae859da28c1e465227b8305c83a933f97b}}{24f01aa65cecf591cb8adcf83352d6ae859da28c1e465227b8305c83a933f97b} \\
+\texorpdfstring{\softcode{9c827574348bee0ecee67510f44e453ce2d341ec3cd2b1ce1bba1f3e7d5f14b1}}{9c827574348bee0ecee67510f44e453ce2d341ec3cd2b1ce1bba1f3e7d5f14b1} \\
 \texorpdfstring{\softcode{frontend/src/main.tsx}}{frontend/src/main.tsx}
 &
 \texorpdfstring{\softcode{e34b50223ac942759bc00c81a3d886fa77fc39645c31a32bd14841cbaceb2300}}{e34b50223ac942759bc00c81a3d886fa77fc39645c31a32bd14841cbaceb2300} \\
 \texorpdfstring{\softcode{frontend/src/screens.tsx}}{frontend/src/screens.tsx}
 &
-\texorpdfstring{\softcode{db38246a91b46b34c692cbbb256537a8c9e33306a8ef611bb5c9a1f927d92eae}}{db38246a91b46b34c692cbbb256537a8c9e33306a8ef611bb5c9a1f927d92eae} \\
+\texorpdfstring{\softcode{97c7da46a4ed09ca3eacab3c24e85f1be529ae28f8d8ee198dcad3aa2d2d702d}}{97c7da46a4ed09ca3eacab3c24e85f1be529ae28f8d8ee198dcad3aa2d2d702d} \\
 \texorpdfstring{\softcode{frontend/src/styles.css}}{frontend/src/styles.css}
 &
-\texorpdfstring{\softcode{d59390ef19345dedab9c2f9c517f728e47d26c3f0bd045863d2ca9e67231dd1a}}{d59390ef19345dedab9c2f9c517f728e47d26c3f0bd045863d2ca9e67231dd1a} \\
+\texorpdfstring{\softcode{5312b44e46e35a5545048e9094622ef11d3978cf41dde3269d0d0acfd849ec52}}{5312b44e46e35a5545048e9094622ef11d3978cf41dde3269d0d0acfd849ec52} \\
 \texorpdfstring{\softcode{frontend/src/ui.tsx}}{frontend/src/ui.tsx} &
 \texorpdfstring{\softcode{18619ae8fcc27bffd235ca8734be12ba92d22acdd44b1538a7823d311e1a1a0a}}{18619ae8fcc27bffd235ca8734be12ba92d22acdd44b1538a7823d311e1a1a0a} \\
 \texorpdfstring{\softcode{frontend/src/workflow.ts}}{frontend/src/workflow.ts}
@@ -22129,7 +22196,7 @@ SHA-256
 \texorpdfstring{\softcode{f965704aea82f2fb262054b769f8a5d42cfd1b74bdcc575c12ec856356d00900}}{f965704aea82f2fb262054b769f8a5d42cfd1b74bdcc575c12ec856356d00900} \\
 \texorpdfstring{\softcode{scripts/sync-task-tables.py}}{scripts/sync-task-tables.py}
 &
-\texorpdfstring{\softcode{efac9ff97c57233fb41b39fa70b544ff9af5cd59e403b574cfd55504a8ea29b0}}{efac9ff97c57233fb41b39fa70b544ff9af5cd59e403b574cfd55504a8ea29b0} \\
+\texorpdfstring{\softcode{a5cb5f33fbb2268a5862f90943c68f129a4ae22da19833393ebd17890c4e76f4}}{a5cb5f33fbb2268a5862f90943c68f129a4ae22da19833393ebd17890c4e76f4} \\
 \texorpdfstring{\softcode{tools/dev/check\_api\_contract.py}}{tools/dev/check\_api\_contract.py}
 &
 \texorpdfstring{\softcode{58a7df485501aaf23cf8ceaeba610addbea2c5602799d5f443f31e34d68053ef}}{58a7df485501aaf23cf8ceaeba610addbea2c5602799d5f443f31e34d68053ef} \\

@@ -1,5 +1,7 @@
 # Modelo conceptual (MER Chen / EER)
 
+> **Vigencia (14-oct-2026):** válido hasta la migración **V26**. V19–V26 no agregan ni cambian tablas o columnas (sólo funciones, triggers y roles); `tools/esquema/comparar_catalogo.py` contra A y B: 42 tablas, 0 diferencias.
+
 Versión 0.1 · 2026-10-10 · Diagrama completo en una hoja: `docs/diagrams/exports/mer-completo.pdf`; láminas por dominio: `docs/diagrams/exports/mer-0*.pdf`.
 
 ## 1. Notación y lectura

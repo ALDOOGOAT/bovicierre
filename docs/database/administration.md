@@ -24,7 +24,8 @@ Estado: implementado y probado parcialmente en PostgreSQL18.6. Scripts ejecutabl
 | bovi_app_a / bovi_app_b | LOGIN | SELECT acotado (sin hashes), EXECUTE explícito en consultar/cmd_ejecutar; sin DML directo, DDL ni comandos internos worker | No superusuario, no BYPASSRLS, no dueño, no puede cambiar `session_replication_role` |
 | bovi_auditor | LOGIN | SELECT en tablas y vistas de reporte | Sin mutaciones |
 | bovi_repl | LOGIN REPLICATION | SELECT en tablas publicadas; usado por la suscripción | `pg_hba` restringido a la IP del otro nodo |
-| bovi_fdw_read (en el servidor proveedor) | LOGIN | SELECT sobre `proveedor.tarifa_transporte`, `proveedor.ticket_bascula` | User mapping en A |
+| bovi_fdw_read (en el servidor proveedor) | LOGIN | SELECT sobre `proveedor.tarifa_transporte`, `proveedor.ticket_bascula` | User mapping en A y B (DEC-26) |
+| bovi_consulta (V22/V23) | NOLOGIN (grupo) | Hereda `bovi_auditor`: lectura de `bovi` sin `hash_contrasena`; sin `pg_monitor` (V23) | Grupo de las cuentas personales `profesor_bd`, `aldo_bd`, `jared_bd` (LOGIN, `CONNECTION LIMIT 5`), creadas por `scripts/academic_users.py` con contraseñas fuera del repo |
 | bovi_monitor | LOGIN | `pg_monitor` | — |
 | bovi_backup | LOGIN | `pg_read_all_data` (respaldo lógico) | Sólo desde host de respaldo |
 
@@ -67,11 +68,21 @@ Reintento en Java: hasta 3 veces el comando completo ante 40001/40P01 con la mis
 | `estado_terminal_inmutable` → `trg_estado_terminal` (V14) BEFORE UPDATE/borrado | operacion (CONFIRMADA, ANULADA, CANCELADA), gasto_operacion (APROBADO), pago (VALIDADO, REVERTIDO), posicion_inventario (CERRADA_VENTA, BAJA) | RN-023 (DIV-04). Permite sólo CONFIRMADA→ANULADA, `estado_entrega` en CONFIRMADA y `version_lock`; BV016 |
 
 | `liquidacion_cuadrada` → `trg_liquidacion_cuadrada` (V16/V17) CONSTRAINT AFTER INSERT DEFERRABLE INITIALLY DEFERRED | liquidacion, concepto_liquidacion | total = Σ conceptos al confirmar la transacción (DIV-05); BV015 |
+| `reserva_venta_vence_max_check` (V18) CHECK | reserva_venta | vencimiento ≤ 30 días desde la creación (DIV-14) |
+| `reserva_activa_unica` → `trg_reserva_activa_unica` (V20) BEFORE INSERT | reserva_venta | una sola reserva ACTIVA por posición; la carrera perdedora recibe BV402/RN-018 en lugar de 23505 (GOLD-ACAD-03) |
 
 Índice `uk_periodo_un_abierto` (V16): un solo periodo ABIERTO por sede, respaldo del advisory lock de `crear_periodo`.
 
 Desde V14 toda función de `bovi`/`infra` fija `search_path = pg_catalog, pg_temp` y PUBLIC no tiene TEMP sobre la base (SF-08). El ACL de base no viaja en `pg_dump`: `restore-check` lo reaplica y lo comprueba.
 Los triggers ordinarios no se disparan en el apply (F24–F25): validación en origen + conciliación (TEST-23).
+
+### Administración de usuarios de la aplicación (V21, V24–V26)
+
+`cmd_ejecutar(…,'actualizar_usuario')` (sólo ADMIN): cambia nombre, estado o contraseña. La contraseña llega como hash bcrypt generado por la API (nunca texto plano; la huella de idempotencia no deriva de ella) y la auditoría registra sólo `contrasena_restablecida`. Desde V24/V26 el actor debe ser ADMIN en **todas** las sedes donde la cuenta tiene membresías (vigentes o no, con las filas bloqueadas), para impedir tomar una cuenta ADMIN de otra sede (SF-28). Desde V25, restablecer o bloquear borra las sesiones abiertas de la cuenta (`infra.spring_session`). Pruebas: TEST-38.
+
+### “Reglas” (rúbrica) y `CREATE RULE`
+
+Las reglas de negocio RN-001..045 viven en CHECK, triggers y funciones, que fallan con un error explícito (BVxxx). El sistema de reescritura de PostgreSQL (`CREATE RULE … DO INSTEAD / DO ALSO`) se demuestra en un laboratorio revertido (TEST-41, `db/tests/rules_lab.py`) y no se usa en el esquema `bovi`, porque una regla `DO INSTEAD NOTHING` haría desaparecer escrituras sin error (DEC-27).
 
 ## 5. Consultas e índices
 | Consulta | Índice |

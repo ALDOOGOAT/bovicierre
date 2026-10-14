@@ -48,6 +48,8 @@ Cobertura **no ejecutada**: ZAP/DAST autenticado, Semgrep/Gitleaks/Trivy/escáne
 | SF-29 | Media | Restablecer contraseña o bloquear no cerraba sesiones abiertas | V25: borra `infra.spring_session` de la cuenta en la misma transacción | TEST-38 |
 | SF-30 | Media | `pg_monitor` en la cuenta de consulta (texto de consultas ajenas) y `sslmode=prefer` remoto | V23; `require` hacia destinos remotos | TEST-42 |
 | SF-31 | Media | Backend como root en Railway y entrypoint escribible por el UID 1000 | `setpriv` a 1000 sin grupos ni capacidades; entrypoint root 555; `chown -h` en ruta fija | inspección de imagen (`CapEff=0`) |
+| SF-32 | Alta | La guarda de V24 sólo contaba membresías vigentes: un ADMIN de otra sede suspendido y luego reactivado dejaba la escalada abierta | V26: cuenta todas las membresías y bloquea sus filas | TEST-38 (rol suspendido → 42501) |
+| SF-33 | Media | Con el mapa de intentos lleno, `LoginThrottle` dejaba de contar claves nuevas (falla en abierto) | 4,096 cubetas compartidas de desbordamiento: memoria acotada y el límite sigue aplicando | `LoginThrottleTest` (login nuevo con mapa lleno → 429) |
 
 ## Salida
 Ningún hallazgo crítico/alto **confirmado y no mitigado dentro del alcance ejecutado**. Abiertos: 1 media aceptada provisionalmente (SF-09, requiere decisión humana), bajas/info estáticas sin reproducir. Esto no es una certificación de seguridad ni habilita un piloto por sí mismo.

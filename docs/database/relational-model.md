@@ -1,5 +1,7 @@
 # Modelo relacional (lógico)
 
+> **Vigencia (14-oct-2026):** válido hasta la migración **V26**. V19–V26 no agregan ni cambian tablas o columnas (sólo funciones, triggers y roles); `tools/esquema/comparar_catalogo.py` contra A y B: 42 tablas, 0 diferencias.
+
 Línea base de diseño: 2026-10-10; implementación y comparación local documentadas al 2026-10-11. Detalle de columnas por tabla en `data-dictionary.md`. Autoridad física: `db/migrations/`; representación lógica documental: `tools/esquema/esquema.py` (42 tablas, 83 FK declaradas; el resultado de comparación con A/B se registra en [evidencia](../testing/evidence.md)). El recuento no sustituye pruebas de CHECK, índices parciales, triggers y permisos. Diagrama completo: `docs/diagrams/exports/relacional-completo.pdf`. Abreviaturas sólo en este documento: **E** = `empresa_id`, **S** = `sucursal_id`. Claves subrayadas = PK; `UK` = restricción única; sólo es clave candidata si es mínima; `→` = FK.
 
 ## 1. Reglas de transformación MER → relacional

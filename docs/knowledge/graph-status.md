@@ -78,3 +78,5 @@ El PDF y su fuente LaTeX, que duplican el corpus explicado, quedan excluidos en 
 `graphify update .` tras UI v3 y SCA/DAST (13-oct-2026, sólo AST); los documentos nuevos se reinterpretarán en el próximo `/graphify --update`.
 
 `graphify update .` tras el cierre académico (13-oct-2026, sólo AST): **3,059 nodos, 4,992 aristas, 317 comunidades** (69 comunidades renombradas por su nodo central; `graphify label` pendiente). Los documentos académicos nuevos (`docs/academic/*`, `docs/ui/competitive-review.md`) entran en el próximo `/graphify --update` semántico.
+
+`graphify update .` tras V26 y la entrega (14-oct-2026, sólo AST): **3,195 nodos, 5,131 aristas, 337 comunidades**; documentos nuevos (`docs/deploy/railway.md`, rúbrica) pendientes del `/graphify --update` semántico.

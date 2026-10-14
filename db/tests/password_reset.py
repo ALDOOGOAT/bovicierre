@@ -76,6 +76,11 @@ try:
     for body in ({'usuario_id': victim, 'hash_contrasena': bcrypt('DEMO-tomada-1')}, {'usuario_id': victim, 'estado': 'BLOQUEADO'}):
         fails(admin_a, body, '42501')
     print('PASS TEST-38 ADMIN sólo de A no restablece ni bloquea una cuenta ADMIN en B (42501)')
+    dormant = generic(ADMIN, S, 'crear_usuario', {'login': 'demo.adminbsusp.' + run, 'nombre': 'DEMO admin B suspendido', 'hash_contrasena': new})['id']
+    generic(ADMIN, S, 'asignar_membresia', {'usuario_id': dormant, 'rol_codigo': 'OPERADOR', 'vigente': True})
+    generic(ADMIN, SB, 'asignar_membresia', {'usuario_id': dormant, 'rol_codigo': 'ADMIN', 'vigente': False})
+    fails(admin_a, {'usuario_id': dormant, 'hash_contrasena': bcrypt('DEMO-tomada-2')}, '42501')
+    print('PASS TEST-38 tampoco con el rol ADMIN de B suspendido (V26: cuenta todas las membresías)')
     only_a = generic(ADMIN, S, 'crear_usuario', {'login': 'demo.soloa.' + run, 'nombre': 'DEMO sólo A', 'hash_contrasena': new})['id']
     generic(ADMIN, S, 'asignar_membresia', {'usuario_id': only_a, 'rol_codigo': 'CAJA', 'vigente': True})
     assert cmd(admin_a, {'usuario_id': only_a, 'hash_contrasena': bcrypt('DEMO-otra-1')})['contrasena_restablecida'] is True

@@ -6,10 +6,10 @@
 F1–F5 sin UUID (V19); CHECK→422; GOLD-ACAD-01/02/03 (V20 BV402); tablero de pendientes + guía; selección paginada; restablecer contraseña (V21); instalación vacía; TEST-40 Pgpool/réplica/corte/FDW; restore tras V21; skills `.claude/skills/bovicierre-*`; make `verify-academic|demo-profesor|evidence|release-academic`; competitive-review, SOLID, guion, 12 preguntas, aceptación; manual 23.10.
 
 ## Bloqueos que requieren al usuario
-1. `RUBRICA_ORIGINAL_PIZARRON.png` → copiar a `docs/academic/rubrica.png`, registrar SHA-256 y procedencia, revisar AC-01..09 contra la foto.
-2. Despliegue: destino, credenciales y presupuesto autorizados (o confirmar que basta la demo local).
+1. Rúbrica ya incorporada (`docs/academic/rubrica.png`); confirmar que es la foto original (llegó exportada desde ChatGPT).
+2. Despliegue: cambiar Railway a Hobby; luego `scripts/railway_deploy.sh infra|db|app` (proyecto `bovicierre-academico` ya creado, 2 de 8 servicios).
 3. Revisión humana de Aldo/Jared (`docs/academic/aceptacion-final.md`) y decisión de push/merge.
 
 ## Siguiente acción ejecutable
-- Con la rúbrica: incorporarla y ajustar la matriz.
+- Siguiente migración: V27.
 - `/graphify . --update` semántico para los documentos nuevos; `graphify label`.

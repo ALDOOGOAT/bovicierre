@@ -65,10 +65,11 @@ class LoginThrottleTest {
     @Test void laMemoriaQuedaAcotadaYLasClavesExistentesSiguenContando() {
         var t = new LoginThrottle(new MutableClock());
         for (int i = 0; i < LoginThrottle.MAX_KEYS; i++) t.failed("u" + i, "203.0.113.7");
-        int full = t.trackedKeys();
         for (int i = 0; i < 1000; i++) t.failed("nuevo" + i, "203.0.113.7");
-        assertTrue(t.trackedKeys() <= LoginThrottle.MAX_KEYS, "sin crecimiento ilimitado: " + t.trackedKeys());
-        assertEquals(full, t.trackedKeys());
+        assertTrue(t.trackedKeys() <= LoginThrottle.MAX_KEYS + LoginThrottle.OVERFLOW_BUCKETS, "memoria acotada: " + t.trackedKeys());
         assertTrue(t.retryAfter("cualquiera", "203.0.113.7") > 0, "el origen existente sigue bloqueado");
+        // Sin fallar en abierto: con el mapa lleno, un login nuevo atacado desde orígenes nuevos sigue limitado.
+        for (int i = 0; i < LoginThrottle.MAX_PER_LOGIN; i++) t.failed("victima", "198.51.100." + i);
+        assertTrue(t.retryAfter("victima", "198.51.100.200") > 0, "el login nuevo queda limitado aun con el mapa lleno");
     }
 }
