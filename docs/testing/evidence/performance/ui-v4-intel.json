@@ -1,0 +1,82 @@
+{
+ "medido_en": "2026-10-14T08:43:46.056Z",
+ "gpu": "ANGLE (Intel, Mesa Intel(R) Graphics (RPL-P), OpenGL ES 3.2 Mesa 25.2.8-0ubuntu0.24.04.2)",
+ "ventana": {
+  "width": 1280,
+  "height": 720
+ },
+ "escenarios": [
+  {
+   "nombre": "bandeja-reposo (aurora + conteo animado)",
+   "movimiento": "normal",
+   "frames": 637,
+   "fps": 162.2,
+   "p95_ms": 6.1,
+   "max_ms": 18.2,
+   "sobre_33ms": 0
+  },
+  {
+   "nombre": "navegacion entre 6 secciones (bandas + entrada)",
+   "movimiento": "normal",
+   "frames": 958,
+   "fps": 159.6,
+   "p95_ms": 6.1,
+   "max_ms": 36.4,
+   "sobre_33ms": 1
+  },
+  {
+   "nombre": "recorrido guiado (realce y tarjeta)",
+   "movimiento": "normal",
+   "frames": 1439,
+   "fps": 160,
+   "p95_ms": 6.1,
+   "max_ms": 30.3,
+   "sobre_33ms": 0
+  },
+  {
+   "nombre": "desplazamiento de tabla bajo barra translúcida",
+   "movimiento": "normal",
+   "frames": 478,
+   "fps": 159.3,
+   "p95_ms": 6.1,
+   "max_ms": 16.7,
+   "sobre_33ms": 0
+  },
+  {
+   "nombre": "bandeja-reposo (aurora + conteo animado)",
+   "movimiento": "reducido",
+   "frames": 656,
+   "fps": 163.8,
+   "p95_ms": 6.1,
+   "max_ms": 20.5,
+   "sobre_33ms": 0
+  },
+  {
+   "nombre": "navegacion entre 6 secciones (bandas + entrada)",
+   "movimiento": "reducido",
+   "frames": 1863,
+   "fps": 155.2,
+   "p95_ms": 6.1,
+   "max_ms": 23.4,
+   "sobre_33ms": 0
+  },
+  {
+   "nombre": "recorrido guiado (realce y tarjeta)",
+   "movimiento": "reducido",
+   "frames": 1985,
+   "fps": 147.1,
+   "p95_ms": 16.7,
+   "max_ms": 24.1,
+   "sobre_33ms": 0
+  },
+  {
+   "nombre": "desplazamiento de tabla bajo barra translúcida",
+   "movimiento": "reducido",
+   "frames": 496,
+   "fps": 165,
+   "p95_ms": 6.1,
+   "max_ms": 7.1,
+   "sobre_33ms": 0
+  }
+ ]
+}

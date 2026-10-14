@@ -2,6 +2,10 @@
 
 Actualizado: 2026-10-13 · trabajo en rama `feature/cierre-academico-v1`; `main`; código MVP publicado en `9282b75`, normalización de wrapper en `92d3d41`. La aplicación se ejecuta en local; publicar código no equivale a desplegarla.
 
+## Rediseño ejecutivo v4 · 14-oct-2026
+
+Sistema visual v4 (cromo nocturno con oro, easing de Ramp, bandas fotográficas por sección), conteos animados del tablero, palomita de confirmación, barras del margen, **recorrido guiado con voz del navegador** (port de `Proyecto_Contable/Tour.js`) y **Ayuda y tutoriales** con 4 videos reales con subtítulos. Medido en la Intel UHD: ~160 fps, p95 6.1 ms ([ui-v4-intel.json](testing/evidence/performance/ui-v4-intel.json)); contraste AA en todas las parejas nuevas; puerta **PASS** 239 casos ([20261014T0244](testing/evidence/release-local/20261014T0244/release-gate.json)). Decisiones UXD-21..28 en [redesign-decisions](ui/redesign-decisions.md). Revisión humana pendiente.
+
 ## Cierre académico (en `main` y GitHub desde `f9f32b5`) · 13-oct-2026
 
 Mandato: `MEGAPROMPT_BOVICIERRE_CIERRE_ACADEMICO_CLAUDE.md` (no versionado). Implementado y probado localmente: recibir/entregar/baja, pesaje, evidencia, gasto y documentos **sin copiar identificadores** (V19); CHECK nunca da 500; GOLD-ACAD-01/02 con cifras del mandato; carrera de reservas con BV402 (V20); **tablero de pendientes** con conteos del servidor y **guía de primer ingreso**; **selección paginada** de ganado más allá de la primera página; **restablecimiento administrativo de contraseña** (V21); **instalación vacía** `BOVI_INSTALL=vacia`; evidencia Pgpool/réplica con IDs/corte de enlace/FDW caída y recuperación (TEST-40); puerta final **PASS** 226 casos ([release-gate](testing/evidence/release-local/20261013T1415/release-gate.json)); restauración tras V21 conciliada ([restore-v21](testing/evidence/recovery/restore-v21.json)). Skills de proyecto en `.claude/skills/`; objetivos `make verify-academic|demo-profesor|evidence|release-academic`. Entrega: [entrega-final](academic/entrega-final.md).

@@ -1,0 +1,37 @@
+WEBVTT
+
+1
+00:00:00.003 --> 00:00:03.305
+Comprar ganado y confirmar el trato
+
+2
+00:00:03.305 --> 00:00:04.590
+Desde la Bandeja, empieza una nueva operación.
+
+3
+00:00:04.590 --> 00:00:12.556
+Elige el tipo de trato y al proveedor.
+
+4
+00:00:12.556 --> 00:00:13.756
+El borrador todavía no genera inventario ni saldo.
+
+5
+00:00:13.459 --> 00:00:18.938
+Busca el ganado por su arete y márcalo en la lista.
+
+6
+00:00:18.938 --> 00:00:23.177
+Indica el precio: por cabeza o por kilo. El importe final lo calcula el servidor.
+
+7
+00:00:23.177 --> 00:00:25.241
+Acepta las condiciones pactadas con la contraparte.
+
+8
+00:00:25.241 --> 00:00:30.261
+Revisa el cálculo del servidor y confirma: sólo aquí nace la deuda.
+
+9
+00:00:30.261 --> 00:00:31.763
+Listo: la compra quedó confirmada y su liquidación muestra el total exacto.

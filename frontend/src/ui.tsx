@@ -32,6 +32,13 @@ const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // Identificadores técnicos completos en monoespaciado; el texto no se recorta ni se sustituye.
 function Cell({value,numeric}:{value:unknown;numeric?:boolean}){if(value===null||value===undefined||value==='')return <><span className="nil" aria-hidden="true">—</span><span className="sr-only">No disponible</span></>;if(numeric&&typeof value==='string')return <>{decimal(value)}</>;const shown=text(value);return UUID.test(shown)?<span className="uuid">{shown}</span>:<>{shown}</>;}
 // Importe con la moneda en menor tamaño; el texto conserva «1,000.00 MXN» para lectores y pruebas.
+/** Conteo animado de un número entero ya entregado por el servidor (no se usa para dinero). Respeta movimiento reducido. */
+export function CountUp({value}:{value:number}){
+    const reduced=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const [shown,setShown]=useState(()=>reduced()?value:0);
+    useEffect(()=>{if(reduced()){setShown(value);return;}let raf=0;const start=performance.now();const tick=(t:number)=>{const k=Math.min(1,(t-start)/700);setShown(Math.round(value*(1-Math.pow(1-k,4))));if(k<1)raf=requestAnimationFrame(tick);};raf=requestAnimationFrame(tick);return()=>cancelAnimationFrame(raf);},[value]);
+    return <>{shown}</>;
+}
 export function Amount({value}:{value:unknown}){if(!value||typeof value!=='object'||!('importe' in value))return <>No disponible</>;const m=value as Money;return <>{decimal(m.importe)} <span className="unit">{m.moneda||'MXN'}</span></>;}
 export function DataTable({rows,columns,onSelect}:{rows:Row[];columns:{key:string;label:string;money?:boolean;numeric?:boolean}[];onSelect?:(row:Row)=>void}){
     return <div className="table-region" role="region" aria-label="Registros de la sede" tabIndex={0}><table><thead><tr>{columns.map(c=><th className={c.money||c.numeric?'numeric':''} key={c.key} scope="col">{c.label}</th>)}{onSelect&&<th scope="col">Detalle</th>}</tr></thead><tbody>{rows.map((row,index)=><tr key={row.id||index}>{columns.map(c=><td className={c.money||c.numeric?'numeric':['tipo','direccion','unidad','unidad_precio','naturaleza'].includes(c.key)?'short-value':''} key={c.key}>{statusColumns.has(c.key)&&typeof row[c.key]==='string'?<span className="badge" data-tone={toneOf(row[c.key])}>{text(row[c.key])}</span>:<Cell value={row[c.key]} numeric={c.numeric}/>}</td>)}{onSelect&&<td><button className="text-button" onClick={()=>onSelect(row)}>Abrir <span className="sr-only">{text(row.folio||row.nombre||row.id)}</span></button></td>}</tr>)}</tbody></table></div>;

@@ -24,3 +24,21 @@
 | UXD-20 | Tablet 768–900 px: sidebar como riel de iconos de 72 px | Evitar que la navegación ocupe 27 % del ancho | Menú hamburguesa |
 
 No se cambiaron: `api.ts`, idempotencia/reintentos, AbortController por sede, almacenamiento (sessionStorage sólo clave+huella), cálculo de importes (todo viene de la API), textos de botones/etiquetas usados por E2E.
+
+## v4 «ejecutivo» · 14-oct-2026
+
+Encargo: rediseño ejecutivo pero vistoso de todo, con animaciones, imágenes, fondos, videos de uso y componentes de los repositorios propios. Fuentes leídas: CSS público de **Ramp**, **Attio** y **Herdwatch** (descargado sin sesión, valores extraídos con un script), repos propios `Proyecto_Contable` (`Tour.js`) y `Dagon-Project` (`TutorialOverlayCinematic`, `AbyssBackground`), y la guía `ui-ux-pro-max`. ElevenLabs: descartado por decisión del usuario; se usa la voz del navegador.
+
+| ID | Decisión | Fuente / razón | Alternativa descartada |
+|---|---|---|---|
+| UXD-21 | Fondo cálido `#F4F2EE`, sombra `0 8px 30px` al 7 %, easing expo-out `cubic-bezier(.16,1,.3,1)` con duraciones .12/.2/.32/.5 s | Ramp (easing presente 29 veces en su CSS; fondo `#f4f2f0`) | Liquid Glass sugerido por la guía: blur caro en GPU integrada |
+| UXD-22 | Cromo nocturno (`--night-*`) con aurora oro/verde animada sólo con `transform` en un pseudo-elemento | Herdwatch (base oscura `#00101c`); `AbyssBackground` como idea, no como canvas | Canvas animado: costo de CPU/GPU sin beneficio |
+| UXD-23 | Oro como acento: `--gold-700` único apto para texto (6.3:1), `--gold-300/500` decorativos sobre oscuro; eyebrows con tracking .14em | Ramp/Herdwatch (eyebrows anchos); contraste verificado en `tools/ui/contrast.py` | Cormorant/Montserrat de la guía: tipografías de moda, no operativas |
+| UXD-24 | Banda fotográfica en **todas** las secciones con imagen por grupo (dominio público/CC0) y encuadre propio; entrada `settle` de 1.1 s | Contexto visual por área sin tapar datos | Fotos en tablas o tarjetas |
+| UXD-25 | Conteo animado sólo para **conteos** del servidor; el dinero nunca se anima con cifras intermedias | Regla del proyecto: el navegador no inventa importes | Animar importes |
+| UXD-26 | Barras del margen proporcionales con aritmética entera (`BigInt` en centavos), `transform: scaleX`, y tarjetas de cifras como equivalente de texto | `frontendNeverParsesMoneyAsFloat`; rendimiento (no animar `width`) | Gráfica de terceros |
+| UXD-27 | Recorrido guiado con voz del navegador (es-MX), «Narración por voz» con `aria-pressed`, diálogo con foco atrapado, fondo `inert`, Escape y foco devuelto | Port de `Proyecto_Contable/Tour.js`; mejoras de accesibilidad encontradas por pruebas | Auto-inicio del recorrido (bloquearía tareas y pruebas) |
+| UXD-28 | Centro de ayuda con 4 videos reales (Playwright, cursor visible, subtítulos WebVTT sincronizados al paso) y preguntas frecuentes | «Que lo pueda usar cualquiera»; Herdwatch usa videos de producto | Videos narrados con ElevenLabs (descartado por el usuario) |
+
+Medición en la GPU más débil (Intel UHD RPL-P vía ANGLE/Mesa): ~160 fps a 165 Hz, p95 6.1 ms, 1 cuadro >33 ms en ~3,500 (cambio de pantalla con carga de datos); sin diferencia apreciable con movimiento reducido ([ui-v4-intel.json](../testing/evidence/performance/ui-v4-intel.json)). Defectos encontrados y corregidos en el pase: columnas de Periodos leían `fecha_inicio/fin` (la API devuelve `desde/hasta`) y el selector de periodo mostraba el UUID.
+

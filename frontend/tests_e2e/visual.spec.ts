@@ -6,7 +6,7 @@ import {test} from './runtime';
 // BOVI_SHOT_DIR=<dir> npm run test:e2e -- visual.spec.ts
 const out=process.env.BOVI_SHOT_DIR||'/tmp/bovicierre-shots';
 const widths=[390,768,1440];
-const screens=['operaciones','captura','inventario','animales','pesajes','liquidaciones','pagos','expediente','cartera','margen','periodos'];
+const screens=['operaciones','captura','inventario','animales','pesajes','liquidaciones','pagos','expediente','cartera','margen','periodos','usuarios','sincronizacion','documentos','ayuda'];
 async function login(page:Page){
     const secret=(await readFile(homedir()+'/.local/share/bovicierre-academic/secrets/demo_password','utf8')).trim();
     await page.goto('/');await page.getByLabel('Usuario *',{exact:true}).fill('demo.admin');await page.getByLabel('Contraseña *',{exact:true}).fill(secret);

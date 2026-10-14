@@ -127,7 +127,7 @@
 \fancyhf{}
 \fancyhead[L]{\sffamily\small BoviCierre}
 \fancyhead[R]{\sffamily\small Manual técnico integral}
-\fancyfoot[L]{\sffamily\scriptsize Base 92d3d41 + cierre académico (V19--V26) · 14 octubre 2026}
+\fancyfoot[L]{\sffamily\scriptsize Base 92d3d41 + cierre académico (V19--V26) + rediseño v4 · 14 octubre 2026}
 \fancyfoot[R]{\sffamily\small\thepage}
 \setlength{\headheight}{15pt}
 \setlength{\emergencystretch}{3em}
@@ -141,7 +141,7 @@
 \clubpenalty=10000
 \fancyhead[L]{\color{brand}\sffamily\small BoviCierre}
 \fancyhead[R]{\color{black!70}\sffamily\small Manual técnico integral}
-\fancyfoot[L]{\color{black!70}\sffamily\footnotesize Base 92d3d41 + cierre académico (V19--V26) · 14 octubre 2026}
+\fancyfoot[L]{\color{black!70}\sffamily\footnotesize Base 92d3d41 + cierre académico (V19--V26) + rediseño v4 · 14 octubre 2026}
 \fancyfoot[R]{\color{brand}\sffamily\small\thepage}
 \renewcommand{\maketitle}{%
 \hypersetup{pageanchor=false}
@@ -21930,6 +21930,52 @@ variable, Caddy con dominio público): \texttt{scripts/railway\_deploy.sh} y
 \texttt{docs/deploy/railway.md}. Quedó pendiente porque el plan gratuito de
 Railway no permite más de tres servicios.
 
+\section{Rediseño ejecutivo v4 (14 de octubre)}\label{campana-v4}
+
+\textbf{Dirección visual.} Se leyó el CSS público de Ramp, Attio y Herdwatch y se
+tomaron valores medidos, no impresiones: fondo cálido \texttt{\#F4F2EE}, sombras
+suaves de 30 px, easing expo-out \texttt{cubic-bezier(.16,1,.3,1)} con duraciones de
+0.12 a 0.5 s, eyebrows con espaciado amplio y una base nocturna de cromo con oro como
+acento. El oro sólo se usa como texto en su tono oscuro (6.3:1 sobre blanco); los tonos
+claros son decorativos sobre fondo oscuro. Todas las parejas de color nuevas superan
+4.5:1 (\texttt{tools/ui/contrast.py}).
+
+\textbf{Imágenes y movimiento.} Cada sección tiene su banda fotográfica de dominio
+público o CC0 (pastoreo, corral con aretes, subasta y rancho nocturno), con encuadre
+propio y una entrada breve. La barra lateral tiene una aurora oro y verde que sólo
+anima \texttt{transform}. Los conteos del tablero suben hasta el valor del servidor; el
+dinero nunca se anima con cifras intermedias. Cada confirmación muestra una palomita
+animada y el margen se acompaña de barras proporcionales calculadas con enteros.
+
+\begin{center}
+\includegraphics[width=.95\linewidth,height=.42\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui/v4-margen-1440.jpg}}
+\end{center}
+
+\textbf{Recorrido guiado y ayuda.} Se portó el recorrido de
+\texttt{Proyecto\_Contable} (repositorio propio) como diálogo accesible: voz del
+navegador en español de México con botón ``Narración por voz'', realce del elemento
+real, fondo inerte, Escape y foco devuelto al botón que lo abrió. La pantalla
+\emph{Ayuda y tutoriales} reúne cuatro videos de uso grabados con el producto real
+(compra, recepción, venta con entrega y cobro, tablero), con cursor visible y
+subtítulos WebVTT sincronizados con cada paso, además de preguntas frecuentes y
+atajos de teclado.
+
+\begin{center}
+\includegraphics[width=.82\linewidth,height=.48\textheight,keepaspectratio]{\detokenize{@@BOVI_ROOT@@/docs/testing/evidence/ui/v4-ayuda-1440.jpg}}
+\end{center}
+
+\textbf{Rendimiento en la GPU más débil.} Medido en Chrome sobre la Intel UHD
+(Raptor Lake) por ANGLE/Mesa: alrededor de 160 cuadros por segundo en una pantalla de
+165 Hz, percentil 95 de 6.1 ms y un solo cuadro mayor a 33 ms entre unos 3,500, en un
+cambio de pantalla con carga de datos. Con movimiento reducido las cifras son
+equivalentes: las animaciones no tienen costo apreciable.
+
+\textbf{Defectos corregidos en el pase.} La tabla de periodos leía campos que la API no
+devuelve y mostraba ``—''; el selector de periodo mostraba el identificador interno en
+lugar de las fechas. Las pruebas del recorrido detectaron que el foco no volvía al
+cerrar (se devolvía antes de quitar \texttt{inert}) y que la preferencia de voz se leía
+sólo al cargar.
+
 \section{Pendientes después de esta actualización}\label{campana-pendientes}
 
 \begin{itemize}
@@ -21939,6 +21985,7 @@ Railway no permite más de tres servicios.
 \item Las migraciones V14--V26 no añaden tablas ni columnas (triggers, un
 índice, un CHECK, funciones y roles): los diagramas MER y relacional siguen
 vigentes y el catálogo de A y B coincide con la documentación.
+\item Revisión humana del rediseño v4 (Aldo y Jared) y prueba con lector de pantalla del recorrido guiado.
 \item Despliegue en Railway al cambiar al plan Hobby, y confirmación del
 profesor sobre la lectura de la ``Y'' y del término ``reglas''.
 \item Lector de pantalla, axe y teléfono físico para el rediseño.
@@ -22177,10 +22224,10 @@ SHA-256
 \texorpdfstring{\softcode{e34b50223ac942759bc00c81a3d886fa77fc39645c31a32bd14841cbaceb2300}}{e34b50223ac942759bc00c81a3d886fa77fc39645c31a32bd14841cbaceb2300} \\
 \texorpdfstring{\softcode{frontend/src/screens.tsx}}{frontend/src/screens.tsx}
 &
-\texorpdfstring{\softcode{97c7da46a4ed09ca3eacab3c24e85f1be529ae28f8d8ee198dcad3aa2d2d702d}}{97c7da46a4ed09ca3eacab3c24e85f1be529ae28f8d8ee198dcad3aa2d2d702d} \\
+\texorpdfstring{\softcode{23c5d5225b98f9629360b08aab3fb97586edd7e381df71eb23992f094e36b9bb}}{23c5d5225b98f9629360b08aab3fb97586edd7e381df71eb23992f094e36b9bb} \\
 \texorpdfstring{\softcode{frontend/src/styles.css}}{frontend/src/styles.css}
 &
-\texorpdfstring{\softcode{5312b44e46e35a5545048e9094622ef11d3978cf41dde3269d0d0acfd849ec52}}{5312b44e46e35a5545048e9094622ef11d3978cf41dde3269d0d0acfd849ec52} \\
+\texorpdfstring{\softcode{0c214219f38416dbe810dc51372afaafd36cdb3b3ada90523c879a51bac314bd}}{0c214219f38416dbe810dc51372afaafd36cdb3b3ada90523c879a51bac314bd} \\
 \texorpdfstring{\softcode{frontend/src/ui.tsx}}{frontend/src/ui.tsx} &
 \texorpdfstring{\softcode{18619ae8fcc27bffd235ca8734be12ba92d22acdd44b1538a7823d311e1a1a0a}}{18619ae8fcc27bffd235ca8734be12ba92d22acdd44b1538a7823d311e1a1a0a} \\
 \texorpdfstring{\softcode{frontend/src/workflow.ts}}{frontend/src/workflow.ts}

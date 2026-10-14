@@ -1,4 +1,4 @@
-# Sistema visual implementado (v2, rediseño S1 del 12-oct-2026)
+# Sistema visual implementado (v4 «ejecutivo», 14-oct-2026; base v2/v3 del 12–13-oct)
 
 BoviCierre es un centro de operaciones para la compraventa de bovinos en pie. Implementación: `frontend/src/styles.css` (tokens en `:root`), `frontend/src/brand.tsx` (marca e iconos), `frontend/src/tone.ts` (tono de estados). Pantallas y API: [flujos](flows-and-screens.md), [contrato](../api/openapi.yaml). Los datos provienen de la API de la sede autorizada; no hay gráficas, cifras ni historiales ficticios. Motivos y alternativas: [decisiones](redesign-decisions.md); procedencia de fotos/fuente: [registro de assets](asset-register.md).
 
@@ -35,3 +35,12 @@ Comportamiento de `api.ts`, idempotencia y reintentos (sessionStorage sólo clav
 
 ## Verificación registrada
 `docs/testing/evidence/ui-redesign/20261012T0214/`: capturas antes/después en 390/768/1440 px (14 vistas), comparaciones lado a lado, 15 E2E con API real PASS, recorrido visual sin desbordamiento horizontal (`clientWidth`), resumen de errores HTTP esperados. Revisión de lector de pantalla y teléfono físico: **no realizadas**.
+
+## v4 «ejecutivo» (14-oct-2026)
+
+- **Tokens nuevos:** `--night-950/900/800/700` (cromo), `--gold-700` (texto), `--gold-500/300/100` (decorativos y fondos), `--dur-4:.5s`; `--ease` y `--ease-out` = `cubic-bezier(.16,1,.3,1)`; `--bg:#F4F2EE`; `--fs-h1:34px`.
+- **Componentes:** `CountUp` (ui.tsx, sólo enteros), `MarginBars` (screens.tsx), `GuidedTour` y `HelpCenter` (guide.tsx), confirmación animada `.notice.success:before`, bandas `.page-heading.hero.compact`.
+- **Imágenes por sección:** Operaciones `sede-pastoreo-fillmore`, Inventario `inventario-corral-nuevo-mexico`, Dinero `dinero-subasta-ganado`, Control `control-rancho-nocturno` (registro en `asset-register.md`).
+- **Movimiento:** todo con `transform`/`opacity`; `prefers-reduced-motion` deja el estado final visible (conteo, palomita, barras).
+- **Videos:** `frontend/public/videos/<id>.mp4|.vtt|-poster.jpg`; regenerar con `npx playwright test -c playwright.tools.config.ts tutorials.record.ts` (stack local arriba). Medición: `… perf.measure.ts`.
+

@@ -26,6 +26,41 @@ Presupuesto de imagen destacada 150–300 KB: cumplido (máx. 249 KB en el fallb
 
 Límites: las fotos son contexto editorial, **no** son evidencia ni retrato de animales registrados en el sistema. No se usan en fichas, tablas financieras ni comprobantes. "Dominio público" es lo declarado por Wikimedia Commons al 2026-10-12; se conserva el JSON de esa consulta.
 
+## Fotografías del rediseño v4 (14-oct-2026)
+
+| Asset | Origen | Autor / proveedor | Licencia | Transformación | Destino |
+|---|---|---|---|---|---|
+| `inventario-corral-nuevo-mexico-{800,1600}.{webp,jpg}` | [File:Beef cattle in a feedlot in New Mexico.jpg](https://commons.wikimedia.org/wiki/File:Beef_cattle_in_a_feedlot_in_New_Mexico.jpg), original 7855×5653 | Quintin Soloviev (obra propia, Commons) | **CC0** declarado en Commons al 2026-10-14 | Recorte 8:3 centrado en el sujeto, redimensionado a 1600×600 y 800×300; WebP q74, JPEG q80 progresivo | Banda de **Inventario** (Posiciones, Animales, Recepción y entrega) |
+| `dinero-subasta-ganado-{800,1600}.{webp,jpg}` | [File:Cattle Auction - 50639453351.jpg](https://commons.wikimedia.org/wiki/File:Cattle_Auction_-_50639453351.jpg), original 4272×2848 | Alabama Extension (vía Flickr, Commons) | **CC0** declarado en Commons al 2026-10-14 | Recorte 8:3 centrado en el sujeto, redimensionado a 1600×600 y 800×300; WebP q74, JPEG q80 progresivo | Banda de **Dinero** (Liquidaciones, Cobros y pagos, Gastos, Cartera, Margen, Simulador) |
+| `control-rancho-nocturno-{800,1600}.{webp,jpg}` | [File:CG Merlo Ranch and Cattle Operation Survives through Challenges (20220610-FPAC-LSC-0541).jpg](https://commons.wikimedia.org/wiki/File:CG_Merlo_Ranch_and_Cattle_Operation_Survives_through_Challenges_(20220610-FPAC-LSC-0541).jpg), original 5397×3598 | USDA (USDAgov, Flickr; obra del gobierno de EE. UU.) | **Dominio público** declarado en Commons al 2026-10-14 | Recorte 8:3 centrado en el sujeto, redimensionado a 1600×600 y 800×300; WebP q74, JPEG q80 progresivo | Banda de **Control** (Periodos, Usuarios, Sincronización, Documentos, Ayuda) |
+
+| Archivo | Bytes | Dimensiones | SHA256 |
+|---|---:|---|---|
+| inventario-corral-nuevo-mexico-1600.webp | 205,712 | 1600×600 | `818adee5d94bbd21196575b1cf8c3823bd0e32e0c2cdd458571bb78fa7e39af5` |
+| inventario-corral-nuevo-mexico-1600.jpg | 265,664 | 1600×600 | `117512807968efd4907101b820a209547ebe9b36327c7c5572b011fd2c63d757` |
+| inventario-corral-nuevo-mexico-800.webp | 60,906 | 800×300 | `2ce8d2cac0a994faa267f1ea1ca5eefb3a39a4f2d1652e2664d3b5e854b84b1f` |
+| inventario-corral-nuevo-mexico-800.jpg | 75,654 | 800×300 | `12454db1cc86b4bc9bd3345ca3fe7652b7d578f6c71429660b62df4df6ced37a` |
+| dinero-subasta-ganado-1600.webp | 89,416 | 1600×600 | `b3bae5403bc505252a3b09b63a91d482f93f7aab2d0147aaabb0b811f4fc4f90` |
+| dinero-subasta-ganado-1600.jpg | 162,071 | 1600×600 | `723bc79233557ec37feb2d5171beab52387591f8946d2f8c2051152b823cf93f` |
+| dinero-subasta-ganado-800.webp | 36,126 | 800×300 | `7ed3cc3401e93e3739770c965b380be4c55d3bac9846a6ebd9eecc590303f617` |
+| dinero-subasta-ganado-800.jpg | 55,343 | 800×300 | `6cc693fd9f279edbd50b36507197f07b1f1c057af03afe870ff9b5df90435705` |
+| control-rancho-nocturno-1600.webp | 123,012 | 1600×600 | `6c540250a3b7fd6df08da83db916429b9a139104d2055eff7b834f02c297be93` |
+| control-rancho-nocturno-1600.jpg | 181,648 | 1600×600 | `e567ef561e948ea418ac9f514a4cd5c5169c81769d35afee65bbe56a2fcf7849` |
+| control-rancho-nocturno-800.webp | 32,218 | 800×300 | `c973a32f42c2f96bb70f18bf803b87853e20de949b18bcbc36bde9dc1e88778f` |
+| control-rancho-nocturno-800.jpg | 46,222 | 800×300 | `1b5abc82a61e0da16789922cc7033114430277b6d28db2e23d460d41ef060b62` |
+
+Criterio: sólo dominio público o CC0 (sin atribución obligatoria ni copyleft al recortar); se evitó retratar personas identificables de frente. Son contexto editorial, no evidencia de animales registrados.
+
+## Videos de uso (14-oct-2026)
+
+| Asset | Origen | Licencia |
+|---|---|---|
+| `frontend/public/videos/{compra,recepcion,venta-cobro,tablero}.mp4` (H.264 1280×720, 11–53 s) | Grabación propia del producto con Playwright en Chrome real, datos sintéticos DEMO (`DEMO Rancho Video …`, aretes `DEMO-VID-…`) | Propia del proyecto |
+| `….vtt` | Subtítulos WebVTT en español generados en el instante de cada paso grabado | Propia del proyecto |
+| `…-poster.jpg` | Fotograma del propio video (segundo 4.2) | Propia del proyecto |
+
+Herramienta auxiliar instalada: `ffmpeg` de Playwright (`npx playwright install ffmpeg`, en `~/.cache/ms-playwright`), necesario para grabar; la conversión a MP4 usa el `ffmpeg` del sistema.
+
 ## Marca e iconos
 
 | Asset | Origen | Licencia |

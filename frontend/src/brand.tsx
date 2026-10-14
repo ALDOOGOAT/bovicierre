@@ -30,7 +30,7 @@ const paths:Record<string,string>={
     periodos:'M4 5h12v11H4zM4 8.5h12M7.5 3v3M12.5 3v3',
     usuarios:'M10 3l6 2.5v4c0 3.6-2.6 6.4-6 7.5-3.4-1.1-6-3.9-6-7.5v-4zM7.5 10l1.8 1.8L13 8',
     sincronizacion:'M15.5 8A6 6 0 0 0 4.6 6.6M4.5 12a6 6 0 0 0 10.9 1.4M15.5 4v4h-4M4.5 16v-4h4',
-    documentos:'M6 3h5.5L15 6.5V17H6zM11 3v4h4M8.5 10.5h4M8.5 13.5h4'
+    documentos:'M6 3h5.5L15 6.5V17H6zM11 3v4h4M8.5 10.5h4M8.5 13.5h4',ayuda:'M10 17.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15zM7.9 7.7a2.2 2.2 0 0 1 4.3.8c0 1.5-2.2 1.8-2.2 3.2M10 14.3v.2'
 };
 export function NavIcon({name}:{name:string}){
     return <svg className="nav-icon" aria-hidden="true" viewBox="0 0 20 20" width="18" height="18"><path d={paths[name]||paths.documentos}/></svg>;

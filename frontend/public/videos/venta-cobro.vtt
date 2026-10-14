@@ -1,0 +1,45 @@
+WEBVTT
+
+1
+00:00:00.006 --> 00:00:03.308
+Vender, entregar y cobrar
+
+2
+00:00:03.308 --> 00:00:10.185
+Crea el borrador de venta con el comprador.
+
+3
+00:00:10.185 --> 00:00:15.690
+Busca el ganado por su arete y márcalo en la lista.
+
+4
+00:00:15.690 --> 00:00:19.926
+Indica el precio: por cabeza o por kilo. El importe final lo calcula el servidor.
+
+5
+00:00:19.926 --> 00:00:22.024
+Acepta las condiciones pactadas con la contraparte.
+
+6
+00:00:22.024 --> 00:00:24.533
+Reserva el ganado: nadie más podrá venderlo mientras la reserva esté activa.
+
+7
+00:00:24.533 --> 00:00:29.568
+Revisa el cálculo del servidor y confirma: sólo aquí nace la deuda.
+
+8
+00:00:29.568 --> 00:00:33.030
+La entrega es un paso físico aparte: marca los animales entregados.
+
+9
+00:00:33.030 --> 00:00:43.619
+Para cobrar, abre la liquidación y registra el dinero recibido.
+
+10
+00:00:43.619 --> 00:00:50.263
+Valida el pago y aplícalo a la liquidación: el saldo se actualiza al momento.
+
+11
+00:00:50.263 --> 00:00:51.766
+Cobro aplicado: la cuenta del comprador queda en cero.

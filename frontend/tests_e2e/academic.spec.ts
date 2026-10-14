@@ -59,3 +59,18 @@ test('usuarios: restablecimiento administrativo de contraseña sin correo',async
  try{await enter(other,user,initial);await expect(other.getByRole('alert')).toBeVisible();await enter(other,user,reset);await other.getByRole('button',{name:/DEMO Sede A/}).click();await expect(other.locator('#main-title')).toHaveText('Bandeja');}
  finally{await context.close();}
 });
+
+test('recorrido guiado y ayuda: diálogo accesible, fondo inerte, Escape devuelve el foco y videos servidos',async({page})=>{
+ await login(page);await page.evaluate(()=>localStorage.setItem('bovi.tour.voz','off'));
+ const launcher=page.getByRole('button',{name:'Recorrido guiado',exact:true});await launcher.click();
+ const tour=page.getByRole('dialog',{name:'BoviCierre en dos minutos'});await expect(tour).toBeVisible();await expect(tour).toContainText('1 de 7');
+ await expect(tour.getByRole('button',{name:'Siguiente'})).toBeFocused();await expect(page.locator('.app-shell > .workspace')).toHaveAttribute('inert','');
+ const voice=tour.getByRole('button',{name:'Narración por voz'});await expect(voice).toHaveAttribute('aria-pressed','false');await voice.click();await expect(voice).toHaveAttribute('aria-pressed','true');await voice.click();await expect(voice).toHaveAttribute('aria-pressed','false');
+ await tour.getByRole('button',{name:'Siguiente'}).click();await expect(page.getByRole('dialog',{name:'Lo pendiente de tu sede'})).toBeVisible();await expect(page.locator('.tour-spot')).toBeVisible();
+ await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.locator('.app-shell > .workspace')).not.toHaveAttribute('inert','');await expect(launcher).toBeFocused();
+ await nav(page,'ayuda');await expect(page.locator('#main-title')).toHaveText('Ayuda y tutoriales');
+ const videos=page.locator('.video-card video');await expect(videos).toHaveCount(4);await expect(page.locator('.video-card track[kind="captions"][srclang="es"]')).toHaveCount(4);
+ for(const src of await videos.locator('source').evaluateAll(els=>els.map(e=>(e as HTMLSourceElement).getAttribute('src')))){const r=await page.request.get(src!);expect(r.status(),src!).toBe(200);expect(r.headers()['content-type']).toContain('video/mp4');}
+ for(const src of await page.locator('.video-card track').evaluateAll(els=>els.map(e=>(e as HTMLTrackElement).getAttribute('src')))){const r=await page.request.get(src!);expect(r.status(),src!).toBe(200);expect(await r.text()).toMatch(/^WEBVTT/);}
+ await page.getByRole('button',{name:'Iniciar recorrido guiado'}).click();await expect(page.getByRole('dialog')).toBeVisible();await expect(page.locator('#main-title')).toHaveText('Bandeja');await page.getByRole('dialog').getByRole('button',{name:'Saltar'}).click();await expect(page.getByRole('dialog')).toHaveCount(0);
+});
