@@ -1,6 +1,6 @@
 # NEXT_SESSION — cierre académico (mandato 2.0)
 
-**Estado al 13-oct-2026:** rama `feature/cierre-academico-v1`, sin push. Stack local en http://localhost:15180, A/B en V21. Entrega: `docs/academic/entrega-final.md`.
+**Estado al 13-oct-2026:** rama `feature/cierre-academico-v1`, integrada en `main` y publicada en GitHub (`f9f32b5`, 13-oct-2026). Stack local en http://localhost:15180, A/B en V21. Entrega: `docs/academic/entrega-final.md`.
 
 ## Hecho (verificado localmente)
 F1–F5 sin UUID (V19); CHECK→422; GOLD-ACAD-01/02/03 (V20 BV402); tablero de pendientes + guía; selección paginada; restablecer contraseña (V21); instalación vacía; TEST-40 Pgpool/réplica/corte/FDW; restore tras V21; skills `.claude/skills/bovicierre-*`; make `verify-academic|demo-profesor|evidence|release-academic`; competitive-review, SOLID, guion, 12 preguntas, aceptación; manual 23.10.

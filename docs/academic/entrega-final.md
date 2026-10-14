@@ -1,6 +1,6 @@
 # Entrega final académica — BoviCierre
 
-Estado al 13-oct-2026, rama `feature/cierre-academico-v1` (sin push ni merge). Tres planos separados:
+Estado al 13-oct-2026, rama `feature/cierre-academico-v1`, integrada por avance rápido en `main` y publicada en GitHub (`f9f32b5`). Tres planos separados:
 
 | Plano | Estado |
 |---|---|
