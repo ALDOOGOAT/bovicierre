@@ -46,8 +46,8 @@ app)
     up "pgpool-$n" infra/pgpool --path-as-root
   done
   var backend "BOVI_DB_A_URL=jdbc:postgresql://pgpool-a$I:9999/bovicierre"; var backend "BOVI_DB_B_URL=jdbc:postgresql://pgpool-b$I:9999/bovicierre"
-  var backend "BOVI_AUTH_URL=jdbc:postgresql://pg-a$I:5432/bovicierre"; var backend "BOVI_BIND_ADDRESS=::"; var backend BOVI_COOKIE_SECURE=true
-  var backend "JAVA_OPTS=-Xmx384m -XX:+UseSerialGC"; var backend RAILWAY_DOCKERFILE_PATH=backend/Dockerfile; var backend RAILWAY_RUN_UID=0
+  var backend "BOVI_AUTH_URL=jdbc:postgresql://pg-a$I:5432/bovicierre?sslmode=require"; var backend "BOVI_BIND_ADDRESS=::"; var backend BOVI_COOKIE_SECURE=true
+  var backend "JAVA_OPTS=-Xmx384m -XX:+UseSerialGC"; var backend RAILWAY_DOCKERFILE_PATH=backend/Dockerfile; var backend RAILWAY_RUN_UID=0  # el entrypoint baja a 1000 sin capacidades tras ajustar el volumen
   sec backend BOVI_DB_A_PASSWORD app_a_password; sec backend BOVI_DB_B_PASSWORD app_b_password
   sec backend BOVI_AUTH_PASSWORD auth_password; sec backend BOVI_WORKER_PASSWORD worker_password
   vols=$(railway volume list -p "$P" -e "$E" --json 2>/dev/null || echo '[]')

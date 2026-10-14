@@ -36,3 +36,9 @@ Para ver los valores: panel de Railway → servicio → *Variables* (requiere tu
 ## Verificación
 
 `scripts/verify_access.py` (TEST-42) contra `BOVI_PUBLIC_URL` y `BOVI_PG_TARGETS`; `db/tests/infra_evidence.py` documenta las mismas comprobaciones de Pgpool, réplica y FDW en local.
+
+## Cifrado y privilegios (revisión de seguridad del 13-oct-2026)
+
+- **Proxy TCP público → PostgreSQL:** TLS obligatorio (`sslmode=require` en bootstrap, migraciones, semilla y scripts). El certificado es autofirmado: `require` cifra pero no autentica al servidor; para fijarlo, descarga `server.crt` del servicio y usa `BOVI_PG_SSLMODE=verify-ca` con `PGSSLROOTCERT`.
+- **Red privada `*.railway.internal`:** Railway la cifra entre servicios (WireGuard). Además, la conexión de autenticación del backend a `pg-a` exige TLS (`?sslmode=require`); Pgpool→PostgreSQL y la réplica lógica viajan sólo por la red privada.
+- **Backend como root:** `RAILWAY_RUN_UID=0` existe sólo porque el volumen se monta propiedad de root. `backend/container-entrypoint.sh` ajusta el dueño del directorio de documentos y baja de inmediato a `1000:1000` con `setpriv --clear-groups --bounding-set=-all` antes de leer secretos o arrancar Java (verificado: `uid=1000`, sin grupos extra, `CapEff=0`).
