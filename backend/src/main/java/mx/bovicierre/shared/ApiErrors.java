@@ -64,6 +64,22 @@ public class ApiErrors {
                     case "BV403" -> "La reserva venció; revise la disponibilidad.";
                     case "BV020" -> "La aplicación excede el saldo o el importe disponible.";
                     case "BV025" -> "El periodo está cerrado o no admite la fecha solicitada.";
+                    // 2026-11-10: BV013/BV015 cubren varias reglas; el mensaje se precisa con regla_id (la semántica HTTP no cambia).
+                    case "BV013" -> rule.equals("RN-014") ? "Falta aprobar el pesaje del lote o no pesa las mismas cabezas del trato."
+                        : "El pesaje no está en el estado o con la composición que requiere esta acción.";
+                    case "BV015" -> switch(rule) {
+                        case "RN-017" -> "Faltan condiciones guardadas o datos del trato para esta acción.";
+                        case "RN-013" -> "La corrección del pesaje requiere un motivo de entre 1 y 200 caracteres.";
+                        case "RN-023" -> "La liquidación no cuadra con sus conceptos; no se guardó nada.";
+                        case "RN-035" -> "La captura del proveedor no corresponde a este gasto.";
+                        case "RN-001", "RN-020", "RN-029" -> "El filtro o la búsqueda no es válido.";
+                        default -> "Los datos no cumplen las reglas del dominio.";
+                    };
+                    case "BV016" -> "El registro ya quedó firme; un cambio requiere reabrir, corregir o ajustar sin borrar el original.";
+                    case "BV018" -> "El reparto o el costo no cumple las reglas del inventario.";
+                    case "BV021" -> "El pago y la obligación no corresponden entre sí.";
+                    case "BV022" -> "La aplicación no existe o ya fue revertida.";
+                    case "BV026" -> "El movimiento no corresponde al estado de las posiciones.";
                     default -> status==503 ? "El nodo requerido no está disponible." : "La solicitud no cumple las reglas del dominio.";
                 };
                 ApiException result=new ApiException(status,code,message); result.rule=rule; result.fields=publicFields; return result;

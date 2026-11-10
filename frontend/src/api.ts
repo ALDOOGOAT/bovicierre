@@ -1,7 +1,19 @@
+import {traducirError,fraseError,type ContextoError,type DetalleError,type Traduccion} from './errores';
+export type DetallesApi={codigo?:string;mensaje?:string;regla_id?:string;correlation_id?:string;campos?:{campo:string;problema:string}[]};
+/**
+ * Error de la API con su traducción al lenguaje del tratante (ver errores.ts).
+ * `message` es la frase completa «qué pasó + qué hacer»; `contexto.escritura` distingue un comando de una consulta:
+ * solo un comando de escritura promete conservar la captura o reintentar con la misma clave.
+ */
 export class ApiError extends Error {
-    constructor(public status:number,public details:{mensaje?:string;regla_id?:string;correlation_id?:string;campos?:{campo:string;problema:string}[]}={}){
-        super(status===401?'La sesión terminó. Ingresa de nuevo.':status===403||status===404?'No tienes acceso a este recurso.':status===412?'Otra persona cambió este registro. Recarga antes de continuar.':status===428?'Falta la versión del registro. Recarga antes de continuar.':status===503?'La sede no está disponible. Conservamos la captura para reintentar.':status===0?'No se pudo conocer el resultado. Reintenta el mismo comando para comprobarlo.':details.mensaje||'No se pudo completar la solicitud.');
+    readonly traduccion:Traduccion;
+    constructor(public status:number,public details:DetallesApi={},public contexto:ContextoError={}){
+        const traduccion=traducirError({status,...details},contexto);
+        super(fraseError(traduccion));
+        this.traduccion=traduccion;
     }
+    /** Datos del error para volver a traducirlo con lo que sabe la pantalla (p. ej. el folio del ticket). */
+    detalle():DetalleError{return {status:this.status,...this.details};}
 }
 let csrf='';
 let csrfHeader='X-CSRF-TOKEN';
@@ -14,10 +26,12 @@ export async function request<T>(path:string,options:RequestInit={}):Promise<{da
     const headers=new Headers(options.headers);
     if(options.body&&!headers.has('Content-Type')&&typeof options.body==='string')headers.set('Content-Type','application/json');
     if(options.method&&options.method!=='GET'&&csrf)headers.set(csrfHeader,csrf);
+    const escritura=!!options.method&&options.method!=='GET';
+    const contexto:ContextoError={escritura,comando:escritura?comandoDe(path,options.method!):undefined};
     let response:Response;
-    try{response=await fetch('/api/v1'+path,{...options,headers,credentials:'same-origin'});}catch{throw new ApiError(0);}
-    if(!response.ok){const detail=await response.json().catch(()=>({}));if(response.status===401)window.dispatchEvent(new Event('session-expired'));throw new ApiError(response.status,detail);}
-    let data:unknown;try{data=response.status===204?undefined:await response.json();}catch{throw new ApiError(0);}
+    try{response=await fetch('/api/v1'+path,{...options,headers,credentials:'same-origin'});}catch{throw new ApiError(0,{},contexto);}
+    if(!response.ok){const detail=await response.json().catch(()=>({}));if(response.status===401)window.dispatchEvent(new Event('session-expired'));throw new ApiError(response.status,detail,contexto);}
+    let data:unknown;try{data=response.status===204?undefined:await response.json();}catch{throw new ApiError(0,{},contexto);}
     return {data:data as T,etag:response.headers.get('ETag')};
 }
 export type Attempt={path:string;method:string;body:string|undefined;key:string;etag?:string};
@@ -30,7 +44,9 @@ export function readPending(path:string):Attempt|undefined{try{const key=storage
 export function rememberPending(attempt:Attempt){try{const key=storageKey(attempt.path);if(key)sessionStorage.setItem(key,JSON.stringify(attempt));}catch{/* shortcut: storage may be unavailable, the mounted form still preserves its retry. */}}
 export function forgetPending(path:string){try{const key=storageKey(path);if(key)sessionStorage.removeItem(key);}catch{/* shortcut: unavailable tab storage has no stored retry to remove. */}}
 
-function commandName(attempt:Attempt):string|undefined{
+/** Nombre del comando de escritura para traducir errores y elegir la confirmación (incluye el inicio de sesión). */
+export function comandoDe(path:string,method='POST'):string|undefined{return path==='/sesion/login'?'iniciar_sesion':commandName({path,method});}
+export function commandName(attempt:Pick<Attempt,'path'|'method'>):string|undefined{
     const pieces=attempt.path.split('/');const resource=pieces[3];const action=pieces[5];
     const actions:Record<string,string>={confirmar:'confirmar_operacion',acordar:'acordar_operacion',revisiones:'registrar_revision',pesajes:'registrar_pesaje',aprobar:'aprobar_pesaje',correcciones:'corregir_pesaje',reservas:'reservar_venta',liberar:'liberar_reserva',reparto:'repartir_gasto',validar:'validar_pago',aplicaciones:'aplicar_pago',reverso:'revertir_aplicacion',reembolsos:'reembolsar_pago',ajustes:'ajustar_liquidacion',cierre:'cerrar_periodo',cerrar:'cerrar_periodo',reabrir:'reabrir_periodo',membresias:'asignar_membresia'};
     if(resource==='integraciones'&&pieces[6]==='aceptaciones')return 'aceptar_tarifa';
@@ -41,5 +57,5 @@ function commandName(attempt:Attempt):string|undefined{
 }
 export async function commandResult<T>(attempt:Attempt):Promise<{completed:boolean;data?:T}>{
     const command=commandName(attempt);if(!command)return {completed:false};
-    const site=attempt.path.split('/')[2];try{const {data}=await request<{estado:string;resultado:T}>(`/sedes/${site}/comandos/${command}/${attempt.key}`);if(data.estado==='COMPLETADA')return {completed:true,data:data.resultado};if(data.estado==='EN_CURSO')throw new ApiError(425,{mensaje:'El servidor todavía está procesando este comando. Espera y vuelve a consultar el mismo intento.'});throw new ApiError(0);}catch(e){if(e instanceof ApiError&&e.status===404)return {completed:false};throw e;}
+    const site=attempt.path.split('/')[2];try{const {data}=await request<{estado:string;resultado:T}>(`/sedes/${site}/comandos/${command}/${attempt.key}`);if(data.estado==='COMPLETADA')return {completed:true,data:data.resultado};if(data.estado==='EN_CURSO')throw new ApiError(425,{mensaje:'El servidor todavía está procesando este comando.'},{escritura:true,comando:command});throw new ApiError(0,{},{escritura:true,comando:command});}catch(e){if(e instanceof ApiError&&e.status===404)return {completed:false};if(e instanceof ApiError&&!e.contexto.escritura)throw new ApiError(e.status,e.details,{escritura:true,comando:command});throw e;}
 }

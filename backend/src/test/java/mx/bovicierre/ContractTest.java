@@ -44,6 +44,19 @@ class ContractTest {
         assertEquals(400,ApiErrors.database(new java.sql.SQLException("unsupported Unicode escape","22P05")).status);
         assertEquals(400,ApiErrors.database(new java.sql.SQLException("invalid byte sequence","22021")).status);
     }
+    @Test void domainRulesBv013AndBv015HaveHumanMessagesWithSameStatus() {
+        ApiException kg=ApiErrors.database(pg("P0001",null,"{\"codigo\":\"BV013\",\"regla_id\":\"RN-014\",\"campos\":[{\"campo\":\"pesaje_base_id\",\"problema\":\"invalido\"}]}"));
+        assertEquals(422,kg.status); assertEquals("RN-014",kg.rule); assertEquals("BV013",kg.code);
+        assertTrue(kg.getMessage().startsWith("Falta aprobar el pesaje"));
+        ApiException weighing=ApiErrors.database(pg("P0001",null,"{\"codigo\":\"BV013\",\"regla_id\":\"RN-013\",\"campos\":[]}"));
+        assertEquals(422,weighing.status); assertTrue(weighing.getMessage().startsWith("El pesaje no está"));
+        ApiException noTerms=ApiErrors.database(pg("P0001",null,"{\"codigo\":\"BV015\",\"regla_id\":\"RN-017\",\"campos\":[]}"));
+        assertEquals(422,noTerms.status); assertTrue(noTerms.getMessage().startsWith("Faltan condiciones guardadas"));
+        ApiException other=ApiErrors.database(pg("P0001",null,"{\"codigo\":\"BV015\",\"regla_id\":\"RN-044\",\"campos\":[]}"));
+        assertEquals(422,other.status); assertEquals("Los datos no cumplen las reglas del dominio.",other.getMessage());
+        for (ApiException ex : java.util.List.of(kg,weighing,noTerms,other)) assertNotEquals("La solicitud no cumple las reglas del dominio.",ex.getMessage());
+        assertFalse(kg.getMessage().contains("secret SQL"));
+    }
     @Test void nativeDatabaseMessagesNeverLeakSql() {
         ApiException conflict=ApiErrors.database(pg("23505","uk_animal_identificacion_codigo",null));
         assertEquals(409,conflict.status);

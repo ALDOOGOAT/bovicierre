@@ -11,7 +11,7 @@ export function BrandMark({size=36}:{size?:number}){
 export function Brand({subtitle='GANADO EN PIE'}:{subtitle?:string}){
     return <div className="brand"><BrandMark/><span>BoviCierre<small>{subtitle}</small></span></div>;
 }
-const paths:Record<string,string>={
+const paths:Record<string,string>={'camino-compra':'M7 3.5h6l2 2.5v9.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 5 15.5V6zM10 7.5h.01M7.5 12h5','camino-venta':'M3 16h14M5 16V9l5-4 5 4v7M8.5 16v-4h3v4','camino-recibir':'M3 4v13M17 4v13M3 7h14M3 11h14M3 15h14M3 15L17 7','camino-entregar':'M2 6h9v7H2zM11 9h3.5L17 11.5V13h-6M5 15.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM14 15.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z','camino-cobro':'M3 6h14v9H3zM3 9h14M6 12.5h3M13 12.5h1',
     operaciones:'M3 13l2.5-7h9L17 13M3 13v3.5h14V13M3 13h4l1 2h4l1-2h4',
     captura:'M10 4v12M4 10h12',
     contrapartes:'M7.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3 16c0-2.5 2-4.5 4.5-4.5S12 13.5 12 16M13.5 4.3a2.5 2.5 0 0 1 0 4.4M14.5 11.8c1.5.6 2.5 2.2 2.5 4.2',

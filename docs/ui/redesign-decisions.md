@@ -42,3 +42,38 @@ Encargo: rediseño ejecutivo pero vistoso de todo, con animaciones, imágenes, f
 
 Medición en la GPU más débil (Intel UHD RPL-P vía ANGLE/Mesa): ~160 fps a 165 Hz, p95 6.1 ms, 1 cuadro >33 ms en ~3,500 (cambio de pantalla con carga de datos); sin diferencia apreciable con movimiento reducido ([ui-v4-intel.json](../testing/evidence/performance/ui-v4-intel.json)). Defectos encontrados y corregidos en el pase: columnas de Periodos leían `fecha_inicio/fin` (la API devuelve `desde/hasta`) y el selector de periodo mostraba el UUID.
 
+
+## Identidad «corral y libreta» y caminos guiados (rama `ui/identidad-caminos`, 9-nov-2026)
+
+Hecho por Jared (Dilhan) con asistencia de IA (Claude); **revisión humana y de Aldo pendiente**; no está en `main`. Motivo: la v4 era correcta pero genérica, y usar el sistema costaba porque los procesos son muy específicos. Brief completo fuera del repo (bóveda de Dilhan, «Brief de identidad — BoviCierre»).
+
+| ID | Decisión | Por qué | Descartado |
+|---|---|---|---|
+| UXD-29 | Identidad por materiales del trato: verde potrero `#1F3B2C`, amarillo arete SINIIGA `#F2C230` (solo figura/fondo; texto sobre claro `#6E5200`), cuero, madera de corral, papel de libreta/ticket. Big Shoulders Display (títulos), Big Shoulders Stencil (rótulos/sellos), Atkinson Hyperlegible Next (texto) y Mono (cifras, aretes, folios), empaquetadas con Fontsource (CSP `font-src 'self'`). Se quita Inter. Estados con forma de arete (forma + texto, se conserva UXD-02/03). | Que la pantalla solo pueda ser de un tratante de ganado; legibilidad para usuarios no técnicos. | Oro «ejecutivo», tipografía de SaaS genérico. |
+| UXD-30 | Cinco **caminos guiados** (`frontend/src/caminos.tsx`): Comprar, Vender, Recibir, Entregar, Cobrar/pagar; una pregunta por paso, riel de avance, valores por defecto (periodo abierto y fecha válida, apartado de 3 días, importe sugerido = menor entre disponible y saldo comparado con BigInt) y «¿Qué pasa por dentro?» con el comando SQL real. Usan los mismos `CommandForm` (Idempotency-Key, If-Match, reintento con la misma clave); el total sale del simulador del servidor; ningún total se calcula en el navegador. Las pantallas originales se conservan (modo completo, pruebas E2E). | Guiar procesos de varios comandos (borrador → condiciones → aceptar → confirmar; registrar → validar → aplicar) sin saltarse reglas. | Encadenar comandos automáticamente en un solo botón (ocultaría estados intermedios y reintentos). |
+| UXD-31 | Momentos firma SVG propios (`frontend/src/escenas.tsx`): fierro que marca «TRATO CERRADO», puerta de corral con cebú, camión jaula, báscula de plataforma, libreta con sello «ABONADO»; CSS una sola vez, `transform`/`opacity`, versión estática con movimiento reducido. El dinero no se anima (UXD-25). | Recompensa y explicación en el instante clave de cada proceso. | Video (se ve pegado; no se adapta). |
+
+Verificación (9-nov-2026, stack local): `typecheck`, 14 pruebas unitarias y `build` PASS; recorrido manual en Chrome contra la API real: compra por cabeza con arete nuevo → cierre (15,300.00 = 14,500 + 800 de flete, calculado por el servidor) → recepción → pago parcial 10,000 (saldo 5,300.00) y venta con apartado → cierre (19,800.00) → entrega; 390/1440 px sin desborde horizontal; sin errores de consola ni de CSP. **No se ejecutaron** las suites E2E de Playwright tras el cambio.
+
+### Auditoría de lo genérico, ronda 2 (9-nov-2026, misma rama)
+
+Recorrido de las 19 vistas con capturas reales + detector de patrones de UI genérica (skill `impeccable`, `detect.mjs`). Hecho con asistencia de IA; revisión humana pendiente.
+
+| Antes | Después | Por qué |
+|---|---|---|
+| Banda fotográfica con degradado oscuro y etiqueta «DEMO-A / SECCIÓN» en las 20 pantallas | Encabezado delgado (título + una línea) y el objeto dibujado de la sección (nota, corral, libreta, fierro) | Plantilla de héroe repetida; fotos de banco de otro estado; la etiqueta encima del título no aporta |
+| «Pendientes de la sede»: cinco tarjetas iguales con franja de color y número animado | Pizarrón de renglones: número, qué es, a dónde lleva (se conservan `data-task` y el `<strong>` numérico) | Plantilla de KPI; se lee mejor como lista de tareas |
+| Margen: cinco tarjetas + barras con las mismas cifras | Una sola «cuenta del resultado»: + venta − costos − gastos − pérdidas = margen, con barra por renglón (el renglón Margen conserva `.metric`) | Misma cifra dos veces; la libreta es como el tratante cuenta |
+| Expediente con fecha ISO y `CONFIRMACION / POR PAGAR` | Hora legible, «Trato cerrado / Quedó una cuenta por pagar» y el código del servidor al lado | Lenguaje del negocio sin perder el dato técnico (pruebas y defensa) |
+| Sincronización: `ASINCRONA` y marca de tiempo ISO | Estado (se conserva el texto `ASINCRONA`), nodo, última sincronización legible, cambios por llegar, fallos al aplicar y una explicación | Explica la réplica M–M en palabras |
+| UUID como primera columna (Cartera, Documentos) y columnas «(técnico)» | Columna «Ref. interna» al final y en tono tenue | Las pruebas E2E localizan filas por UUID; el dato del negocio va primero |
+| Aretes como texto «INTERNO: …» | Etiqueta de arete en la tabla (SINIIGA en amarillo; el sistema queda en el título y para lectores de pantalla) | Identidad en el dato, no solo en la decoración |
+| Login con «01/02/03», «Bienvenido de nuevo» y franja de color | «Cada cabeza, su nota. Cada peso, su cuenta.» / «Abre tu libreta» | Plantilla de landing genérica |
+| Sombras duras sin difuminado y borde izquierdo de 4 px en avisos | Sombras con desplazamiento y difuminado; avisos con borde parejo | Patrones de UI genérica detectados (algunos introducidos en UXD-29..31 y corregidos aquí) |
+| Letra de rótulo (Big Shoulders) en opciones, pasos y botones de «siguiente» | Atkinson Hyperlegible en controles; Big Shoulders solo en títulos | La letra de rótulo en controles se lee peor |
+| `@font-face` de Inter y dependencia `@fontsource-variable/inter` | Eliminadas | Ya no se usa |
+| Guía de primera vez retirada en UXD-30 (rompía `academic.spec.ts`) | Restituida bajo la Mesa de tratos y apuntando a los caminos | Regresión propia corregida |
+
+Excepciones conscientes del detector: el eje vertical de `.timeline` (no es una tarjeta) y las transiciones `top/left/width/height` del foco del recorrido guiado y de su punto activo (uso esporádico, elemento fijo). Pendiente: los 4 videos de Ayuda muestran la UI anterior (regrabar con `tutorials.record.ts`); E2E sin ejecutar tras el cambio.
+
+| Barra superior: punto verde pulsante «Sede activa · cambiar» + ⌄, avatar circular con la inicial | Sede en un arete con su código y «Nodo A · cambiar de sede» (dato real de la réplica); usuario como gafete de cuero con el rol; ícono de voz en «Recorrido guiado»; doble raya de libreta. Se conservan `.sede-switch`, el nombre accesible «Recorrido guiado» y «Salir» | Punto de estado decorativo con animación infinita y avatar de inicial: piezas de SaaS genérico |

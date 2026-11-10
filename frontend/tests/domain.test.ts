@@ -14,7 +14,9 @@ test('importe exacto grande y centavos conservados sin conversión binaria',()=>
 test('captura decimal canónica rechaza exponentes, negativos y precisión excesiva',()=>{
     assert.equal(canonicalDecimal('048.5',4),'48.5000');
     assert.equal(canonicalDecimal('0',2),'0.00');
-    for(const invalid of ['1e5','-5','1.001','NaN','1,000','Infinity',''])assert.throws(()=>canonicalDecimal(invalid,2));
+    // 2026-11-10: «1,000» es el formato que la propia app muestra; ahora se acepta como mil (ver decimales.test.ts).
+    assert.equal(canonicalDecimal('1,000',2),'1000.00');
+    for(const invalid of ['1e5','-5','1.001','NaN','52,50','Infinity',''])assert.throws(()=>canonicalDecimal(invalid,2));
 });
 test('reintento conserva clave, contenido y If-Match aun si cambia el objeto original',async()=>{
     const original={importe:{importe:'600.00',moneda:'MXN'}};

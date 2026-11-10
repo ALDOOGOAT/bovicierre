@@ -4,14 +4,17 @@ import {useCallback,useEffect,useLayoutEffect,useRef,useState,type CSSProperties
 // accesible (foco atrapado, Escape, foco devuelto) y con realce del elemento real de la interfaz.
 
 type Step={title:string;body:string;target?:string};
+// 2026-11-10: el recorrido apunta a la Mesa de tratos y a los caminos (antes, a Nueva operación, Recepción y entrega y
+// Liquidaciones: el modo experto). Si un destino no se ve para el rol (p. ej. una tarjeta que no le toca), la tarjeta
+// del recorrido sale centrada. Las E2E fijan 7 pasos y los títulos de los dos primeros.
 export const TOUR:Step[]=[
-    {title:'BoviCierre en dos minutos',body:'Te muestro dónde se registra cada paso del trato, del borrador a la liquidación. Puedes salir cuando quieras con Escape.'},
-    {title:'Lo pendiente de tu sede',body:'La Bandeja resume, con conteos del servidor, el ganado por recibir, las entregas pendientes y lo que hay por cobrar y por pagar. Cada tarjeta te lleva a su pantalla.',target:'[aria-labelledby="task-title"]'},
-    {title:'Arma el trato',body:'En Nueva operación eliges al cliente o proveedor, el ganado por arete y el precio por cabeza o por kilo. Nada cuenta hasta que confirmas.',target:'.sidebar a[href="#captura"]'},
-    {title:'Recibe o entrega el ganado',body:'Es un paso físico aparte: abres la operación confirmada y marcas los animales por arete. No cambia el importe acordado.',target:'.sidebar a[href="#movimientos"]'},
-    {title:'Cobra o paga desde la liquidación',body:'Registrar el dinero y aplicarlo a la deuda son dos acciones distintas, para que cada saldo quede conciliado.',target:'.sidebar a[href="#liquidaciones"]'},
-    {title:'Cartera y margen',body:'La cartera muestra lo que se debe y cuándo vence; el margen, el resultado que calcula el servidor con su fecha de corte.',target:'.sidebar a[href="#margen"]'},
-    {title:'Ayuda siempre a la mano',body:'Aquí están los videos de uso con subtítulos y las preguntas frecuentes. Puedes repetir este recorrido cuando quieras.',target:'.sidebar a[href="#ayuda"]'},
+    {title:'BoviCierre en dos minutos',body:'Te muestro cómo se lleva un trato, de apuntarlo a cobrarlo. Puedes salir cuando quieras con Escape.'},
+    {title:'Lo pendiente de tu sede',body:'La Bandeja empieza por lo que hay que hacer hoy: ganado por recibir, entregas pendientes y lo que hay por cobrar y por pagar, con conteos del servidor. Cada renglón te lleva a su pantalla.',target:'[aria-labelledby="task-title"]'},
+    {title:'Elige qué vas a hacer',body:'En la Mesa de tratos eliges un camino: comprar, vender, recibir, entregar o cobrar. Te llevo con una pregunta por paso y nada cuenta hasta que cierras el trato.',target:'.mesa'},
+    {title:'Recibe o entrega el ganado',body:'Es un paso físico aparte: marcas por arete las cabezas que llegaron o que salieron. No cambia el importe del trato.',target:'.tarjeta-camino[data-camino="camino-recibir"]'},
+    {title:'Cobra o paga',body:'Apuntas el dinero, lo revisas y lo abonas a su cuenta: son pasos separados para que cada saldo quede explicado.',target:'.tarjeta-camino[data-camino="camino-cobro"]'},
+    {title:'Encuentra lo que sea',body:'Con Buscar (o Control más K) llegas a un trato por su folio, a un animal por su arete o a cualquier pantalla sin recorrer el menú.',target:'.buscar-launch'},
+    {title:'Ayuda siempre a la mano',body:'Las pantallas completas siguen en el menú, en Registro detallado. Aquí están los videos con subtítulos y las preguntas frecuentes; repite este recorrido cuando quieras.',target:'.sidebar a[href="#ayuda"]'},
 ];
 
 function speak(text:string){
@@ -50,7 +53,7 @@ export function GuidedTour({open,onClose,onStart}:{open:boolean;onClose:()=>void
     return <div className="tour-layer">
         <div className={rect?'tour-spot':'tour-dim'} style={rect?{top:rect.top-6,left:rect.left-6,width:rect.width+12,height:rect.height+12}:undefined} aria-hidden="true" onClick={close}/>
         <div ref={card} className={rect?'tour-card anchored':'tour-card'} style={place} role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-body" onKeyDown={trap}>
-            <div className="tour-head"><p className="eyebrow">Recorrido guiado · {index+1} de {TOUR.length}</p><button type="button" className="tour-voice" aria-pressed={voice} onClick={toggleVoice}>Narración por voz</button></div>
+            <div className="tour-head"><p className="paso-tour">Paso {index+1} de {TOUR.length}</p><button type="button" className="tour-voice" aria-pressed={voice} onClick={toggleVoice}>Narración por voz</button></div>
             <h2 id="tour-title">{step.title}</h2>
             <p id="tour-body">{step.body}</p>
             <div className="tour-foot"><div className="tour-dots" aria-hidden="true">{TOUR.map((_,k)=><span key={k} data-on={k===index?'true':undefined}/>)}</div>
@@ -76,11 +79,11 @@ const FAQ:[string,string][]=[
 
 export function HelpCenter({startTour}:{startTour:()=>void}){
     return <>
-        <section className="panel help-intro"><div><p className="eyebrow">Empieza aquí</p><h2>Aprende BoviCierre en minutos</h2><p className="muted">Un recorrido de dos minutos con voz y videos cortos con subtítulos de cada tarea frecuente.</p></div><button type="button" className="primary" onClick={startTour}>Iniciar recorrido guiado</button></section>
+        <section className="panel help-intro"><div><h2>Aprende BoviCierre en minutos</h2><p className="muted">Un recorrido de dos minutos con voz y videos cortos con subtítulos de cada tarea frecuente.</p></div><button type="button" className="primary" onClick={startTour}>Iniciar recorrido guiado</button></section>
         <section className="panel" aria-labelledby="videos-title"><div className="section-heading"><h2 id="videos-title">Videos de uso</h2><span className="badge">Subtítulos en español</span></div>
             <div className="video-grid">{VIDEOS.map(v=><article className="video-card" key={v.id}><video controls preload="none" poster={`/videos/${v.id}-poster.jpg`} aria-describedby={`video-${v.id}`}><source src={`/videos/${v.id}.mp4`} type="video/mp4"/><track kind="captions" srcLang="es" label="Español" src={`/videos/${v.id}.vtt`} default/></video><h3>{v.title}</h3><p className="muted" id={`video-${v.id}`}>{v.body}</p></article>)}</div>
         </section>
         <section className="panel" aria-labelledby="faq-title"><h2 id="faq-title">Preguntas frecuentes</h2><div className="faq">{FAQ.map(([q,a])=><details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div></section>
-        <section className="panel narrow" aria-labelledby="keys-title"><h2 id="keys-title">Teclado y accesibilidad</h2><ul className="key-list"><li><kbd>Tab</kbd> y <kbd>Mayús</kbd>+<kbd>Tab</kbd> recorren campos y botones en orden.</li><li><kbd>Enter</kbd> envía el formulario activo; <kbd>Espacio</kbd> marca casillas de ganado.</li><li><kbd>Esc</kbd> cierra el recorrido guiado.</li><li>El enlace “Ir al contenido” aparece con el primer <kbd>Tab</kbd> de cada página.</li><li>Las animaciones se apagan si tu sistema pide reducir movimiento.</li></ul></section>
+        <section className="panel narrow" aria-labelledby="keys-title"><h2 id="keys-title">Teclado y accesibilidad</h2><ul className="key-list"><li><kbd>Tab</kbd> y <kbd>Mayús</kbd>+<kbd>Tab</kbd> recorren campos y botones en orden.</li><li><kbd>Enter</kbd> envía el formulario activo; <kbd>Espacio</kbd> marca casillas de ganado.</li><li><kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd> en Mac) abre el buscador: escribe un folio, un arete, un nombre o una pantalla y elige con las flechas y <kbd>Enter</kbd>.</li><li><kbd>Esc</kbd> cierra el buscador y el recorrido guiado; el foco vuelve a donde estabas.</li><li>El enlace “Ir al contenido” aparece con el primer <kbd>Tab</kbd> de cada página.</li><li>Las animaciones se apagan si tu sistema pide reducir movimiento.</li></ul></section>
     </>;
 }
