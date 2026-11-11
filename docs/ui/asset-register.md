@@ -33,6 +33,7 @@ Límites: las fotos son contexto editorial, **no** son evidencia ni retrato de a
 | `inventario-corral-nuevo-mexico-{800,1600}.{webp,jpg}` | [File:Beef cattle in a feedlot in New Mexico.jpg](https://commons.wikimedia.org/wiki/File:Beef_cattle_in_a_feedlot_in_New_Mexico.jpg), original 7855×5653 | Quintin Soloviev (obra propia, Commons) | **CC0** declarado en Commons al 2026-10-14 | Recorte 8:3 centrado en el sujeto, redimensionado a 1600×600 y 800×300; WebP q74, JPEG q80 progresivo | Banda de **Inventario** (Posiciones, Animales, Recepción y entrega) |
 | `dinero-subasta-ganado-{800,1600}.{webp,jpg}` | [File:Cattle Auction - 50639453351.jpg](https://commons.wikimedia.org/wiki/File:Cattle_Auction_-_50639453351.jpg), original 4272×2848 | Alabama Extension (vía Flickr, Commons) | **CC0** declarado en Commons al 2026-10-14 | Recorte 8:3 centrado en el sujeto, redimensionado a 1600×600 y 800×300; WebP q74, JPEG q80 progresivo | Banda de **Dinero** (Liquidaciones, Cobros y pagos, Gastos, Cartera, Margen, Simulador) |
 | `control-rancho-nocturno-{800,1600}.{webp,jpg}` | [File:CG Merlo Ranch and Cattle Operation Survives through Challenges (20220610-FPAC-LSC-0541).jpg](https://commons.wikimedia.org/wiki/File:CG_Merlo_Ranch_and_Cattle_Operation_Survives_through_Challenges_(20220610-FPAC-LSC-0541).jpg), original 5397×3598 | USDA (USDAgov, Flickr; obra del gobierno de EE. UU.) | **Dominio público** declarado en Commons al 2026-10-14 | Recorte 8:3 centrado en el sujeto, redimensionado a 1600×600 y 800×300; WebP q74, JPEG q80 progresivo | Banda de **Control** (Periodos, Usuarios, Sincronización, Documentos, Ayuda) |
+| `sede-corral-aretes-{960,1600}.{webp,jpg}` y `sede-corral-aretes-banda-{800,1600}.{webp,jpg}` | [File:Beef cattle in a feedlot in New Mexico.jpg](https://commons.wikimedia.org/wiki/File:Beef_cattle_in_a_feedlot_in_New_Mexico.jpg), derivado de la miniatura de 3840 px de Commons (original 7855×5653) | Quintin Soloviev (obra propia, Commons) | **CC0** declarado en Commons al 2026-11-11; evidencia `asset-evidence/sede-corral-aretes.json` | Recorte vertical 4:5 centrado en los dos becerros con arete (960×1200 y 1600×2000) y banda 2:1 para tablet y celular (800×400 y 1600×800); WebP q74, JPEG q80 progresivo | Pantalla **Selecciona una sede** (reemplaza a `sede-pastoreo-fillmore`, 2026-11-11) |
 
 | Archivo | Bytes | Dimensiones | SHA256 |
 |---|---:|---|---|
@@ -74,3 +75,15 @@ Herramienta auxiliar instalada: `ffmpeg` de Playwright (`npx playwright install 
 | Asset | Origen | Licencia | Versión / huella |
 |---|---|---|---|
 | Inter Variable, subconjunto latin, ejes wght (`inter-latin-wght-normal.woff2`, 48 KB) | npm `@fontsource-variable/inter@5.3.0` (publicado 2026-07-19), fuente rsms/inter | SIL Open Font License 1.1 (archivo `LICENSE` del paquete) | SHA256 `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62`; empaquetada por Vite, `font-display: swap`, fallback de sistema |
+
+### Huellas de `sede-corral-aretes` (2026-11-11)
+| Archivo | Bytes | Tamaño | SHA-256 |
+|---|---|---|---|
+| sede-corral-aretes-1600.webp | 660,702 | 1600×2000 | `0847427c8ec1e049fe3abfad70e672a52c2a106d5358668505115b03b0f7f700` |
+| sede-corral-aretes-1600.jpg | 784,104 | 1600×2000 | `afd1253b556142334f4609ffb90b79fa7a551111e68eb7b4ad785495156cd786` |
+| sede-corral-aretes-960.webp | 171,256 | 960×1200 | `43d4eeeeee743363b7b49a4234fc63cf42b1bee8a1da0dcec505deeb104de857` |
+| sede-corral-aretes-960.jpg | 249,617 | 960×1200 | `c97a56b1e65caf676382f1a4d8ae592503a9e93fd52bf61fbec04428ab4f8154` |
+| sede-corral-aretes-banda-1600.webp | 238,266 | 1600×800 | `47d20b8792e51d1de36ee4d0b44c788c7a1a834eac4dad3702bf9716d31c13ef` |
+| sede-corral-aretes-banda-1600.jpg | 324,680 | 1600×800 | `e89fada371feba89af1d0b6553ceff55a8a0b7bce1c4dab856e4019a3b86b351` |
+| sede-corral-aretes-banda-800.webp | 71,954 | 800×400 | `ae512fe0b84f526575e9a601c1d34be2a916b1602a6adfb6bb975fccb83b5be6` |
+| sede-corral-aretes-banda-800.jpg | 93,171 | 800×400 | `42798de8ef21344096b6205258d581c5a5f7b0b99cdacedbea706723ddcc5440` |

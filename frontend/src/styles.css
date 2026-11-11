@@ -252,11 +252,15 @@ p.field-error a{color:var(--error)}
 /* Acceso y sede */
 .access{min-height:100dvh;padding:var(--s10);max-width:1180px;margin:auto}
 .access-panel{margin-top:var(--s10)}
-.access-sede{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);grid-template-rows:auto 1fr;column-gap:var(--s12);align-items:start}
-.access-sede>.brand{grid-column:1/-1}
-.access-sede .access-panel{margin-top:var(--s8)}
+/* Sedes (2026-11-11): la foto llena la mitad derecha de borde a borde y las sedes quedan centradas en la altura. */
+.access.access-sede{max-width:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+.sede-lado{display:grid;grid-template-rows:auto 1fr;padding:var(--s10) var(--s10) var(--s10) max(var(--s10),calc((100vw - 1180px)/2))}
+.sede-lado .access-panel{align-self:center;max-width:560px;margin:0;padding-block:var(--s8)}
 .access-photo{display:block;margin-top:var(--s6);border-radius:var(--r-xl);overflow:hidden;aspect-ratio:8/3;background:var(--earth-100);box-shadow:var(--shadow-3)}
-.access-sede .access-photo{grid-column:2;grid-row:2;aspect-ratio:4/5;margin-top:var(--s8)}
+.sede-foto{position:relative;margin:0;min-height:100dvh;background:var(--earth-100);overflow:hidden}
+.sede-foto picture,.sede-foto img{position:absolute;inset:0;width:100%;height:100%}
+.sede-foto img{object-fit:cover;object-position:50% 60%}
+.sede-foto figcaption{position:absolute;left:var(--s5);bottom:var(--s5);padding:6px 10px;border-radius:var(--r-sm);background:rgba(28,26,22,.62);color:#F3EBDD;font-size:12.5px;line-height:1.3;letter-spacing:.01em}
 .access-photo img{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(1.08) contrast(1.04)}
 .access-sede h1{font-size:40px;letter-spacing:-.03em}
 .sede-list{display:grid;gap:var(--s3);margin-top:var(--s6)}
@@ -313,7 +317,7 @@ p.field-error a{color:var(--error)}
   :root{--sidebar:224px}
   .main{padding:var(--s6)}.topbar{padding:0 var(--s6)}.split,.split-even{grid-template-columns:1fr}
   .login-story{padding:var(--s8)}.login-story h1{font-size:38px}
-  .access-sede{display:block}.access-sede .access-photo{aspect-ratio:8/3}
+  .access.access-sede{display:flex;flex-direction:column}.sede-foto{order:-1;min-height:0;aspect-ratio:2/1}.sede-lado{padding:var(--s8) var(--s6)}.sede-lado .access-panel{padding-block:var(--s6) 0}
 }
 /* Tablet: barra lateral como riel de iconos */
 @media(min-width:768px) and (max-width:900px){
@@ -359,7 +363,7 @@ p.field-error a{color:var(--error)}
   .login-form{padding:var(--s6) var(--s4);align-items:flex-start}
   .login-form form{padding:var(--s5);box-shadow:var(--shadow-2)}
   .field input,.field select{font-size:16px}
-  .access{padding:var(--s5) var(--s4)}.access-panel{margin-top:var(--s6)}.access-photo{aspect-ratio:2/1}.access-sede h1{font-size:30px}
+  .access{padding:var(--s5) var(--s4)}.access-panel{margin-top:var(--s6)}.access-photo{aspect-ratio:2/1}.access-sede h1{font-size:30px}.access.access-sede{padding:0}.sede-lado{padding:var(--s5) var(--s4) var(--s8)}.sede-foto figcaption{left:var(--s3);bottom:var(--s3);font-size:11.5px}
   .sede-card{padding:var(--s4);flex-wrap:wrap}.sede-go{width:100%;padding-left:64px}
   .section-heading{flex-wrap:wrap}
   .selection-list .numeric{white-space:normal;max-width:100px}
