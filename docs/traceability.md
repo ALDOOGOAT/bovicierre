@@ -59,3 +59,5 @@ SF-09 → ADR-018 → `security.sql`/`immutability.py` (controles). SF-22 → `A
 Rúbrica (`rubrica.png`) → AC-03 “User” → V22/V23 `bovi_consulta` + `scripts/academic_users.py` → TEST-42 `verify_access.py`. AC-03 “reglas” → DEC-27 → TEST-41 `rules_lab.py`. AC-07 “Y” → DEC-26 → `bootstrap.py` (FDW en A y B) → TEST-40. Despliegue → `scripts/railway_deploy.sh`, `infra/railway/`, `docs/deploy/railway.md`.
 
 Rediseño v4 → UXD-21..28 (`docs/ui/redesign-decisions.md`) → `frontend/src/styles.css` (tokens night/gold, aurora, bandas, barras, recorrido, ayuda), `App.tsx` (banda por sección, ruta `ayuda`), `ui.tsx` (`CountUp`), `screens.tsx` (`MarginBars`, periodos `desde/hasta`), `guide.tsx` (`GuidedTour`, `HelpCenter`) → `academic.spec.ts` (recorrido y ayuda), `visual.spec.ts` (15 pantallas), `perf.measure.ts`, `tutorials.record.ts`.
+
+Usabilidad 11-nov-2026 (rama `ui/identidad-caminos`): UXD-32 → `frontend/src/screens.tsx` (`OperationEditor`, `LotForm`) → TEST-43 `frontend/tests_e2e/registro-seguro.spec.ts`. UXD-33 → `ExpenseDetail` → `closure.spec.ts` «gastos» (aretes, sin UUID). UXD-34 → `caminos.tsx`, `guide.tsx`, `identidad.css`, `usabilidad.css`, `styles.css`.

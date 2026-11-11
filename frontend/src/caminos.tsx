@@ -1489,7 +1489,7 @@ function PasoBascula({
   );
   const corregir = (
     <p className="muted">
-      ¿No coincide con el papel? Corrígelo en Operaciones → Tickets y pesajes: se guarda una versión nueva y la anterior no se borra.
+      ¿No coincide con el papel? Corrígelo en Tratos y ganado → Tickets y pesajes: se guarda una versión nueva y la anterior no se borra.
     </p>
   );
   return (
@@ -1968,7 +1968,7 @@ export function CaminoMovimiento({
     return (
       <section className="paso">
         <h2 className="pregunta">Este camino lo hace el operador</h2>
-        <p className="explica">Tu rol puede consultar el inventario en Inventario → Posiciones.</p>
+        <p className="explica">Tu rol puede consultar el inventario en la pantalla Posiciones: escribe «Posiciones» en el buscador de arriba (⌘K).</p>
       </section>
     );
   const o = op.data;
@@ -2137,7 +2137,7 @@ export function CaminoMovimiento({
                     Caja apunta el {entrega ? "cobro" : "pago"} de este trato: quedan {money(liq.saldo)} pendientes.
                   </p>
                 ))}
-              <Siguiente titulo="Ver el inventario" detalle="Inventario → Posiciones." onClick={() => go("inventario")} />
+              <Siguiente titulo="Ver el inventario" detalle="Tratos y ganado → Posiciones." onClick={() => go("inventario")} />
             </div>
           </Paso>
         )}
@@ -2193,7 +2193,7 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
     return (
       <section className="paso">
         <h2 className="pregunta">Este camino lo hace caja</h2>
-        <p className="explica">Tu rol puede ver los saldos en Dinero → Cartera y en cada liquidación.</p>
+        <p className="explica">Tu rol puede ver los saldos en Cartera y en cada liquidación: búscalas por nombre en el buscador de arriba (⌘K).</p>
       </section>
     );
   const saldo = importeDe(l?.saldo);

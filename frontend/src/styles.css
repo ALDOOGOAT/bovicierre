@@ -15,7 +15,7 @@
   --ok:#1E5B3E;--ok-bg:#EAF4EC;--ok-line:#B9D6C0;--info:#24507A;--info-bg:#EAF1F8;--info-line:#B8CDE2;
   --focus:#B37710;
   /* Tipografía: pesos variables 510/590/680; títulos con tracking negativo; datos tabulares */
-  --font:'Inter Variable',Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font:'Atkinson Hyperlegible Next Variable','Atkinson Hyperlegible Next',ui-sans-serif,system-ui,sans-serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --fs-xs:12px;--fs-sm:13px;--fs-body:15px;--fs-lg:17px;--fs-h3:17px;--fs-h2:21px;--fs-h1:34px;--fs-display:52px;
   --figures:lining-nums tabular-nums slashed-zero;

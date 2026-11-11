@@ -246,3 +246,10 @@ Hallazgo de prueba corregido: `keyboard.spec.ts` dependía del idioma del sistem
 - **Videos**: compra 32.6 s, recepción 11.3 s, venta con entrega y cobro 52.6 s, tablero 25.6 s; 4.8 MB en total; grabados con el producto real y datos DEMO.
 - **Defectos corregidos**: Periodos mostraba «—» (columnas `fecha_inicio/fin` frente a `desde/hasta` de la API) y el selector de periodo mostraba el UUID.
 
+
+## Usabilidad: registro detallado seguro · 11-nov-2026 (rama `ui/identidad-caminos`, sin `main`)
+- **Cambios:** UXD-32 (aviso al cambiar de paso con cambios sin guardar; «Confirmar» bloqueado en BORRADOR con «Ir a aceptar condiciones»; versión aceptada visible), UXD-33 (reparto de gastos por arete, sin UUID), UXD-34 (rutas de ayuda por rol, nota en videos, sombras y token Inter).
+- **Verificación local** contra el stack académico en :15180 (Colima, 8 contenedores): `typecheck` OK, 41/41 unitarias, `build` OK.
+- **E2E 20/20** (`closure`, `academic`, `additional`, `visual` y el nuevo TEST-43 `tests_e2e/registro-seguro.spec.ts`), en Chrome sin ventana. La prueba de gastos ahora exige «Arete …» y ningún UUID en la tabla de reparto. `keyboard.spec.ts` no se corrió: en macOS falla también en HEAD por el `select` nativo (pasa en Linux; ver la tanda del 10-nov).
+- **Capturas revisadas a ojo** (1440 y 390 px): aviso de cambio de paso, «Confirmar compra» deshabilitado con su razón y reparto con aretes.
+- **No verificado:** el servidor sigue aceptando confirmar desde BORRADOR por API (aceptación implícita); el cambio es solo de interfaz. Los videos de Ayuda no se volvieron a grabar.

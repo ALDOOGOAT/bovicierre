@@ -2,6 +2,14 @@
 
 Actualizado: 2026-10-13 · trabajo en rama `feature/cierre-academico-v1`; `main`; código MVP publicado en `9282b75`, normalización de wrapper en `92d3d41`. La aplicación se ejecuta en local; publicar código no equivale a desplegarla.
 
+## Rama `ui/identidad-caminos` (local, sin `main`) · 9–11-nov-2026
+
+Trabajo de Jared con asistencia de IA; **la revisión de Aldo está pendiente** y nada de esto está en `main`.
+- `001da7b`: identidad «corral y libreta» (UXD-29..31), cinco caminos guiados en la Mesa de tratos, menú por rol, dinero legible y la primera tanda de usabilidad (crítica 21 → 26/40).
+- `6d8ea83`: camino de compra fluido (20 → 11 clics con vendedor nuevo; aretes en lote).
+- 11-nov: registro detallado seguro (UXD-32), reparto de gastos por arete (UXD-33), ayuda al día y sombras (UXD-34). Evidencia en `docs/testing/evidence.md`.
+- **Decisión pendiente (Aldo):** el servidor acepta confirmar desde BORRADOR con aceptación implícita de la última versión (V2/V26, probado en GOLD). La interfaz ya no lo permite; falta documentarlo como regla o endurecerlo con V27.
+
 ## Rediseño ejecutivo v4 · 14-oct-2026
 
 Sistema visual v4 (cromo nocturno con oro, easing de Ramp, bandas fotográficas por sección), conteos animados del tablero, palomita de confirmación, barras del margen, **recorrido guiado con voz del navegador** (port de `Proyecto_Contable/Tour.js`) y **Ayuda y tutoriales** con 4 videos reales con subtítulos. Medido en la Intel UHD: ~160 fps, p95 6.1 ms ([ui-v4-intel.json](testing/evidence/performance/ui-v4-intel.json)); contraste AA en todas las parejas nuevas; puerta **PASS** 239 casos ([20261014T0244](testing/evidence/release-local/20261014T0244/release-gate.json)). Decisiones UXD-21..28 en [redesign-decisions](ui/redesign-decisions.md). Revisión humana pendiente.

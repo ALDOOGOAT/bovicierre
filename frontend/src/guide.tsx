@@ -80,7 +80,7 @@ const FAQ:[string,string][]=[
 export function HelpCenter({startTour}:{startTour:()=>void}){
     return <>
         <section className="panel help-intro"><div><h2>Aprende BoviCierre en minutos</h2><p className="muted">Un recorrido de dos minutos con voz y videos cortos con subtítulos de cada tarea frecuente.</p></div><button type="button" className="primary" onClick={startTour}>Iniciar recorrido guiado</button></section>
-        <section className="panel" aria-labelledby="videos-title"><div className="section-heading"><h2 id="videos-title">Videos de uso</h2><span className="badge">Subtítulos en español</span></div>
+        <section className="panel" aria-labelledby="videos-title"><div className="section-heading"><h2 id="videos-title">Videos de uso</h2><span className="badge">Subtítulos en español</span></div><p className="muted">Se grabaron antes del rediseño del 9 de noviembre de 2026: los pasos y las reglas son los mismos, pero las pantallas se ven distintas. Hoy los tratos empiezan en la Mesa de tratos de la Bandeja.</p>
             <div className="video-grid">{VIDEOS.map(v=><article className="video-card" key={v.id}><video controls preload="none" poster={`/videos/${v.id}-poster.jpg`} aria-describedby={`video-${v.id}`}><source src={`/videos/${v.id}.mp4`} type="video/mp4"/><track kind="captions" srcLang="es" label="Español" src={`/videos/${v.id}.vtt`} default/></video><h3>{v.title}</h3><p className="muted" id={`video-${v.id}`}>{v.body}</p></article>)}</div>
         </section>
         <section className="panel" aria-labelledby="faq-title"><h2 id="faq-title">Preguntas frecuentes</h2><div className="faq">{FAQ.map(([q,a])=><details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div></section>
