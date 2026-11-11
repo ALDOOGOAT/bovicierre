@@ -2,6 +2,7 @@
 // Línea de tinta + relleno plano. Decorativas (aria-hidden): el texto equivalente siempre está en la interfaz.
 // Los momentos firma se activan con la clase `is-playing` y se animan en identidad.css; con movimiento reducido quedan estáticos.
 import type { ReactNode } from "react";
+import { letraBascula } from "./caminos-util";
 
 const INK = "var(--tinta)";
 
@@ -55,6 +56,9 @@ export function Arete({ code, selected, muted }: { code: string; selected?: bool
 
 /** Báscula ganadera de plataforma con barandal y pantalla. `kg` es el peso que muestra la pantalla (texto, no animado). */
 export function Bascula({ kg, play, className }: { kg?: string; play?: boolean; className?: string }) {
+  // «910.500» o «4,520.500» no caben a 15: la letra se achica para quedarse dentro de la pantalla (y centrada en alto).
+  const lectura = kg || "0";
+  const letra = letraBascula(lectura);
   return (
     <Svg viewBox="0 0 240 130" className={"bascula " + (play ? "is-playing " : "") + (className || "")}>
       <rect x="0" y="118" width="240" height="12" fill="var(--tierra)" />
@@ -62,8 +66,8 @@ export function Bascula({ kg, play, className }: { kg?: string; play?: boolean; 
       <rect x="196" y="40" width="8" height="80" fill="var(--madera-oscura)" stroke={INK} strokeWidth="1.6" />
       <rect x="172" y="14" width="58" height="34" rx="4" fill="var(--potrero)" stroke={INK} strokeWidth="1.8" />
       <rect x="178" y="20" width="46" height="20" rx="2" fill="var(--pantalla)" />
-      <text className="bascula-lectura" x="221" y="35" textAnchor="end">
-        {kg || "0"}
+      <text className="bascula-lectura" x="221" y={30 + letra * 0.36} textAnchor="end" style={{ fontSize: letra }}>
+        {lectura}
       </text>
       <text className="bascula-unidad" x="201" y="45" textAnchor="middle">
         KG

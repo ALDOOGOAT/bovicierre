@@ -113,3 +113,112 @@ th.ref-celda,td.ref-celda{width:1%;white-space:nowrap}
 .aviso-cambio strong{color:var(--arete-texto)}
 .aviso-cambio-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s4)}
 @media (max-width:767px){.aviso-cambio-acciones button{width:100%;justify-content:center}}
+
+/* ═════════════ Camino de compra fluido (2026-11-10) ═════════════
+   Lo elegido nunca se pierde de vista: la ficha dice con quién es el trato y la charola cuelga del alambre
+   las cabezas elegidas (todas, aunque estén en otra página o búsqueda). «Apuntar varios» se escribe como en la
+   libreta: un arete por renglón. Movimiento: solo el arete que se cuelga (200 ms, sutil: se hace muchas veces). */
+
+/* Ficha de lo elegido */
+.ficha-zona:empty{display:none}
+.ficha-elegida{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s2) var(--s3);margin:0 0 var(--s4);padding:10px 12px 10px 12px;background:var(--arete-claro);color:var(--tinta);border:2px solid var(--tinta);border-radius:var(--r-md);box-shadow:0 2px 0 var(--tinta)}
+.ficha-elegida p{flex:1 1 220px;min-width:0;margin:0;line-height:1.35}
+.ficha-rotulo{font-weight:700;color:var(--arete-texto)}
+.ficha-elegida strong{font-size:18px;font-weight:800;overflow-wrap:anywhere}
+.ficha-elegida small{margin-top:1px;font-size:13px;color:var(--muted)}
+.ficha-sello{flex-shrink:0;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--potrero-700);color:var(--hoja)}
+.ficha-elegida .text-button{padding:6px 6px;color:var(--tinta);font-weight:700;text-decoration:underline;text-decoration-color:var(--arete-texto);text-decoration-thickness:2px;text-underline-offset:4px}
+
+/* Listas que buscan mientras escribes */
+.busqueda-estado{min-height:22px;margin:0 0 var(--s2);font-size:14px;color:var(--muted)}
+.renglones.con-scroll{max-height:min(26rem,58vh);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--madera) transparent}
+.renglon.es-nuevo{background:var(--ok-bg)}
+.renglon strong .badge{margin-left:8px;vertical-align:2px;font-family:var(--font);font-size:12px}
+.arete-opcion.es-nuevo small{color:var(--ok);font-weight:700}
+
+/* Charola: las cabezas del trato colgadas del alambre */
+.charola{margin:0 0 var(--s5);padding:var(--s3) var(--s4) var(--s4);background:var(--ticket);border:1.5px solid var(--madera-oscura);border-radius:var(--r-md)}
+.charola:focus{outline:none}
+.charola:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.charola-cabeza{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s3)}
+.charola-cabeza h3{margin:0;font-size:21px;text-transform:uppercase}
+.charola-cabeza .contador{margin:0}
+.aretes.charola-aretes{list-style:none;margin:0;padding:4px 2px 0;gap:14px 14px}
+.charola-aretes li{position:relative}
+/* el alambre pasa por el ojal de cada arete (y se ve a través del ojal) */
+.charola-aretes li:before{content:'';position:absolute;left:-8px;right:-8px;top:9.5px;height:2px;border-radius:1px;background:var(--fierro);opacity:.5}
+.charola-aretes .arete,.charola-aretes .arete.is-selected{transform-origin:50% 10px;transform:rotate(-3deg)}
+.charola-aretes li:nth-child(even) .arete{transform:rotate(2.5deg)}
+.charola-aretes .arete:before{background:linear-gradient(to bottom,transparent 3.5px,rgba(58,54,50,.5) 3.5px 5.5px,transparent 5.5px),var(--ticket)}
+.charola-arete{position:relative;display:block;min-height:0;padding:0;background:none;border:0;border-radius:7px 7px 12px 12px;color:inherit}
+.charola-arete:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.charola-quitar{position:absolute;top:-7px;right:-7px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--tinta);color:var(--hoja);box-shadow:0 0 0 2px var(--ticket);transition:background-color var(--dur-2) var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .charola-arete:hover .arete{background:var(--arete-claro)}
+  .charola-arete:hover .charola-quitar{background:var(--sello)}
+}
+.charola-aretes li.recien{animation:colgar var(--dur-2) var(--ease-out) both}
+@keyframes colgar{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.charola-pista{margin-top:var(--s3);font-size:13px;color:var(--muted)}
+.charola-vacia{margin:0;font-size:15px;color:var(--muted);max-width:62ch}
+.paso-acciones .contador{margin:0;color:var(--muted)}
+
+/* Apuntar varios: renglones de libreta */
+.apuntar form{margin-top:var(--s3)}
+.apuntar-campos{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:var(--s3) var(--s5);align-items:start}
+.apuntar-texto{margin-bottom:0}
+.apuntar-texto textarea{width:100%;min-height:118px;resize:vertical;padding:10px 12px;border:1.5px solid var(--madera-oscura);border-radius:var(--r-sm);font-family:var(--mono);font-size:16px;font-weight:600;line-height:26px;color:var(--tinta);background-color:var(--hoja);background-image:linear-gradient(to bottom,transparent 25px,var(--renglon) 25px 26px);background-size:100% 26px;background-position:0 10px;background-attachment:local;caret-color:var(--potrero-700)}
+.apuntar-texto textarea::placeholder{color:var(--subtle);font-weight:400}
+.apuntar-texto textarea:focus-visible{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--potrero-700);box-shadow:0 0 0 4px rgba(242,194,48,.35)}
+.apuntar-texto textarea:disabled{background-color:var(--libreta);color:var(--muted)}
+.apuntar-opciones .field{margin-bottom:0}
+.segmento{display:inline-flex;flex-wrap:wrap;min-width:0;margin:0 0 var(--s4);padding:0;border:0}
+.segmento legend{width:100%;margin-bottom:6px;padding:0;font-size:15px;font-weight:700}
+.segmento label{position:relative;display:flex;cursor:pointer}
+.segmento input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.segmento label>span{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;padding:8px 14px;border:1.5px solid var(--madera-oscura);background:var(--hoja);color:var(--tinta);font-size:15px;font-weight:700;white-space:nowrap}
+.segmento label+label>span{margin-left:-1.5px}
+.segmento label:first-of-type>span{border-radius:var(--r-sm) 0 0 var(--r-sm)}
+.segmento label:last-of-type>span{border-radius:0 var(--r-sm) var(--r-sm) 0}
+.segmento input:checked+span{position:relative;z-index:1;background:var(--arete-claro);border:2px solid var(--tinta);font-weight:800}
+.segmento input:focus-visible+span{position:relative;z-index:2;outline:3px solid var(--focus);outline-offset:2px}
+.segmento input:disabled+span{opacity:.55;cursor:not-allowed}
+.segmento-n{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.apuntar-lista{list-style:none;margin:var(--s4) 0 0;padding:0;max-height:min(20rem,50vh);overflow-y:auto;overscroll-behavior:contain;background:var(--hoja);border:1.5px solid var(--line);border-radius:var(--r-md)}
+.apuntar-lista li{display:flex;align-items:center;flex-wrap:wrap;gap:6px var(--s3);min-height:50px;padding:5px var(--s3);border-bottom:1px solid var(--renglon)}
+.apuntar-lista li:last-child{border-bottom:0}
+.apuntar-lista li[data-estado=problema],.apuntar-lista li[data-estado=error]{background:var(--error-bg)}
+.apuntar-codigo{min-width:10ch;font-size:15px;font-weight:700;overflow-wrap:anywhere}
+.apuntar-motivo{flex:1 1 220px;font-size:14px;font-weight:650;line-height:1.4;color:var(--error)}
+.apuntar-lista li[data-estado=apuntando] .apuntar-motivo{color:var(--muted);font-weight:600}
+.apuntar-motivo .text-button{min-height:36px;padding:4px 2px;color:var(--error);text-decoration:underline;text-underline-offset:3px}
+.sexo-linea{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border:1.5px solid var(--madera);border-radius:999px;background:var(--ticket);color:var(--tinta);font-size:14px;font-weight:700}
+@media (hover:hover) and (pointer:fine){.sexo-linea:hover:not(:disabled){border-color:var(--tinta);background:var(--arete-claro)}}
+.apuntar-avance{min-height:22px;margin:var(--s3) 0 0;font-size:15px;font-weight:700;color:var(--tinta)}
+.apuntar .aviso-bloqueo{margin:var(--s2) 0 0}
+.apuntar form>button.primary{margin-top:var(--s3)}
+
+/* Cobrar o pagar: filtro de cuentas */
+.filtro-cuentas{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--s3) var(--s4);margin-bottom:var(--s2)}
+.filtro-cuentas .field{flex:1 1 240px;margin-bottom:0}
+.filtro-cuentas .segmento{margin:0}
+.renglones .renglon.sin-resultado{justify-content:space-between;flex-wrap:wrap;cursor:default;color:var(--muted)}
+.otra-cantidad{margin-top:var(--s5);padding-top:var(--s3);border-top:1.5px dashed var(--line)}
+.otra-cantidad summary{display:inline-flex;align-items:center;min-height:44px;cursor:pointer;font-weight:700;color:var(--cuero-oscuro)}
+.otra-cantidad p{max-width:62ch;margin:var(--s2) 0 var(--s3);line-height:1.5}
+
+@media (max-width:767px){
+  .apuntar-campos{grid-template-columns:minmax(0,1fr)}
+  .renglones.con-scroll{max-height:52vh}
+  .filtro-cuentas .segmento{display:flex;width:100%}
+  .filtro-cuentas .segmento label{flex:1}
+  .segmento label>span{padding:8px 10px}
+  .charola{padding:var(--s3)}
+  .paso-acciones .contador{font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){
+  .charola-aretes li.recien{animation:aparecer var(--dur-2) ease both}
+  .charola-aretes .arete,.charola-aretes .arete.is-selected,.charola-aretes li:nth-child(even) .arete{transform:none}
+}
+.paso-acciones .primary{white-space:nowrap}
+.paso-acciones .contador{white-space:nowrap}

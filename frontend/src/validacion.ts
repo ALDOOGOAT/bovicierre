@@ -41,6 +41,8 @@ export function esquemaDecimal(r: ReglaDecimal, requerido = true) {
       z.refine((v) => !requerido || v !== '', {error: escribe, abort: true}),
       z.refine((v) => v === '' || !/^[-−–]/.test(v), {error: `Escribe ${r.que} sin signo de menos, ${ej}.`, abort: true}),
       z.refine((v) => v === '' || !/^\d+,\d+$/.test(v), {error: `Usa punto para los decimales, ${ej}.`, abort: true}),
+      // «52.5.0» no tiene letras: el problema es el segundo punto.
+      z.refine((v) => v === '' || !/^[\d.]*\.[\d.]*\.[\d.]*$/.test(v), {error: `Escribe un solo punto decimal, ${ej}.`, abort: true}),
       z.refine((v) => v === '' || /^\d+(?:\.\d+)?$/.test(v), {error: `Escribe solo el número, sin letras, ${ej}.`, abort: true}),
       z.refine((v) => (v.split('.')[1] || '').length <= r.escala, {error: `Usa como máximo ${r.escala} decimales, ${ej}.`, abort: true}),
       z.refine((v) => v.split('.')[0].replace(/^0+(?=\d)/, '').length <= enterosDe(r.escala), {

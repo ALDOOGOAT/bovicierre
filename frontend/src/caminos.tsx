@@ -3,7 +3,9 @@
 // (CommandForm conserva Idempotency-Key, If-Match y el reintento con la misma clave) y ningún total se calcula aquí;
 // el total del trato lo da el simulador del servidor y el saldo lo da la liquidación.
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { request } from "./api";
+import { ApiError, createAttempt, executeAttempt, keepAttempt, request, type Attempt } from "./api";
+import { avisarGuardado } from "./aviso";
+import { claveArete, filtrarCuentas, leerAretes, normalizarBusqueda, quitarApuntados, type Sentido, type Sexo } from "./caminos-util";
 import { type Page, type Row, type Sede, canonicalDecimal, money, text, today } from "./domain";
 import { agrupar, cantidad, fecha, fechaHora as fechaYHora, importe, kilos, precio } from "./formato";
 import { palabra } from "./palabras";
@@ -90,6 +92,50 @@ function useConsulta<T>(path: string | undefined, revision = 0) {
   return state;
 }
 
+/** El valor tecleado, pero después de una pausa: la lista busca mientras escribes sin consultar en cada tecla. */
+function useDebounced<T>(value: T, ms = 250) {
+  const [v, setV] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setV(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return v;
+}
+
+/** Búsqueda de lista: consulta sola tras una pausa de 250 ms al escribir; «Buscar» (o Enter) consulta enseguida. */
+function useBusqueda() {
+  const [query, setQuery] = useState("");
+  const [buscar, setBuscar] = useState("");
+  const pausada = useDebounced(query.trim(), 250);
+  useEffect(() => setBuscar(pausada), [pausada]);
+  return {
+    query,
+    setQuery,
+    buscar,
+    ya: () => setBuscar(query.trim()),
+    poner: (q: string) => {
+      setQuery(q);
+      setBuscar(q.trim());
+    },
+  };
+}
+
+/** Qué está pasando con la búsqueda, anunciado sin mover el foco. */
+function EstadoBusqueda({ cargando, buscar, total, cosa }: { cargando: boolean; buscar: string; total?: number; cosa: [string, string] }) {
+  return (
+    <p className="busqueda-estado" role="status">
+      {cargando ? "Buscando…" : buscar && total !== undefined ? `${total} ${total === 1 ? cosa[0] : cosa[1]} con «${buscar}»` : ""}
+    </p>
+  );
+}
+
+/** Al abrir un alta rápida, el cursor queda en su primer campo: se escribe sin otro clic. */
+function enfocarPrimero(el: HTMLElement) {
+  requestAnimationFrame(() => el.querySelector<HTMLElement>("input:not([type=hidden]),textarea,select")?.focus());
+}
+
+const reducido = () => typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function Campo({
   name,
   label,
@@ -173,12 +219,23 @@ function Rail({
   notas?: Record<string, string>;
 }) {
   const tope = pasos.findIndex(([id]) => id === alcanzado);
+  // En celular la ruta es una tira horizontal: se desliza sola hasta el paso actual.
+  const tira = useRef<HTMLOListElement>(null);
+  useEffect(() => {
+    const ol = tira.current;
+    if (!ol || ol.scrollWidth <= ol.clientWidth) return;
+    const li = ol.querySelector<HTMLElement>('li[data-estado="actual"]');
+    if (!li) return;
+    const left = Math.max(0, li.offsetLeft - (ol.clientWidth - li.offsetWidth) / 2);
+    if (typeof ol.scrollTo === "function") ol.scrollTo({ left, behavior: reducido() ? "auto" : "smooth" });
+    else ol.scrollLeft = left;
+  }, [actual]);
   return (
     <aside className="rail">
       <h2>{titulo}</h2>
       <p>{subtitulo}</p>
       <nav aria-label="Pasos del camino">
-        <ol>
+        <ol ref={tira}>
           {pasos.map(([id, label], i) => (
             <li
               key={id}
@@ -548,12 +605,32 @@ export function CaminoTrato({ base, sede, tipo, id, go }: { base: string; sede: 
   );
 }
 
+const detalleParte = (p: Row) =>
+  (p.tipo_persona === "MORAL" ? "Empresa" : "Persona") + (p.telefono ? " · " + text(p.telefono) : "") + (p.rfc ? " · RFC " + text(p.rfc) : "");
+
+function Palomita() {
+  return (
+    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d="M4.5 10.5l3.6 3.4 7.4-8" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function PasoQuien({ base, venta, ruta, go }: { base: string; venta: boolean; ruta: string; go: Go }) {
-  const [query, setQuery] = useState("");
-  const [buscar, setBuscar] = useState("");
-  const [rev, setRev] = useState(0);
-  const [parte, setParte] = useState("");
-  const lista = useConsulta<Page>(base + "/contrapartes?pagina=1&tamano=50" + (buscar ? "&q=" + encodeURIComponent(buscar) : ""), rev);
+  const b = useBusqueda();
+  const [parte, setParte] = useState<Row>();
+  // Contrapartes dadas de alta aquí: van primero en la lista (el servidor ordena de la más antigua a la más nueva).
+  const [nuevas, setNuevas] = useState<Row[]>([]);
+  const [alta, setAlta] = useState(0);
+  const [altaAbierta, setAltaAbierta] = useState(false);
+  const capturada = useRef<Row>({});
+  const empezar = useRef<HTMLDivElement>(null);
+  const renglones = useRef<HTMLDivElement>(null);
+  const lista = useConsulta<Page>(base + "/contrapartes?pagina=1&tamano=50" + (b.buscar ? "&q=" + encodeURIComponent(b.buscar) : ""));
+  const q = normalizarBusqueda(b.buscar);
+  const propias = nuevas.filter((n) => !q || normalizarBusqueda(text(n.nombre)).includes(q));
+  const filas = [...propias, ...(lista.data?.elementos || []).filter((p) => !nuevas.some((n) => n.id === p.id))];
+  const rotulo = venta ? "Le vendes a" : "Te vende";
   return (
     <Paso
       eyebrow="Paso 1 · Con quién"
@@ -570,53 +647,100 @@ function PasoQuien({ base, venta, ruta, go }: { base: string; venta: boolean; ru
         </>
       }
     >
+      <div className="ficha-zona" role="status">
+        {parte && (
+          <div className="ficha-elegida">
+            <span className="ficha-sello" aria-hidden="true">
+              <Palomita />
+            </span>
+            <p>
+              <span className="ficha-rotulo">{rotulo}:</span> <strong>{text(parte.nombre)}</strong>
+              <small>{detalleParte(parte)}</small>
+            </p>
+            <button
+              type="button"
+              className="text-button"
+              onClick={() => {
+                setParte(undefined);
+                document.getElementById("buscar_parte")?.focus();
+              }}
+            >
+              Cambiar<span className="sr-only"> {venta ? "de comprador" : "de vendedor"}</span>
+            </button>
+          </div>
+        )}
+      </div>
       <form
         className="buscador"
+        role="search"
         onSubmit={(e) => {
           e.preventDefault();
-          setBuscar(query.trim());
+          b.ya();
         }}
       >
-        <Field name="buscar_parte" label="Buscar por nombre" required={false} value={query} onChange={setQuery} />
+        <Field name="buscar_parte" label="Buscar por nombre" type="search" required={false} value={b.query} onChange={b.setQuery} />
         <button className="secondary">Buscar</button>
       </form>
+      <EstadoBusqueda cargando={lista.loading && !!lista.data} buscar={b.buscar} total={lista.data ? filas.length : undefined} cosa={["persona", "personas"]} />
       {lista.error && <Notice error={lista.error} />}
-      <div className="renglones" role="radiogroup" aria-label={venta ? "Comprador" : "Vendedor"}>
-        {(lista.data?.elementos || []).map((p) => (
-          <label className="renglon" key={String(p.id)}>
-            <input type="radio" name="parte_elegida" checked={parte === p.id} onChange={() => setParte(String(p.id))} />
-            <span>
-              <strong>{text(p.nombre)}</strong>
-              <small>
-                {p.tipo_persona === "MORAL" ? "Empresa" : "Persona"}
-                {p.telefono ? " · " + text(p.telefono) : ""}
-                {p.rfc ? " · RFC " + text(p.rfc) : ""}
-              </small>
-            </span>
-          </label>
-        ))}
+      <div className="renglones con-scroll" ref={renglones} role="radiogroup" aria-label={venta ? "Comprador" : "Vendedor"}>
+        {filas.map((p) => {
+          const nueva = nuevas.some((n) => n.id === p.id);
+          return (
+            <label className={"renglon" + (nueva ? " es-nuevo" : "")} key={String(p.id)}>
+              <input type="radio" name="parte_elegida" checked={parte?.id === p.id} onChange={() => setParte(p)} />
+              <span>
+                <strong>
+                  {text(p.nombre)}
+                  {nueva && (
+                    <span className="badge" data-tone="positive">
+                      Recién dado de alta
+                    </span>
+                  )}
+                </strong>
+                <small>{detalleParte(p)}</small>
+              </span>
+            </label>
+          );
+        })}
         {lista.loading && !lista.data && (
           <p className="renglon" role="status">
             Buscando…
           </p>
         )}
-        {lista.data && !lista.data.elementos.length && <p className="renglon">Nadie con ese nombre. Dalo de alta abajo.</p>}
+        {lista.data && !filas.length && <p className="renglon">Nadie con ese nombre. Dalo de alta abajo.</p>}
       </div>
-      <details className="alta-rapida">
+      <details
+        className="alta-rapida"
+        open={altaAbierta}
+        onToggle={(e) => {
+          const abierto = e.currentTarget.open;
+          setAltaAbierta(abierto);
+          if (abierto) enfocarPrimero(e.currentTarget);
+        }}
+      >
         <summary>¿Es nuevo? Darlo de alta</summary>
         <CommandForm
+          key={alta}
           path={base + "/contrapartes"}
           label="Guardar y elegir"
           build={(f) => {
             const nombre = str(f, "nombre").trim();
             if (!nombre) throw new Error("Escribe el nombre completo o la razón social.");
-            return { nombre, tipo_persona: str(f, "tipo_persona"), telefono: str(f, "telefono") || undefined };
+            capturada.current = { nombre, tipo_persona: str(f, "tipo_persona"), telefono: str(f, "telefono") || undefined };
+            return capturada.current;
           }}
           onDone={(r) => {
-            setParte(String(r.id));
-            setBuscar("");
-            setQuery("");
-            setRev((n) => n + 1);
+            // El servidor puede responder solo lo esencial: se completa con lo que se escribió para mostrarlo ya.
+            const p: Row = { ...capturada.current, ...r };
+            setNuevas((c) => [p, ...c.filter((x) => x.id !== p.id)]);
+            setParte(p);
+            b.poner("");
+            setAltaAbierta(false);
+            setAlta((n) => n + 1);
+            // La recién dada de alta queda arriba y a la vista; el foco va al botón que sigue.
+            renglones.current?.scrollTo?.({ top: 0 });
+            requestAnimationFrame(() => empezar.current?.querySelector<HTMLButtonElement>("button.primary")?.focus());
           }}
         >
           <div className="form-grid">
@@ -634,22 +758,29 @@ function PasoQuien({ base, venta, ruta, go }: { base: string; venta: boolean; ru
           </div>
         </CommandForm>
       </details>
-      <CommandForm
-        path={base + "/operaciones"}
-        label="Empezar el trato"
-        build={(f) => {
-          if (!parte) throw new Error(venta ? "Elige al comprador (o dalo de alta)." : "Elige a quien te vende (o dalo de alta).");
-          return { tipo: venta ? "VENTA" : "COMPRA", parte_id: parte, fecha_operacion: str(f, "fecha_operacion"), requiere_recepcion: false };
-        }}
-        onDone={(r) => go(ruta, r)}
-      >
-        <div className="form-grid">
-          <Campo name="fecha_operacion" label="¿Qué día fue el trato?" type="date" initial={today()} />
-        </div>
-      </CommandForm>
+      <div ref={empezar}>
+        <CommandForm
+          path={base + "/operaciones"}
+          label={parte ? `Empezar el trato con ${text(parte.nombre)}` : "Empezar el trato"}
+          // Sin contraparte el botón espera y dice por qué; al elegir, la razón desaparece sola (no queda un aviso rojo viejo).
+          bloqueo={parte ? "" : venta ? "Elige al comprador o dalo de alta para empezar." : "Elige a quien te vende o dalo de alta para empezar."}
+          build={(f) => {
+            if (!parte) throw new Error(venta ? "Elige al comprador (o dalo de alta)." : "Elige a quien te vende (o dalo de alta).");
+            return { tipo: venta ? "VENTA" : "COMPRA", parte_id: parte.id, fecha_operacion: str(f, "fecha_operacion"), requiere_recepcion: false };
+          }}
+          onDone={(r) => go(ruta, r)}
+        >
+          <div className="form-grid">
+            <Campo name="fecha_operacion" label="¿Qué día fue el trato?" type="date" initial={today()} />
+          </div>
+        </CommandForm>
+      </div>
     </Paso>
   );
 }
+
+const cabezasDe = (n: number) => `${n} ${n === 1 ? "cabeza" : "cabezas"}`;
+const sexoPalabra = (sexo: unknown) => (sexo === "H" ? "Hembra" : sexo === "M" ? "Macho" : "");
 
 function PasoGanado({
   base,
@@ -668,16 +799,52 @@ function PasoGanado({
   rev: number;
   onNext: () => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [buscar, setBuscar] = useState("");
+  const b = useBusqueda();
   const [pagina, setPagina] = useState(1);
-  const [altas, setAltas] = useState(0);
+  useEffect(() => setPagina(1), [b.buscar]);
+  // Aretes dados de alta en este paso: van primero en la lista y ya quedan en el trato.
+  const [creados, setCreados] = useState<Row[]>([]);
+  // Lo que se agregó en esta visita (para que se note al colgarse en la charola).
+  const [recientes, setRecientes] = useState<string[]>([]);
+  // Número de arete de cada cabeza elegida, aunque esté en otra página o búsqueda.
+  const [etiquetas, setEtiquetas] = useState<Record<string, string>>({});
   const lista = useConsulta<Page>(
     base +
       (venta ? "/inventario/posiciones?estado=DISPONIBLE&" : "/animales?") +
-      new URLSearchParams({ pagina: String(pagina), tamano: "40", ...(buscar ? { q: buscar } : {}) }),
-    rev + altas,
+      new URLSearchParams({ pagina: String(pagina), tamano: "40", ...(b.buscar ? { q: b.buscar } : {}) }),
+    rev,
   );
+  const delServidor = lista.data?.elementos || [];
+  useEffect(() => {
+    if (delServidor.length) setEtiquetas((e) => ({ ...e, ...Object.fromEntries(delServidor.map((r) => [String(r.id), arete(r)])) }));
+  }, [lista.data]);
+  const faltan = sel.filter((id) => !(id in etiquetas));
+  useEffect(() => {
+    if (!faltan.length) return;
+    if (venta) {
+      setEtiquetas((e) => ({ ...e, ...Object.fromEntries(faltan.map((id) => [id, arete(posiciones.find((p) => p.id === id) || {})])) }));
+      return;
+    }
+    let active = true;
+    const controller = new AbortController();
+    Promise.all(
+      faltan.map((id) =>
+        request<Row>(base + "/animales/" + id, { signal: controller.signal })
+          .then((r) => [id, arete(r.data)] as const)
+          .catch(() => [id, "Sin arete"] as const),
+      ),
+    ).then((pares) => {
+      if (active) setEtiquetas((e) => ({ ...e, ...Object.fromEntries(pares) }));
+    });
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [faltan.join(","), venta, posiciones.length]);
+  const elegir = (id: string, si: boolean) => {
+    setSel((c) => (si ? [...new Set([...c, id])] : c.filter((x) => x !== id)));
+    if (si) setRecientes((r) => (r.includes(id) ? r : [...r, id]));
+  };
   const enCorral = new Set(posiciones.filter((p) => ACTIVAS.includes(String(p.estado))).map((p) => String(p.animal_id)));
   const motivo = (r: Row) =>
     venta
@@ -687,7 +854,9 @@ function PasoGanado({
       : enCorral.has(String(r.id))
         ? "Ya está en tu inventario"
         : undefined;
-  const filas = lista.data?.elementos || [];
+  const filtroArete = claveArete(b.buscar);
+  const propios = pagina === 1 ? creados.filter((r) => !filtroArete || claveArete(arete(r)).includes(filtroArete)) : [];
+  const filas = [...propios, ...delServidor.filter((r) => !creados.some((c) => c.id === r.id))];
   return (
     <Paso
       eyebrow="Paso 2 · Qué cabezas"
@@ -695,7 +864,7 @@ function PasoGanado({
       explica={
         venta
           ? "Toca los aretes de los animales que salen en esta venta. Debajo de cada uno ves lo que te costó."
-          : "Toca los aretes de los animales del trato. Si un animal todavía no está registrado, apunta su arete abajo."
+          : "Toca los aretes de los animales del trato. Si todavía no están registrados, apúntalos abajo: uno o varios a la vez."
       }
       tecnico={
         <>
@@ -707,47 +876,51 @@ function PasoGanado({
           ) : (
             <>
               Cada animal tiene una identidad permanente (UUID) y uno o varios aretes. La base impide que un animal tenga dos ciclos activos
-              a la vez (índice único parcial <code>uk_posicion_inventario_activo</code>).
+              a la vez (índice único parcial <code>uk_posicion_inventario_activo</code>) y que un arete se repita en el mismo sistema
+              (<code>UNIQUE (sistema, codigo_normalizado)</code>). «Apuntar varios» manda un <code>registrar_animal</code> por arete, uno tras
+              otro y cada uno con su propia clave de idempotencia.
             </>
           )}{" "}
           La selección se guarda junto con el precio en el siguiente paso.
         </>
       }
     >
+      <Charola sel={sel} etiquetas={etiquetas} recientes={recientes} venta={venta} onQuitar={(id) => elegir(id, false)} />
       <form
         className="buscador"
+        role="search"
         onSubmit={(e) => {
           e.preventDefault();
-          setBuscar(query.trim());
-          setPagina(1);
+          b.ya();
         }}
       >
-        <Field name="buscar_arete" label="Buscar arete" required={false} value={query} onChange={setQuery} />
+        <Field name="buscar_arete" label="Buscar arete" type="search" required={false} value={b.query} onChange={b.setQuery} />
         <button className="secondary">Buscar</button>
       </form>
+      <EstadoBusqueda
+        cargando={lista.loading && !!lista.data}
+        buscar={b.buscar}
+        total={lista.data ? lista.data.total + propios.length : undefined}
+        cosa={["arete", "aretes"]}
+      />
       {lista.error && <Notice error={lista.error} />}
       <div className="aretes" role="group" aria-label="Aretes">
         {filas.map((r) => {
+          const id = String(r.id);
           const no = motivo(r);
-          const checked = sel.includes(String(r.id));
+          const checked = sel.includes(id);
+          const nuevo = creados.some((c) => c.id === r.id);
           return (
-            <label className="arete-opcion" key={String(r.id)}>
-              <input
-                type="checkbox"
-                checked={checked}
-                disabled={!!no}
-                onChange={(e) =>
-                  setSel((c) => (e.target.checked ? [...new Set([...c, String(r.id)])] : c.filter((x) => x !== String(r.id))))
-                }
-              />
+            <label className={"arete-opcion" + (nuevo ? " es-nuevo" : "")} key={id}>
+              <input type="checkbox" checked={checked} disabled={!!no} onChange={(e) => elegir(id, e.target.checked)} />
               <Arete code={arete(r)} selected={checked} muted={!!no} />
-              <small>{no || (venta ? "Costó " + money(r.costo_vigente) : r.sexo === "H" ? "Hembra" : r.sexo === "M" ? "Macho" : "")}</small>
+              <small>{no || (venta ? "Costó " + money(r.costo_vigente) : [nuevo && "Nuevo", sexoPalabra(r.sexo)].filter(Boolean).join(" · "))}</small>
             </label>
           );
         })}
         {lista.loading && !lista.data && <p role="status">Buscando aretes…</p>}
         {lista.data && !filas.length && (
-          <p className="notice">{venta ? "No hay cabezas disponibles para vender en esta sede." : "No hay aretes con esa búsqueda."}</p>
+          <p className="notice">{venta ? "No hay cabezas disponibles para vender en esta sede." : "No hay aretes con esa búsqueda. Si es nuevo, apúntalo abajo."}</p>
         )}
       </div>
       {lista.data && lista.data.total > 40 && (
@@ -766,56 +939,322 @@ function PasoGanado({
         </div>
       )}
       {!venta && (
-        <details className="alta-rapida" key={altas}>
-          <summary>Apuntar un arete nuevo</summary>
-          <CommandForm
-            path={base + "/animales"}
-            label="Registrar y agregar al trato"
-            build={(f) => {
-              const codigo = str(f, "codigo").trim();
-              if (!codigo) throw new Error("Escribe el número del arete.");
-              return { sexo: str(f, "sexo"), identificaciones: [{ sistema: str(f, "sistema"), codigo }] };
-            }}
-            onDone={(r) => {
-              setSel((c) => [...new Set([...c, String(r.id)])]);
-              setAltas((n) => n + 1);
-            }}
-          >
-            <div className="form-grid">
-              <Campo name="codigo" label="Número del arete" />
-              <Campo
-                name="sistema"
-                label="Tipo de arete"
-                initial="SINIIGA"
-                options={[
-                  { value: "SINIIGA", label: "SINIIGA (amarillo oficial)" },
-                  { value: "INTERNO", label: "Interno del rancho" },
-                  { value: "SINIDA", label: "SINIDA" },
-                  { value: "OTRO", label: "Otro" },
-                ]}
-              />
-              <Campo
-                name="sexo"
-                label="Sexo"
-                options={[
-                  { value: "M", label: "Macho" },
-                  { value: "H", label: "Hembra" },
-                ]}
-              />
-            </div>
-          </CommandForm>
-        </details>
+        <ApuntarAretes
+          base={base}
+          onAlta={(r) => {
+            const id = String(r.id);
+            setCreados((c) => [r, ...c.filter((x) => x.id !== r.id)]);
+            setEtiquetas((e) => ({ ...e, [id]: arete(r) }));
+            elegir(id, true);
+          }}
+          onBuscar={(codigo) => {
+            b.poner(codigo);
+            document.getElementById("buscar_arete")?.focus();
+          }}
+        />
       )}
-      <p className="contador" role="status">
-        {sel.length} {sel.length === 1 ? "cabeza elegida" : "cabezas elegidas"}
-        {sel.length > filas.filter((r) => sel.includes(String(r.id))).length ? " (algunas en otra página o búsqueda)" : ""}
-      </p>
       <div className="paso-acciones">
         <button type="button" className="primary" disabled={!sel.length} onClick={onNext}>
           Seguir: el precio
         </button>
+        <span className="contador">{cabezasDe(sel.length)}</span>
       </div>
     </Paso>
+  );
+}
+
+/**
+ * Charola: las cabezas elegidas, colgadas del alambre como aretes reales. Se ven todas aunque estén en otra página
+ * o búsqueda; un toque quita la cabeza del trato (sigue en la lista para volver a elegirla).
+ */
+function Charola({
+  sel,
+  etiquetas,
+  recientes,
+  venta,
+  onQuitar,
+}: {
+  sel: string[];
+  etiquetas: Record<string, string>;
+  recientes: string[];
+  venta: boolean;
+  onQuitar: (id: string) => void;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const quitar = (id: string, i: number) => {
+    onQuitar(id);
+    // El foco pasa al arete que quedó en su lugar (o a la charola si ya no hay): nunca se pierde en la página.
+    requestAnimationFrame(() => {
+      const botones = ref.current?.querySelectorAll<HTMLButtonElement>(".charola-arete");
+      const siguiente = botones && botones.length ? botones[Math.min(i, botones.length - 1)] : undefined;
+      (siguiente || ref.current)?.focus();
+    });
+  };
+  return (
+    <section className="charola" ref={ref} tabIndex={-1} aria-labelledby="charola-titulo">
+      <div className="charola-cabeza">
+        <h3 id="charola-titulo">En el trato</h3>
+        <p className="contador" role="status">
+          {cabezasDe(sel.length)}
+        </p>
+      </div>
+      {sel.length ? (
+        <>
+          <ul className="aretes chicos charola-aretes">
+            {sel.map((id, i) => {
+              const codigo = etiquetas[id];
+              return (
+                <li key={id} className={recientes.includes(id) ? "recien" : undefined}>
+                  <button type="button" className="charola-arete" onClick={() => quitar(id, i)} aria-label={`Quitar ${codigo || "esta cabeza"} del trato`}>
+                    <Arete code={codigo || "…"} selected />
+                    <span className="charola-quitar" aria-hidden="true">
+                      <svg viewBox="0 0 12 12" width="10" height="10" focusable="false">
+                        <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+                      </svg>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <small className="charola-pista">Toca un arete para quitarlo del trato.</small>
+        </>
+      ) : (
+        <p className="charola-vacia">Todavía no hay cabezas en el trato. Toca los aretes de abajo{venta ? "" : " o apunta los nuevos"}.</p>
+      )}
+    </section>
+  );
+}
+
+const SISTEMAS = [
+  { value: "SINIIGA", label: "SINIIGA (amarillo oficial)" },
+  { value: "INTERNO", label: "Interno del rancho" },
+  { value: "SINIDA", label: "SINIDA" },
+  { value: "OTRO", label: "Otro" },
+];
+/** Preferencias de captura que se recuerdan en este navegador (sexo por defecto y tipo de arete). Sin almacenamiento, se usan los valores de siempre. */
+function recordado(clave: string, porDefecto: string, validos: string[]) {
+  try {
+    const v = localStorage.getItem(clave);
+    return v && validos.includes(v) ? v : porDefecto;
+  } catch {
+    return porDefecto;
+  }
+}
+function recordar(clave: string, valor: string) {
+  try {
+    localStorage.setItem(clave, valor);
+  } catch {
+    /* sin almacenamiento: la preferencia dura hasta recargar */
+  }
+}
+type EstadoArete = { estado: "apuntando" | "error"; mensaje?: string; duplicado?: boolean };
+
+/**
+ * «Apuntar varios»: pega o escribe los aretes (uno por renglón, o con espacios o comas), con un sexo por defecto que
+ * se recuerda. Se dan de alta uno tras otro con el mismo comando del alta individual; los buenos entran a la charola
+ * y los que fallan se quedan en el texto con su motivo. Un reintento usa la misma clave de idempotencia.
+ */
+function ApuntarAretes({ base, onAlta, onBuscar }: { base: string; onAlta: (r: Row) => void; onBuscar: (codigo: string) => void }) {
+  const [abierto, setAbierto] = useState(false);
+  const [texto, setTexto] = useState("");
+  const [sexo, setSexo] = useState<Sexo>(() => recordado("bovi:aretes:sexo", "M", ["M", "H"]) as Sexo);
+  const [sistema, setSistema] = useState(() => recordado("bovi:aretes:sistema", "SINIIGA", SISTEMAS.map((x) => x.value)));
+  const [cambios, setCambios] = useState<Record<string, Sexo>>({});
+  const [estados, setEstados] = useState<Record<string, EstadoArete>>({});
+  const [avance, setAvance] = useState<{ actual: number; total: number }>();
+  const [resumen, setResumen] = useState("");
+  const intentos = useRef(new Map<string, Attempt>());
+  const panel = useRef<HTMLDetailsElement>(null);
+  const lineas = leerAretes(texto, sexo).map((l) => ({ ...l, sexo: cambios[l.clave] ?? l.sexo }));
+  const buenas = lineas.filter((l) => !l.problema);
+  const corriendo = !!avance;
+  async function apuntar() {
+    if (corriendo || !buenas.length) return;
+    const cola = buenas;
+    const conProblema = lineas.length - buenas.length;
+    const listos = new Set<string>();
+    let fallas = 0;
+    setResumen("");
+    for (let i = 0; i < cola.length; i++) {
+      const l = cola[i];
+      setAvance({ actual: i + 1, total: cola.length });
+      setEstados((e) => ({ ...e, [l.clave]: { estado: "apuntando" } }));
+      const cuerpo = { sexo: l.sexo, identificaciones: [{ sistema, codigo: l.codigo }] };
+      const firma = JSON.stringify(cuerpo);
+      const previo = intentos.current.get(firma);
+      const intento = previo || createAttempt(base + "/animales", cuerpo, "POST");
+      intentos.current.set(firma, intento);
+      try {
+        const { data } = await executeAttempt<Row>(intento, !!previo);
+        intentos.current.delete(firma);
+        listos.add(l.clave);
+        setEstados(({ [l.clave]: _, ...resto }) => resto);
+        onAlta({ ...data, sexo: l.sexo, identificaciones: [{ sistema, codigo_declarado: l.codigo }] });
+      } catch (e) {
+        const err = e as Error;
+        const duplicado = err instanceof ApiError && err.status === 409 && err.details.codigo === "BV401";
+        if (duplicado || !keepAttempt(err)) intentos.current.delete(firma);
+        fallas++;
+        setEstados((s) => ({
+          ...s,
+          [l.clave]: { estado: "error", duplicado, mensaje: duplicado ? "Ya está registrado: búscalo en la lista y tócalo para agregarlo." : err.message },
+        }));
+        if (err instanceof ApiError && err.status === 401) break;
+      }
+    }
+    setAvance(undefined);
+    setTexto((t) => quitarApuntados(t, listos));
+    const n = listos.size;
+    const quedan = fallas + conProblema;
+    setResumen(
+      n && quedan
+        ? `Se ${n === 1 ? "apuntó 1" : `apuntaron ${n}`} y ya ${n === 1 ? "está" : "están"} en el trato. ${quedan === 1 ? "Uno se quedó" : quedan + " se quedaron"} aquí para que ${quedan === 1 ? "lo revises" : "los revises"}.`
+        : n
+          ? `Se ${n === 1 ? "apuntó 1 arete" : `apuntaron ${n} aretes`} y ya ${n === 1 ? "está" : "están"} en el trato.`
+          : "No se apuntó ninguno: revisa el motivo junto a cada arete.",
+    );
+    if (n) avisarGuardado(n === 1 ? "Arete apuntado y agregado al trato." : `${n} aretes apuntados y agregados al trato.`);
+    // Todo salió bien: el panel se cierra y el foco queda en «Seguir». Si algo falló, se queda abierto con el motivo.
+    if (n && !quedan) {
+      setAbierto(false);
+      requestAnimationFrame(() => panel.current?.closest(".paso")?.querySelector<HTMLButtonElement>(".paso-acciones .primary")?.focus());
+    }
+  }
+  const otro = (x: Sexo): Sexo => (x === "H" ? "M" : "H");
+  const etiquetaBoton = corriendo
+    ? `Apuntando ${avance!.actual} de ${avance!.total}…`
+    : buenas.length
+      ? `Apuntar ${buenas.length} ${buenas.length === 1 ? "arete y agregarlo" : "aretes y agregarlos"} al trato`
+      : "Apuntar y agregar al trato";
+  const bloqueo = corriendo ? "" : !lineas.length ? "Escribe al menos un número de arete." : !buenas.length ? "Corrige los aretes marcados para apuntarlos." : "";
+  return (
+    <details
+      ref={panel}
+      className="alta-rapida apuntar"
+      open={abierto}
+      onToggle={(e) => {
+        const si = e.currentTarget.open;
+        setAbierto(si);
+        if (si) enfocarPrimero(e.currentTarget);
+      }}
+    >
+      <summary>¿Son nuevos? Apuntar aretes (uno o varios)</summary>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void apuntar();
+        }}
+      >
+        <div className="apuntar-campos">
+          <label className="field apuntar-texto" htmlFor="aretes_nuevos">
+            <span>Números de arete *</span>
+            <textarea
+              id="aretes_nuevos"
+              name="aretes_nuevos"
+              rows={4}
+              value={texto}
+              disabled={corriendo}
+              onChange={(e) => {
+                setTexto(e.target.value);
+                setResumen("");
+              }}
+              placeholder={"0712345678\n0712345679 H"}
+              spellCheck={false}
+              autoCapitalize="characters"
+              autoComplete="off"
+              aria-describedby="aretes_nuevos-help"
+            />
+            <small id="aretes_nuevos-help">Uno por renglón, o sepáralos con espacios o comas. Para cambiarle el sexo a uno, escribe H o M junto a él (0712345679 H).</small>
+          </label>
+          <div className="apuntar-opciones">
+            <fieldset className="segmento" disabled={corriendo}>
+              <legend>Si no escribes H o M, son</legend>
+              {(
+                [
+                  ["M", "Machos"],
+                  ["H", "Hembras"],
+                ] as [Sexo, string][]
+              ).map(([v, t]) => (
+                <label key={v}>
+                  <input
+                    type="radio"
+                    name="sexo_por_defecto"
+                    value={v}
+                    checked={sexo === v}
+                    onChange={() => {
+                      setSexo(v);
+                      recordar("bovi:aretes:sexo", v);
+                    }}
+                  />
+                  <span>{t}</span>
+                </label>
+              ))}
+            </fieldset>
+            <Field
+              name="sistema_arete"
+              label="Tipo de arete"
+              value={sistema}
+              disabled={corriendo}
+              onChange={(v) => {
+                setSistema(v);
+                if (v) recordar("bovi:aretes:sistema", v);
+              }}
+              options={SISTEMAS}
+            />
+          </div>
+        </div>
+        {lineas.length > 0 && (
+          <ol className="apuntar-lista" aria-label="Aretes por apuntar">
+            {lineas.map((l, i) => {
+              const e = l.problema ? undefined : estados[l.clave];
+              const estado = l.problema ? "problema" : e?.estado || "pendiente";
+              return (
+                <li key={l.clave + "-" + i} data-estado={estado}>
+                  <span className="apuntar-codigo mono">{l.codigo}</span>
+                  {l.problema ? (
+                    <span className="apuntar-motivo">{l.problema}</span>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="sexo-linea"
+                        disabled={corriendo}
+                        aria-label={`${l.codigo}: ${sexoPalabra(l.sexo).toLowerCase()}. Cambiar a ${sexoPalabra(otro(l.sexo)).toLowerCase()}`}
+                        onClick={() => setCambios((c) => ({ ...c, [l.clave]: otro(l.sexo) }))}
+                      >
+                        {sexoPalabra(l.sexo)}
+                        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" focusable="false">
+                          <path d="M3 5.5h9l-2.5-2.5M13 10.5H4l2.5 2.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      {e?.estado === "apuntando" && <span className="apuntar-motivo">Apuntando…</span>}
+                      {e?.estado === "error" && (
+                        <span className="apuntar-motivo">
+                          {e.mensaje}{" "}
+                          {e.duplicado && (
+                            <button type="button" className="text-button" onClick={() => onBuscar(l.codigo)}>
+                              Buscarlo<span className="sr-only"> {l.codigo}</span>
+                            </button>
+                          )}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        )}
+        <p className="apuntar-avance" role="status">
+          {corriendo ? `Apuntando ${avance!.actual} de ${avance!.total}…` : resumen}
+        </p>
+        {bloqueo && texto.trim() !== "" && <p className="aviso-bloqueo">{bloqueo}</p>}
+        <button className="primary" disabled={corriendo || !buenas.length}>
+          {etiquetaBoton}
+        </button>
+      </form>
+    </details>
   );
 }
 
@@ -1720,16 +2159,29 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
   const l = liq.data;
   const cobro = l?.direccion === "POR_COBRAR";
   const nombre = (parte: unknown) => text((partes.data?.elementos || []).find((p) => p.id === parte)?.nombre || "Contraparte");
+  // La cuenta trae el nombre de la contraparte al cerrar el trato; la lista de contrapartes solo trae las primeras 100.
+  const quienEs = (x: Row) => (x.snapshot_contraparte_nombre ? text(x.snapshot_contraparte_nombre) : nombre(x.parte_id));
   const previos = useConsulta<Page>(
     l && !pago ? base + "/pagos?" + new URLSearchParams({ pagina: "1", tamano: "50", tipo: cobro ? "COBRO" : "PAGO" }) : undefined,
     rev,
   );
-  const aprovechables = (previos.data?.elementos || []).filter((p) => p.parte_id === l?.parte_id && conSaldo(p.disponible));
+  // Un registro que se dejó sin validar porque llegó otra cantidad no se vuelve a ofrecer.
+  const [descartados, setDescartados] = useState<string[]>([]);
+  const aprovechables = (previos.data?.elementos || []).filter(
+    (p) => p.parte_id === l?.parte_id && conSaldo(p.disponible) && !descartados.includes(String(p.id)),
+  );
   const refrescarPago = (pid: string) =>
     request<Row>(base + "/pagos/" + pid)
       .then((r) => setPago(r.data))
       .catch(() => undefined);
   const actual = !id ? "cual" : justo ? "listo" : !pago ? "dinero" : pago.estado === "REGISTRADO" ? "revisar" : "abonar";
+  // Filtro de «Qué cuenta»: por folio o nombre y por sentido. Se filtra lo que ya llegó; no se vuelve a consultar.
+  const [filtro, setFiltro] = useState("");
+  const [sentido, setSentido] = useState<Sentido>("");
+  const pendientes = (lista.data?.elementos || []).filter((x) => conSaldo(x.saldo));
+  const folioDe = (x: Row) => (ops.data?.elementos || []).find((o) => o.id === x.operacion_id)?.folio;
+  const visibles = filtrarCuentas(pendientes, { texto: filtro, sentido }, (x) => `${text(folioDe(x) || "")} ${quienEs(x)}`);
+  const cuantas = (d: Sentido) => (d ? pendientes.filter((x) => x.direccion === d).length : pendientes.length);
   const pasos: [string, string][] = [
     ["cual", "Qué cuenta"],
     ["dinero", "Cuánto"],
@@ -1753,7 +2205,7 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
     <div className="camino">
       <Rail
         titulo="Cobrar o pagar"
-        subtitulo={l ? `${cobro ? "Te debe" : "Le debes"}: ${nombre(l.parte_id)}` : "Dinero que entra o sale"}
+        subtitulo={l ? `${cobro ? "Te debe" : "Le debes"}: ${quienEs(l)}` : "Dinero que entra o sale"}
         pasos={pasos}
         actual={actual}
         alcanzado={actual}
@@ -1774,16 +2226,41 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
             }
           >
             {lista.error && <Notice error={lista.error} />}
+            {pendientes.length > 0 && (
+              <div className="filtro-cuentas" role="search" aria-label="Filtrar cuentas">
+                <Field name="filtro_cuenta" label="Buscar por folio o nombre" type="search" required={false} value={filtro} onChange={setFiltro} />
+                <fieldset className="segmento">
+                  <legend className="sr-only">Mostrar</legend>
+                  {(
+                    [
+                      ["", "Todas"],
+                      ["POR_COBRAR", "Te debe"],
+                      ["POR_PAGAR", "Le debes"],
+                    ] as [Sentido, string][]
+                  ).map(([v, t]) => (
+                    <label key={v || "todas"}>
+                      <input type="radio" name="sentido_cuenta" value={v} checked={sentido === v} onChange={() => setSentido(v)} />
+                      <span>
+                        {t} <span className="segmento-n">{cuantas(v)}</span>
+                      </span>
+                    </label>
+                  ))}
+                </fieldset>
+              </div>
+            )}
+            {pendientes.length > 0 && (
+              <p className="busqueda-estado" role="status">
+                {filtro.trim() || sentido ? `${visibles.length} de ${pendientes.length} cuentas` : ""}
+              </p>
+            )}
             <div className="renglones">
-              {(lista.data?.elementos || [])
-                .filter((x) => conSaldo(x.saldo))
-                .map((x) => {
-                  const folio = (ops.data?.elementos || []).find((o) => o.id === x.operacion_id)?.folio;
+              {visibles.map((x) => {
+                  const folio = folioDe(x);
                   return (
                     <button type="button" className="renglon" key={String(x.id)} onClick={() => go("camino-cobro", x)}>
                       <span>
                         <strong>
-                          {x.direccion === "POR_COBRAR" ? "Te debe" : "Le debes"} · {nombre(x.parte_id)}
+                          {x.direccion === "POR_COBRAR" ? "Te debe" : "Le debes"} · {quienEs(x)}
                         </strong>
                         <small>
                           {folio ? text(folio) + " · " : ""}
@@ -1795,10 +2272,31 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
                   );
                 })}
               {lista.loading && !lista.data && <p className="renglon">Buscando…</p>}
-              {lista.data && !lista.data.elementos.some((x) => conSaldo(x.saldo)) && (
-                <p className="renglon">No hay cuentas con saldo pendiente. Todo está al corriente.</p>
+              {lista.data && !pendientes.length && <p className="renglon">No hay cuentas con saldo pendiente. Todo está al corriente.</p>}
+              {pendientes.length > 0 && !visibles.length && (
+                <div className="renglon sin-resultado">
+                  <span>
+                    Ninguna cuenta {sentido === "POR_COBRAR" ? "de quien te debe " : sentido === "POR_PAGAR" ? "de las que debes " : ""}
+                    {filtro.trim() ? <>con «{filtro.trim()}»</> : ""}.
+                  </span>
+                  <button
+                    type="button"
+                    className="text-button"
+                    onClick={() => {
+                      setFiltro("");
+                      setSentido("");
+                    }}
+                  >
+                    Ver todas
+                  </button>
+                </div>
               )}
             </div>
+            {lista.data && lista.data.total > lista.data.elementos.length && (
+              <p className="muted">
+                Aquí ves las primeras {lista.data.elementos.length} cuentas. Si no está la que buscas, ábrela desde Dinero → Liquidaciones.
+              </p>
+            )}
           </Paso>
         )}
         {actual === "dinero" && l && (
@@ -1807,8 +2305,8 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
             pregunta={cobro ? "¿Cuánto te dieron?" : "¿Cuánto le das?"}
             explica={
               cobro
-                ? `${nombre(l.parte_id)} te debe ${money(l.saldo)}. Apunta el dinero tal como llegó; si es un abono parcial, escribe solo esa parte.`
-                : `Le debes a ${nombre(l.parte_id)} ${money(l.saldo)}. Apunta lo que le entregas, tal como sale de caja o del banco; si es un pago parcial, escribe solo esa parte.`
+                ? `${quienEs(l)} te debe ${money(l.saldo)}. Apunta el dinero tal como llegó; si es un abono parcial, escribe solo esa parte.`
+                : `Le debes a ${quienEs(l)} ${money(l.saldo)}. Apunta lo que le entregas, tal como sale de caja o del banco; si es un pago parcial, escribe solo esa parte.`
             }
             tecnico={
               <>
@@ -1820,7 +2318,7 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
           >
             {aprovechables.length > 0 && (
               <div className="pendientes-trato">
-                <h3>Ya hay dinero apuntado de {nombre(l.parte_id)}</h3>
+                <h3>Ya hay dinero apuntado de {quienEs(l)}</h3>
                 <ul>
                   {aprovechables.map((p) => (
                     <li key={String(p.id)}>
@@ -1853,8 +2351,13 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
         {actual === "revisar" && l && pago && (
           <Paso
             eyebrow="Paso 3"
-            pregunta={cobro ? "¿El dinero sí está completo?" : "¿El pago sí salió completo?"}
-            explica={`Apuntaste ${money(pago.importe)} en ${palabra(pago.metodo).toLowerCase()}. Antes de abonarlo, ${revisionDe(cobro, pago.metodo)}.`}
+            pregunta={cobro ? "¿Llegó completo lo que apuntaste?" : "¿Salió completo lo que apuntaste?"}
+            explica={
+              `Apuntaste ${money(pago.importe)} en ${palabra(pago.metodo).toLowerCase()}. Antes de abonarlo, ${revisionDe(cobro, pago.metodo)}.` +
+              ((centavos(importeDe(pago.importe)) ?? 0n) < (centavos(saldo) ?? 0n)
+                ? ` Es menos de lo que ${cobro ? "te debe" : "le debes"} (${money(l.saldo)}): está bien, es un abono y el resto queda pendiente.`
+                : "")
+            }
             escena={<Libreta sello="REVISADO" />}
             tecnico={
               <>
@@ -1865,19 +2368,37 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
           >
             <CommandForm
               path={base + "/pagos/" + pago.id + "/validar"}
-              label={cobro ? "Sí, el dinero está completo" : "Sí, el pago salió completo"}
+              label={cobro ? "Sí, llegó completo" : "Sí, salió completo"}
               build={(f) => ({ periodo_id: str(f, "periodo_id"), fecha_reconocimiento: str(f, "fecha_reconocimiento") })}
               onDone={() => void refrescarPago(String(pago.id))}
             >
               <Contable base={base} />
             </CommandForm>
+            {/* La API no corrige el importe de un registro: lo honesto es no validarlo y apuntar lo que sí se movió. */}
+            <details className="otra-cantidad">
+              <summary>{cobro ? "No, llegó otra cantidad" : "No, salió otra cantidad"}</summary>
+              <p>
+                No lo valides: mientras siga «Por validar», este registro no abona nada a ninguna cuenta. Apunta aparte lo que{" "}
+                {cobro ? "sí llegó" : "sí salió"}; si es menos de lo que se debe, el resto queda como saldo pendiente.
+              </p>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => {
+                  setDescartados((d) => [...d, String(pago.id)]);
+                  setPago(undefined);
+                }}
+              >
+                {cobro ? "Apuntar lo que sí llegó" : "Apuntar lo que sí salió"}
+              </button>
+            </details>
           </Paso>
         )}
         {actual === "abonar" && l && pago && (
           <Paso
             eyebrow="Paso 4"
             pregunta="¿Cuánto abonas a esta cuenta?"
-            explica={`Dinero por aplicar: ${money(pago.disponible)}. Saldo de la cuenta: ${money(l.saldo)}. Te propongo lo menor de los dos; lo que sobre queda ${cobro ? "a tu favor" : "como anticipo a " + nombre(l.parte_id)}.`}
+            explica={`Dinero por aplicar: ${money(pago.disponible)}. Saldo de la cuenta: ${money(l.saldo)}. Te propongo lo menor de los dos; lo que sobre queda ${cobro ? "a tu favor" : "como anticipo a " + quienEs(l)}.`}
             tecnico={
               <>
                 Comando <code>aplicar_pago</code>: bloquea periodo → pagos → liquidaciones (en orden de id) y exige que lo aplicado no pase del
@@ -1913,7 +2434,7 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
             explica={
               conSaldo(l.saldo)
                 ? `Todavía ${cobro ? "te debe" : "le debes"} ${money(l.saldo)}.`
-                : `${cobro ? nombre(l.parte_id) + " ya no te debe nada" : "Ya no le debes nada a " + nombre(l.parte_id)} en esta cuenta.`
+                : `${cobro ? quienEs(l) + " ya no te debe nada" : "Ya no le debes nada a " + quienEs(l)} en esta cuenta.`
             }
             escena={<Libreta play sello={conSaldo(l.saldo) ? "ABONADO" : "LIQUIDADO"} />}
           >
@@ -1922,7 +2443,7 @@ export function CaminoCobro({ base, sede, id, go }: { base: string; sede: Sede; 
             </p>
             {pago && conSaldo(pago.disponible) && (
               <p className="notice">
-                Sobraron {money(pago.disponible)}: quedan a favor de {nombre(l.parte_id)} como anticipo para otra cuenta.
+                Sobraron {money(pago.disponible)}: quedan a favor de {quienEs(l)} como anticipo para otra cuenta.
               </p>
             )}
             <div className="siguientes">
