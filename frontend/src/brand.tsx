@@ -1,11 +1,13 @@
 // Marca e iconografía originales de BoviCierre (SVG en línea, sin dependencias ni assets externos).
+/** Fierro «B en Caja Abierta» (2026-11-11): la B dentro de un corral con la puerta abierta a la derecha.
+ *  Se lee como un fierro de herrar: «Caja B». Trazo parejo y la panza de la B sin tocar el asta, como hierro forjado. */
 export function BrandMark({size=36}:{size?:number}){
-    return <svg className="brand-mark" aria-hidden="true" viewBox="0 0 40 40" width={size} height={size}>
-        <rect width="40" height="40" rx="10" fill="currentColor"/>
-        <path d="M7 11c1.5 3.2 4 4.6 7.2 4.6M33 11c-1.5 3.2-4 4.6-7.2 4.6" fill="none" stroke="var(--brand-mark-ink,#F3EBDD)" strokeWidth="2.6" strokeLinecap="round"/>
-        <path d="M13.2 14.4h13.6l-1.6 12.2c-.4 2.9-2.6 5-5.2 5s-4.8-2.1-5.2-5z" fill="var(--brand-mark-ink,#F3EBDD)"/>
-        <path d="M16.6 27.6h6.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-        <circle cx="17" cy="20" r="1.3" fill="currentColor"/><circle cx="23" cy="20" r="1.3" fill="currentColor"/>
+    return <svg className="brand-mark" aria-hidden="true" viewBox="0 0 100 100" width={size} height={size}>
+        <rect width="100" height="100" rx="22" fill="currentColor"/>
+        <g transform="translate(14 14) scale(.72)" fill="none" stroke="var(--brand-mark-ink,#F2C230)" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M80 40V18H20V82H80V60"/>
+            <path d="M38 32V68M38 32H51A9 9 0 0 1 51 50M51 50H53A9 9 0 0 1 53 68H38"/>
+        </g>
     </svg>;
 }
 export function Brand({subtitle='GANADO EN PIE'}:{subtitle?:string}){

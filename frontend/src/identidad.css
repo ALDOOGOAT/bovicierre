@@ -50,8 +50,9 @@ h3{font-size:var(--fs-h3);font-weight:760}
 /* ── Marca ──────────────────────────────────────────────── */
 .brand span{font-family:var(--stencil);font-weight:800;font-size:23px;letter-spacing:.06em;text-transform:uppercase;line-height:1}
 .brand small{font-family:var(--font);font-weight:700;letter-spacing:.16em}
-.brand-mark{color:var(--arete);--brand-mark-ink:var(--tinta)}
-.sidebar .brand-mark{color:var(--arete);--brand-mark-ink:var(--tinta)}
+/* Fierro «B en Caja Abierta»: verde con fierro amarillo sobre fondo claro; amarillo con fierro verde sobre fondo oscuro. */
+.brand-mark{color:var(--potrero);--brand-mark-ink:var(--arete)}
+.sidebar .brand-mark,.login-story .brand-mark{color:var(--arete);--brand-mark-ink:var(--potrero)}
 .sidebar .brand small{color:var(--arete-claro);opacity:.8}
 
 /* ── Barra lateral: tablones de corral ──────────────────── */
